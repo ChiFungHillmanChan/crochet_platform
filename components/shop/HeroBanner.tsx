@@ -11,7 +11,7 @@ export function HeroBanner() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-blush/50 via-soft-pink/20 to-white px-4 py-16 text-center md:py-24">
       <Image
-        src="/generated/hero-bg.png"
+        src="/hero-bg.png"
         alt=""
         fill
         className="object-cover opacity-40"
@@ -21,7 +21,7 @@ export function HeroBanner() {
       <div className="relative mx-auto max-w-3xl space-y-6">
         <div className="mx-auto mb-4 flex justify-center">
           <Image
-            src="/generated/icon.png"
+            src="/icon.png"
             alt="Cosy Loops"
             width={80}
             height={80}
