@@ -12,7 +12,7 @@ export default function NotFound() {
           The page you&apos;re looking for doesn&apos;t exist.
         </p>
         <Link
-          href="/en/"
+          href="/"
           className="inline-block rounded-full bg-soft-pink px-6 py-2 font-medium text-cocoa transition-colors hover:bg-soft-pink/80"
         >
           Back to Shop

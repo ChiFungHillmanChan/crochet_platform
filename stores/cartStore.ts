@@ -1,65 +1,68 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import type { CartItem } from "@/lib/types";
 
 interface CartState {
   items: CartItem[];
+  /** Whether the cart has been loaded from Firestore */
+  hydrated: boolean;
   addItem: (item: CartItem) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   totalItems: () => number;
   totalPrice: () => number;
+  /** Replace entire cart (used when syncing from Firestore) */
+  setItems: (items: CartItem[]) => void;
+  setHydrated: (v: boolean) => void;
 }
 
-export const useCartStore = create<CartState>()(
-  persist(
-    (set, get) => ({
-      items: [],
+export const useCartStore = create<CartState>()((set, get) => ({
+  items: [],
+  hydrated: false,
 
-      addItem: (item) =>
-        set((state) => {
-          const existing = state.items.find(
-            (i) => i.productId === item.productId
-          );
-          if (existing) {
-            return {
-              items: state.items.map((i) =>
-                i.productId === item.productId
-                  ? { ...i, quantity: i.quantity + item.quantity }
-                  : i
-              ),
-            };
-          }
-          return { items: [...state.items, item] };
-        }),
-
-      removeItem: (productId) =>
-        set((state) => ({
-          items: state.items.filter((i) => i.productId !== productId),
-        })),
-
-      updateQuantity: (productId, quantity) =>
-        set((state) => ({
-          items:
-            quantity <= 0
-              ? state.items.filter((i) => i.productId !== productId)
-              : state.items.map((i) =>
-                  i.productId === productId ? { ...i, quantity } : i
-                ),
-        })),
-
-      clearCart: () => set({ items: [] }),
-
-      totalItems: () =>
-        get().items.reduce((sum, item) => sum + item.quantity, 0),
-
-      totalPrice: () =>
-        get().items.reduce(
-          (sum, item) => sum + item.price * item.quantity,
-          0
-        ),
+  addItem: (item) =>
+    set((state) => {
+      const existing = state.items.find(
+        (i) => i.productId === item.productId
+      );
+      if (existing) {
+        return {
+          items: state.items.map((i) =>
+            i.productId === item.productId
+              ? { ...i, quantity: i.quantity + item.quantity }
+              : i
+          ),
+        };
+      }
+      return { items: [...state.items, item] };
     }),
-    { name: "cosy-loops-cart" }
-  )
-);
+
+  removeItem: (productId) =>
+    set((state) => ({
+      items: state.items.filter((i) => i.productId !== productId),
+    })),
+
+  updateQuantity: (productId, quantity) =>
+    set((state) => ({
+      items:
+        quantity <= 0
+          ? state.items.filter((i) => i.productId !== productId)
+          : state.items.map((i) =>
+              i.productId === productId ? { ...i, quantity } : i
+            ),
+    })),
+
+  clearCart: () => set({ items: [] }),
+
+  totalItems: () =>
+    get().items.reduce((sum, item) => sum + item.quantity, 0),
+
+  totalPrice: () =>
+    get().items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    ),
+
+  setItems: (items) => set({ items }),
+  setHydrated: (v) => set({ hydrated: v }),
+}));

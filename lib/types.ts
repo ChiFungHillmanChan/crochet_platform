@@ -53,3 +53,13 @@ export interface CartItem {
   quantity: number;
   image: string;
 }
+
+export interface Review {
+  id: string;
+  productId: string;
+  authorName: string;
+  rating: number; // 1-5
+  body: string;
+  isApproved: boolean;
+  createdAt: Date;
+}

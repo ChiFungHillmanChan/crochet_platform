@@ -33,6 +33,7 @@ export function RegisterForm() {
         <Label htmlFor="reg-name">Name</Label>
         <Input
           id="reg-name"
+          autoComplete="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Your name"
@@ -44,6 +45,7 @@ export function RegisterForm() {
         <Input
           id="reg-email"
           type="email"
+          autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
@@ -55,6 +57,7 @@ export function RegisterForm() {
         <Input
           id="reg-password"
           type="password"
+          autoComplete="new-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="At least 6 characters"
