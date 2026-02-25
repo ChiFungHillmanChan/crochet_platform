@@ -1,0 +1,156 @@
+{
+  "common": {
+    "brandName": "Cosy Loops",
+    "tagline": "可愛手工鉤針，以愛心在英國製造",
+    "loading": "載入中...",
+    "comingSoon": "即將推出",
+    "backToShop": "返回商店",
+    "currency": "£",
+    "or": "或"
+  },
+  "nav": {
+    "shop": "商店",
+    "about": "關於我們",
+    "signIn": "登入",
+    "signOut": "登出",
+    "myOrders": "我的訂單",
+    "admin": "管理員",
+    "userMenu": "用戶選單",
+    "openMenu": "開啟選單",
+    "cart": "購物車"
+  },
+  "footer": {
+    "copyright": "© 2026 Cosy Loops. 以愛心在英國手工製造。",
+    "shop": "商店",
+    "about": "關於我們"
+  },
+  "home": {
+    "title": "Cosy Loops",
+    "subtitle": "可愛手工鉤針，即將推出。",
+    "heroHeadline": "手工鉤針創作，以愛心製造",
+    "heroCta": "立即選購",
+    "featuredTitle": "我們的系列",
+    "seoTitle": "手工鉤針玩具及禮品 | Cosy Loops 英國",
+    "seoDescription": "選購可愛的手工鉤針玩具、編織玩偶及獨特手作禮品。在英國以愛心製造。訂單滿£30免費送貨。"
+  },
+  "shop": {
+    "allCategories": "全部",
+    "addToCart": "加入購物車",
+    "added": "已加入！",
+    "outOfStock": "缺貨",
+    "price": "價格",
+    "stock": "有存貨",
+    "description": "描述",
+    "noProducts": "找不到產品",
+    "viewProduct": "查看產品"
+  },
+  "product": {
+    "backToShop": "返回商店",
+    "addToCart": "加入購物車",
+    "added": "已加入購物車！",
+    "outOfStock": "缺貨",
+    "quantity": "數量",
+    "details": "詳情",
+    "seoTitle": "手工鉤針產品 | Cosy Loops",
+    "seoDescription": "探索 Cosy Loops 的可愛手工鉤針作品。在英國以愛心製造。"
+  },
+  "cart": {
+    "title": "購物車",
+    "empty": "您的購物車是空的",
+    "emptyDescription": "加入一些可愛的鉤針作品開始吧！",
+    "continueShopping": "繼續購物",
+    "subtotal": "小計",
+    "total": "總計",
+    "checkout": "前往結帳",
+    "remove": "移除",
+    "quantity": "數量",
+    "itemCount": "{count, plural, =0 {沒有商品} one {1 件商品} other {# 件商品}}"
+  },
+  "checkout": {
+    "title": "結帳",
+    "orderSummary": "訂單摘要",
+    "customerDetails": "您的資料",
+    "name": "全名",
+    "email": "電郵地址",
+    "payNow": "立即付款",
+    "processing": "處理中...",
+    "comingSoon": "結帳即將推出"
+  },
+  "checkoutSuccess": {
+    "title": "訂單已確認！",
+    "message": "感謝您的購買。",
+    "orderNumber": "訂單編號",
+    "backToShop": "繼續購物",
+    "seoTitle": "訂單已確認 | Cosy Loops"
+  },
+  "account": {
+    "title": "我的帳戶",
+    "orders": "訂單紀錄",
+    "noOrders": "暫無訂單",
+    "noOrdersDescription": "您的訂單紀錄會在首次購買後顯示在此處。",
+    "comingSoon": "我的帳戶即將推出"
+  },
+  "auth": {
+    "welcomeTitle": "歡迎來到 Cosy Loops",
+    "signIn": "登入",
+    "register": "註冊",
+    "email": "電郵",
+    "password": "密碼",
+    "name": "姓名",
+    "signInButton": "登入",
+    "registerButton": "建立帳戶",
+    "googleSignIn": "使用 Google 繼續",
+    "signingIn": "登入中...",
+    "registering": "建立帳戶中..."
+  },
+  "admin": {
+    "title": "管理員",
+    "dashboard": "控制台",
+    "products": "產品",
+    "orders": "訂單",
+    "newProduct": "新增產品",
+    "editProduct": "編輯產品",
+    "orderDetail": "訂單詳情",
+    "totalOrders": "總訂單數",
+    "totalRevenue": "總收入",
+    "totalProducts": "總產品數",
+    "pendingOrders": "待處理訂單",
+    "recentOrders": "最近訂單",
+    "productName": "產品名稱",
+    "price": "價格",
+    "stock": "庫存",
+    "category": "分類",
+    "status": "狀態",
+    "actions": "操作",
+    "edit": "編輯",
+    "delete": "刪除",
+    "save": "儲存",
+    "cancel": "取消",
+    "create": "建立",
+    "active": "啟用",
+    "inactive": "停用",
+    "dashboardComingSoon": "管理控制台即將推出。",
+    "productsComingSoon": "產品管理即將推出。",
+    "ordersComingSoon": "訂單管理即將推出。",
+    "newProductComingSoon": "新產品表單即將推出。",
+    "editProductComingSoon": "編輯產品即將推出",
+    "orderDetailComingSoon": "訂單詳情即將推出"
+  },
+  "notFound": {
+    "title": "404",
+    "heading": "哎呀！此頁面已鬆開了。",
+    "message": "您尋找的頁面不存在。",
+    "backToShop": "返回商店"
+  },
+  "orderStatus": {
+    "pending": "待處理",
+    "paid": "已付款",
+    "shipped": "已發貨",
+    "delivered": "已送達",
+    "cancelled": "已取消"
+  },
+  "locale": {
+    "en": "EN",
+    "zh-hk": "粵"
+  }
+}
