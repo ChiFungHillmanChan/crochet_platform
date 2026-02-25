@@ -95,12 +95,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
     const provider = new GoogleAuthProvider();
     const cred = await signInWithPopup(auth, provider);
+    const ADMIN_EMAILS = ["hillmanchan709@gmail.com", "choysy@gmail.com"];
     const snap = await getDoc(doc(db, "users", cred.user.uid));
     if (!snap.exists()) {
+      const email = cred.user.email ?? "";
+      const role = ADMIN_EMAILS.includes(email.toLowerCase())
+        ? "admin"
+        : "customer";
       await setDoc(doc(db, "users", cred.user.uid), {
         name: cred.user.displayName ?? "",
-        email: cred.user.email ?? "",
-        role: "customer",
+        email,
+        role,
         createdAt: serverTimestamp(),
       });
     }
