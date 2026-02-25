@@ -22,7 +22,10 @@
   "footer": {
     "copyright": "© 2026 Cosy Loops. 以愛心在英國手工製造。",
     "shop": "商店",
-    "about": "關於我們"
+    "about": "關於我們",
+    "shipping": "運送與退貨",
+    "faq": "常見問題",
+    "contact": "聯絡我們"
   },
   "home": {
     "title": "Cosy Loops",
@@ -31,7 +34,9 @@
     "heroCta": "立即選購",
     "featuredTitle": "我們的系列",
     "seoTitle": "手工鉤針玩具及禮品 | Cosy Loops 英國",
-    "seoDescription": "選購可愛的手工鉤針玩具、編織玩偶及獨特手作禮品。在英國以愛心製造。訂單滿£30免費送貨。"
+    "seoDescription": "選購可愛的手工鉤針玩具、編織玩偶及獨特手作禮品。在英國以愛心製造。訂單滿£30免費送貨。",
+    "loadError": "載入產品失敗，請重試。",
+    "retry": "重試"
   },
   "shop": {
     "allCategories": "全部",
@@ -42,7 +47,8 @@
     "stock": "有存貨",
     "description": "描述",
     "noProducts": "找不到產品",
-    "viewProduct": "查看產品"
+    "viewProduct": "查看產品",
+    "signInToAdd": "登入以加入購物車"
   },
   "product": {
     "backToShop": "返回商店",
@@ -64,7 +70,8 @@
     "checkout": "前往結帳",
     "remove": "移除",
     "quantity": "數量",
-    "itemCount": "{count, plural, =0 {沒有商品} one {1 件商品} other {# 件商品}}"
+    "itemCount": "{count, plural, =0 {沒有商品} one {1 件商品} other {# 件商品}}",
+    "signInToView": "登入以查看購物車"
   },
   "checkout": {
     "title": "結帳",
@@ -134,7 +141,18 @@
     "ordersComingSoon": "訂單管理即將推出。",
     "newProductComingSoon": "新產品表單即將推出。",
     "editProductComingSoon": "編輯產品即將推出",
-    "orderDetailComingSoon": "訂單詳情即將推出"
+    "orderDetailComingSoon": "訂單詳情即將推出",
+    "reviews": "評價",
+    "newReview": "新增評價",
+    "editReview": "編輯評價",
+    "reviewer": "評價者",
+    "rating": "評分",
+    "approved": "已批准",
+    "notApproved": "未批准",
+    "reviewBody": "評價內容",
+    "confirmDelete": "確定刪除？",
+    "confirmDeleteDescription": "此操作無法撤銷。",
+    "productId": "產品"
   },
   "about": {
     "seoTitle": "關於我們 | Cosy Loops",
@@ -165,6 +183,55 @@
     "shipped": "已發貨",
     "delivered": "已送達",
     "cancelled": "已取消"
+  },
+  "reviews": {
+    "title": "顧客評價",
+    "noReviews": "暫無評價。",
+    "starRating": "{rating} / 5 星"
+  },
+  "related": {
+    "title": "你可能也喜歡"
+  },
+  "shipping": {
+    "seoTitle": "運送與退貨 | Cosy Loops",
+    "seoDescription": "了解我們手工鉤針產品的運送選項、送貨時間和退貨政策。",
+    "heading": "運送與退貨",
+    "shippingTitle": "運送資訊",
+    "shippingText": "我們透過 Royal Mail 在英國境內發貨。標準送貨需要 3-5 個工作天。訂單滿 £30 可享免費送貨。",
+    "processingTitle": "處理時間",
+    "processingText": "由於所有商品均為手工製作，請預留 1-3 個工作天準備您的訂單後才發貨。",
+    "returnsTitle": "退貨與換貨",
+    "returnsText": "我們接受收貨後 14 天內退貨。商品必須未使用且保持原始狀態。請電郵聯絡我們安排退貨。",
+    "damageTitle": "損壞商品",
+    "damageText": "如果您的商品到達時已損壞，請在 48 小時內附上照片聯絡我們，我們將安排更換或全額退款。"
+  },
+  "faq": {
+    "seoTitle": "常見問題 | Cosy Loops",
+    "seoDescription": "關於 Cosy Loops 手工鉤針產品、運送和訂單的常見問題。",
+    "heading": "常見問題",
+    "q1": "所有商品真的都是手工製作嗎？",
+    "a1": "是的！每件商品都是我們用優質毛線手工鉤織。沒有機器，沒有批量生產——只有愛和無數的針法。",
+    "q2": "送貨需要多長時間？",
+    "a2": "英國標準送貨通過 Royal Mail 需要 3-5 個工作天。請額外預留 1-3 天讓我們準備您的手工商品。",
+    "q3": "可以訂製嗎？",
+    "a3": "我們很樂意接受訂製要求！請電郵至 hello@cosyloops.com 告訴我們您的想法，我們會告知是否可以實現。",
+    "q4": "退貨政策是什麼？",
+    "a4": "我們接受收貨後 14 天內退回未使用且保持原始狀態的商品。請電郵聯絡我們安排退貨。",
+    "q5": "你們有國際配送嗎？",
+    "a5": "目前我們只在英國境內送貨。我們希望將來能提供國際配送！",
+    "q6": "如何護理我的鉤針商品？",
+    "a6": "我們建議用冷水輕柔手洗，然後平放晾乾。避免機洗以免損壞針法。"
+  },
+  "contact": {
+    "seoTitle": "聯絡我們 | Cosy Loops",
+    "seoDescription": "如有關於手工鉤針產品的問題，請聯絡 Cosy Loops。",
+    "heading": "聯絡我們",
+    "intro": "我們很樂意收到您的來信！無論您對訂單有疑問、想訂製商品，還是只是想打個招呼。",
+    "emailTitle": "電郵聯絡",
+    "emailAddress": "hello@cosyloops.com",
+    "responseTime": "我們通常在 24-48 小時內回覆。",
+    "socialTitle": "關注我們",
+    "socialText": "在社交媒體上關注我們，了解幕後花絮、新產品公告和鉤針靈感。"
   },
   "locale": {
     "en": "EN",
