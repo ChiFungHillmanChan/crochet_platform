@@ -6,6 +6,7 @@ import { getProducts, getCategories } from "@/lib/products";
 import type { Product, Category } from "@/lib/types";
 import { ProductGrid } from "@/components/shop/ProductGrid";
 import { CategoryFilter } from "@/components/shop/CategoryFilter";
+import { Button } from "@/components/ui/button";
 
 export default function ShopSection() {
   const t = useTranslations("home");
@@ -13,9 +14,13 @@ export default function ShopSection() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     async function load() {
+      setLoading(true);
+      setError(false);
       try {
         const [prods, cats] = await Promise.all([
           getProducts(),
@@ -24,17 +29,34 @@ export default function ShopSection() {
         setProducts(prods);
         setCategories(cats);
       } catch {
-        // ASSUMPTION: If Firestore is unreachable, show empty state. Change if offline fallback needed.
+        setError(true);
       } finally {
         setLoading(false);
       }
     }
     load();
-  }, []);
+  }, [retryKey]);
 
   const filtered = selectedCategory
     ? products.filter((p) => p.categorySlug === selectedCategory)
     : products;
+
+  if (error) {
+    return (
+      <section id="collection" className="mx-auto max-w-6xl px-4 py-12">
+        <div className="flex flex-col items-center gap-4 py-16 text-center">
+          <p className="text-warm-gray">{t("loadError")}</p>
+          <Button
+            variant="outline"
+            className="rounded-full"
+            onClick={() => setRetryKey((k) => k + 1)}
+          >
+            {t("retry")}
+          </Button>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="collection" className="mx-auto max-w-6xl px-4 py-12">
