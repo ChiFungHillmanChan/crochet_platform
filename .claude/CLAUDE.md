@@ -22,6 +22,16 @@ When Claude makes a mistake or the user corrects a pattern, **update this file i
 | Deployment | Static export (`output: "export"`) → S3 + CloudFront |
 | CI | `.github/workflows/ci.yml` (lint + typecheck + build on PRs) |
 | CD | `.github/workflows/deploy.yml` (build + S3 sync + CloudFront invalidation on push to main) |
+| Deploy guide | `.claude/commands/deploy.md` (all URLs, resource IDs, costs) |
+
+### Production URLs
+
+| Service | URL |
+|---------|-----|
+| Frontend | https://d25l7it29vlqk3.cloudfront.net |
+| API Gateway | https://2tqn1i1a3e.execute-api.eu-west-2.amazonaws.com |
+| R2 Image CDN | https://pub-ae88baaaf33e44938f1264f28d62ec7c.r2.dev |
+| Firebase Console | https://console.firebase.google.com/project/resume-system-470420 |
 
 ### Essential Commands
 ```bash
@@ -71,7 +81,7 @@ Key routes:
 
 - **Auth**: `lib/auth-context.tsx` provides `AuthProvider` + `useAuth()` hook. Firebase Auth (email/password + Google). User profiles stored in Firestore `users` collection.
 - **Cart**: `stores/cartStore.ts` — Zustand store with `persist` middleware (localStorage key: `cosy-loops-cart`). Prices in pence GBP.
-- **Products/Categories**: `lib/products.ts` — Client-side Firestore queries. Products filtered by `isActive`.
+- **Products/Categories**: `lib/products.ts` — Client-side Firestore queries. Products filtered by `isActive`. Requires composite index on `isActive` + `createdAt`.
 - **API calls**: `lib/api.ts` — Single `apiPost()` function that POSTs to `NEXT_PUBLIC_API_URL` with Firebase ID token. All backend actions go through this one endpoint with an `action` field.
 - **Image uploads**: `lib/r2.ts` — Gets presigned URL from backend, uploads directly to Cloudflare R2.
 - **Stripe**: `lib/stripe.ts` — Lazy-loaded client-side Stripe.js.
@@ -80,25 +90,31 @@ Key routes:
 
 The `lambda/` directory contains AWS Lambda functions (plain `.mjs`, not part of the Next.js build — excluded in `tsconfig.json`):
 
-- `lambda/admin/index.mjs` — Admin API (product CRUD, order management, R2 upload URLs)
+- `lambda/admin/index.mjs` — Admin API (product CRUD, order management, R2 upload URLs, Stripe checkout)
 - `lambda/webhook/index.mjs` — Stripe webhook handler (order creation on payment)
 - `lambda/webhook/emails.mjs` — Transactional email templates
 - `lambda/shared/` — Shared utilities (Firebase Admin SDK init, HTTP response helpers)
 
+**Lambda packaging**: Files must be zipped preserving the `admin/` or `webhook/` + `shared/` directory structure. Handler is `admin/index.handler` or `webhook/index.handler`.
+
 ### Firebase / Firestore
 
+Project: `resume-system-470420`
 Collections: `users`, `products`, `categories`, `orders`, `stripeEvents`
 - Security rules in `firestore.rules` — products/categories are read-only from client; orders readable only by owner; writes only through Lambda backend.
+- Composite indexes in `firestore.indexes.json` — required for product queries with `isActive` filter + `createdAt` sort.
 
 ### Environment Variables
 
 Frontend (must be `NEXT_PUBLIC_`):
 - `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-- `NEXT_PUBLIC_API_URL` — Lambda API Gateway endpoint
+- `NEXT_PUBLIC_API_URL` — Lambda API Gateway endpoint (`https://2tqn1i1a3e.execute-api.eu-west-2.amazonaws.com/admin`)
 
 Backend (in Lambda environment):
-- `S3_BUCKET`, `CF_DISTRIBUTION_ID`, AWS credentials
+- `FIREBASE_SERVICE_ACCOUNT` (base64), `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
+- `ADMIN_EMAILS`, `FRONTEND_URL`, `ALLOWED_ORIGINS`
+- `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL`
 
 ---
 
@@ -185,5 +201,9 @@ Escalations: [any, or "none"]
 ```
 
 <!-- Lessons Learned (append new entries here)
-- YYYY-MM-DD: [correction description]
+- 2026-02-25: Lambda packaging must preserve directory structure (admin/ + shared/) — flat copy breaks relative imports like `../shared/firebase-admin.mjs`
+- 2026-02-25: Firestore composite indexes are required for queries combining where() + orderBy() on different fields — deploy via `firestore.indexes.json`
+- 2026-02-25: CloudFront Functions must be created from file (`fileb://`) not inline string — test with `aws cloudfront test-function` before publishing
+- 2026-02-25: Firebase Auth providers (Email/Password, Google) cannot be enabled via CLI — must be done in Firebase Console
+- 2026-02-25: CloudFront + S3 needs a URL rewrite function to map `/path/` to `/path/index.html` for Next.js trailingSlash
 -->
