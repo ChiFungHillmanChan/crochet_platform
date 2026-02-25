@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { getOrdersByUser } from "@/lib/orders";
+import { getOrdersByUser, getOrdersByEmail } from "@/lib/orders";
 import { formatPrice } from "@/lib/utils";
 import type { Order } from "@/lib/types";
 import { OrderStatusBadge } from "@/components/shop/OrderStatusBadge";
@@ -29,8 +29,22 @@ export default function AccountContent() {
     async function load() {
       if (!user) return;
       try {
-        const data = await getOrdersByUser(user.uid);
-        setOrders(data);
+        const [byUid, byEmail] = await Promise.all([
+          getOrdersByUser(user.uid),
+          user.email ? getOrdersByEmail(user.email) : Promise.resolve([]),
+        ]);
+        // Deduplicate by ID
+        const orderMap = new Map<string, Order>();
+        for (const order of [...byUid, ...byEmail]) {
+          if (!orderMap.has(order.id)) {
+            orderMap.set(order.id, order);
+          }
+        }
+        const merged = Array.from(orderMap.values()).sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setOrders(merged);
       } catch {
         // Firestore unreachable
       } finally {

@@ -10,6 +10,8 @@ import type { Product } from "@/lib/types";
 import { ImageGallery } from "@/components/shop/ImageGallery";
 import { AddToCartButton } from "@/components/shop/AddToCartButton";
 import { QuantitySelector } from "@/components/shop/QuantitySelector";
+import { ReviewSection } from "@/components/shop/ReviewSection";
+import { RelatedProducts } from "@/components/shop/RelatedProducts";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -131,6 +133,9 @@ export function ProductDetail() {
           </div>
         </div>
       </div>
+
+      <ReviewSection productId={product.id} />
+      <RelatedProducts categorySlug={product.categorySlug} excludeId={product.id} />
     </main>
   );
 }
