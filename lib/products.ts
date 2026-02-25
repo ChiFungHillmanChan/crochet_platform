@@ -66,6 +66,40 @@ export async function getProductBySlug(
   } as Product;
 }
 
+export async function getRelatedProducts(
+  categorySlug: string,
+  excludeId: string,
+  limit = 4
+): Promise<Product[]> {
+  const db = await getFirebaseDb();
+  const { collection, getDocs, query, where, orderBy } = await import(
+    "firebase/firestore"
+  );
+
+  const q = query(
+    collection(db, "products"),
+    where("isActive", "==", true),
+    where("categorySlug", "==", categorySlug),
+    orderBy("createdAt", "desc")
+  );
+  const snap = await getDocs(q);
+  const products = snap.docs
+    .map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate?.() ?? new Date(),
+    }))
+    .filter((p) => p.id !== excludeId) as Product[];
+
+  // Shuffle using Fisher-Yates
+  for (let i = products.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [products[i], products[j]] = [products[j], products[i]];
+  }
+
+  return products.slice(0, limit);
+}
+
 export async function getCategories(): Promise<Category[]> {
   const db = await getFirebaseDb();
   const { collection, getDocs, query, orderBy } = await import(

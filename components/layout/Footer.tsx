@@ -9,6 +9,9 @@ export function Footer() {
   const footerLinks = [
     { href: "/" as const, label: t("shop") },
     { href: "/about/" as const, label: t("about") },
+    { href: "/shipping/" as const, label: t("shipping") },
+    { href: "/faq/" as const, label: t("faq") },
+    { href: "/contact/" as const, label: t("contact") },
   ];
 
   return (

@@ -3,6 +3,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { firebaseAuth, db } from "../shared/firebase-admin.mjs";
 import { success, error } from "../shared/response.mjs";
+import { getReviews, createReview, updateReview, deleteReview } from "./reviews.mjs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -216,6 +217,14 @@ export async function handler(event) {
         return await getDashboardStats(origin);
       case "get-upload-url":
         return await getUploadUrl(body, origin);
+      case "get-reviews":
+        return await getReviews(origin);
+      case "create-review":
+        return await createReview(body, origin);
+      case "update-review":
+        return await updateReview(body, origin);
+      case "delete-review":
+        return await deleteReview(body, origin);
       default:
         return error(400, `Unknown action: ${action}`, origin);
     }
