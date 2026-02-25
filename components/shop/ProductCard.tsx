@@ -17,7 +17,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       href={`/products/${product.slug}/`}
-      className="group block overflow-hidden rounded-2xl bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
     >
       <div className="relative aspect-square overflow-hidden bg-blush/30">
         {product.images[0] ? (
@@ -42,14 +42,14 @@ export function ProductCard({ product }: ProductCardProps) {
           </Badge>
         )}
       </div>
-      <div className="p-4">
-        <Badge variant="outline" className="mb-2 text-xs text-warm-gray">
+      <div className="flex flex-1 flex-col p-4">
+        <Badge variant="outline" className="mb-2 w-fit text-xs text-warm-gray">
           {product.categorySlug}
         </Badge>
         <h3 className="font-heading text-lg font-semibold text-cocoa">
           {product.name}
         </h3>
-        <p className="mt-1 font-semibold text-soft-pink">
+        <p className="mt-auto pt-2 font-semibold text-soft-pink">
           {formatPrice(product.price)}
         </p>
       </div>
