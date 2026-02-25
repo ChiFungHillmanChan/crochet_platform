@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { getOptimizedImageUrl } from "@/lib/image-utils";
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
 
 interface ImageGalleryProps {
@@ -31,7 +32,7 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
           className="relative aspect-square w-full overflow-hidden rounded-2xl bg-blush/30"
         >
           <Image
-            src={images[selectedIndex]}
+            src={getOptimizedImageUrl(images[selectedIndex], "full")}
             alt={`${productName} - Image ${selectedIndex + 1}`}
             fill
             className="object-cover"
@@ -53,7 +54,7 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
                 )}
               >
                 <Image
-                  src={img}
+                  src={getOptimizedImageUrl(img, "thumb")}
                   alt={`${productName} thumbnail ${i + 1}`}
                   fill
                   className="object-cover"
@@ -72,7 +73,7 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
           </VisuallyHidden>
           <div className="relative aspect-square overflow-hidden rounded-2xl">
             <Image
-              src={images[selectedIndex]}
+              src={getOptimizedImageUrl(images[selectedIndex], "full")}
               alt={`${productName} - Full size`}
               fill
               className="object-contain"

@@ -116,3 +116,15 @@ section[id],
   content-visibility: auto;
   contain-intrinsic-size: auto 500px;
 }
+
+/* Safari lazy-load flicker fix */
+@supports (font: -apple-system-body) and (-webkit-appearance: none) {
+  img[loading="lazy"] {
+    clip-path: inset(0.6px);
+  }
+}
+
+/* Async image decoding for smoother scrolling */
+img {
+  decoding: async;
+}

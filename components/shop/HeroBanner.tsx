@@ -11,7 +11,7 @@ export function HeroBanner() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-blush/50 via-soft-pink/20 to-white px-4 py-16 text-center md:py-24">
       <Image
-        src="/hero-bg.png"
+        src="/hero-bg.webp"
         alt=""
         fill
         className="object-cover opacity-40"

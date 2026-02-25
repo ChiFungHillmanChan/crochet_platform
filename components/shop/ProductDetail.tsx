@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -14,8 +13,19 @@ import { QuantitySelector } from "@/components/shop/QuantitySelector";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
+/** Extract product slug from the browser URL instead of useParams(),
+ *  because the static placeholder page bakes "placeholder" into RSC params. */
+function getSlugFromUrl(): string | null {
+  if (typeof window === "undefined") return null;
+  // URL pattern: /{locale}/products/{slug}/
+  const match = window.location.pathname.match(
+    /\/(?:en|zh-hk)\/products\/([^/]+)/
+  );
+  const slug = match?.[1] ?? null;
+  return slug === "placeholder" ? null : slug;
+}
+
 export function ProductDetail() {
-  const params = useParams<{ slug: string }>();
   const t = useTranslations("product");
   const ts = useTranslations("shop");
   const [product, setProduct] = useState<Product | null>(null);
@@ -24,12 +34,13 @@ export function ProductDetail() {
 
   useEffect(() => {
     async function load() {
-      if (!params.slug || params.slug === "placeholder") {
+      const slug = getSlugFromUrl();
+      if (!slug) {
         setLoading(false);
         return;
       }
       try {
-        const p = await getProductBySlug(params.slug);
+        const p = await getProductBySlug(slug);
         setProduct(p);
       } catch {
         // Firestore unreachable
@@ -38,7 +49,7 @@ export function ProductDetail() {
       }
     }
     load();
-  }, [params.slug]);
+  }, []);
 
   if (loading) {
     return (
