@@ -20,12 +20,17 @@ service cloud.firestore {
     }
 
     match /orders/{orderId} {
-      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow read: if request.auth != null && (request.auth.uid == resource.data.userId || request.auth.token.email == resource.data.customerEmail);
       allow write: if false;
     }
 
     match /stripeEvents/{eventId} {
       allow read, write: if false;
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if resource.data.isApproved == true;
+      allow write: if false;
     }
   }
 }

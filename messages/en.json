@@ -22,7 +22,10 @@
   "footer": {
     "copyright": "© 2026 Cosy Loops. Handmade with love in the UK.",
     "shop": "Shop",
-    "about": "About"
+    "about": "About",
+    "shipping": "Shipping & Returns",
+    "faq": "FAQ",
+    "contact": "Contact"
   },
   "home": {
     "title": "Cosy Loops",
@@ -31,7 +34,9 @@
     "heroCta": "Shop Now",
     "featuredTitle": "Our Collection",
     "seoTitle": "Handmade Crochet Toys & Gifts | Cosy Loops UK",
-    "seoDescription": "Shop adorable handmade crochet toys, amigurumi, and unique handcrafted gifts. Lovingly made in the UK. Free delivery on orders over £30."
+    "seoDescription": "Shop adorable handmade crochet toys, amigurumi, and unique handcrafted gifts. Lovingly made in the UK. Free delivery on orders over £30.",
+    "loadError": "Failed to load products. Please try again.",
+    "retry": "Retry"
   },
   "shop": {
     "allCategories": "All",
@@ -42,7 +47,8 @@
     "stock": "In stock",
     "description": "Description",
     "noProducts": "No products found",
-    "viewProduct": "View product"
+    "viewProduct": "View product",
+    "signInToAdd": "Sign in to add to cart"
   },
   "product": {
     "backToShop": "Back to Shop",
@@ -64,7 +70,8 @@
     "checkout": "Proceed to Checkout",
     "remove": "Remove",
     "quantity": "Quantity",
-    "itemCount": "{count, plural, =0 {No items} one {1 item} other {# items}}"
+    "itemCount": "{count, plural, =0 {No items} one {1 item} other {# items}}",
+    "signInToView": "Sign in to view your cart"
   },
   "checkout": {
     "title": "Checkout",
@@ -134,7 +141,20 @@
     "ordersComingSoon": "Order management coming soon.",
     "newProductComingSoon": "New product form coming soon.",
     "editProductComingSoon": "Edit product coming soon",
-    "orderDetailComingSoon": "Order detail coming soon"
+    "orderDetailComingSoon": "Order detail coming soon",
+    "reviews": "Reviews",
+    "newReview": "New Review",
+    "editReview": "Edit Review",
+    "reviewer": "Reviewer",
+    "rating": "Rating",
+    "approved": "Approved",
+    "notApproved": "Not Approved",
+    "reviewBody": "Review Body",
+    "confirmDelete": "Are you sure?",
+    "confirmDeleteDescription": "This action cannot be undone.",
+    "productId": "Product",
+    "loadError": "Failed to load data. Please try again.",
+    "retry": "Retry"
   },
   "about": {
     "seoTitle": "About Us | Cosy Loops",
@@ -165,6 +185,55 @@
     "shipped": "Shipped",
     "delivered": "Delivered",
     "cancelled": "Cancelled"
+  },
+  "reviews": {
+    "title": "Customer Reviews",
+    "noReviews": "No reviews yet.",
+    "starRating": "{rating} out of 5 stars"
+  },
+  "related": {
+    "title": "You Might Also Like"
+  },
+  "shipping": {
+    "seoTitle": "Shipping & Returns | Cosy Loops",
+    "seoDescription": "Learn about our shipping options, delivery times, and return policy for handmade crochet items.",
+    "heading": "Shipping & Returns",
+    "shippingTitle": "Shipping Information",
+    "shippingText": "We ship all orders via Royal Mail within the UK. Standard delivery takes 3-5 working days. Orders over £30 qualify for free shipping.",
+    "processingTitle": "Processing Time",
+    "processingText": "As all items are handmade, please allow 1-3 working days for your order to be prepared before dispatch.",
+    "returnsTitle": "Returns & Exchanges",
+    "returnsText": "We accept returns within 14 days of delivery. Items must be unused and in their original condition. Please email us to arrange a return.",
+    "damageTitle": "Damaged Items",
+    "damageText": "If your item arrives damaged, please contact us within 48 hours with photos and we will arrange a replacement or full refund."
+  },
+  "faq": {
+    "seoTitle": "FAQ | Cosy Loops",
+    "seoDescription": "Frequently asked questions about Cosy Loops handmade crochet products, shipping, and orders.",
+    "heading": "Frequently Asked Questions",
+    "q1": "Are all items really handmade?",
+    "a1": "Yes! Every single item is hand-crocheted by us using premium yarn. No machines, no mass production — just love and lots of stitches.",
+    "q2": "How long does shipping take?",
+    "a2": "UK standard delivery takes 3-5 working days via Royal Mail. Please allow 1-3 additional days for us to prepare your handmade item.",
+    "q3": "Can I request a custom order?",
+    "a3": "We love custom requests! Please email us at hello@cosyloops.com with your idea and we will let you know if we can make it happen.",
+    "q4": "What is your return policy?",
+    "a4": "We accept returns within 14 days of delivery for unused items in original condition. Email us to arrange a return.",
+    "q5": "Do you ship internationally?",
+    "a5": "Currently we only ship within the UK. We hope to offer international shipping in the future!",
+    "q6": "How do I care for my crochet item?",
+    "a6": "We recommend gentle hand washing in cool water and laying flat to dry. Avoid machine washing as it may damage the stitches."
+  },
+  "contact": {
+    "seoTitle": "Contact Us | Cosy Loops",
+    "seoDescription": "Get in touch with Cosy Loops for questions about our handmade crochet products.",
+    "heading": "Contact Us",
+    "intro": "We would love to hear from you! Whether you have a question about your order, want to request a custom item, or just want to say hello.",
+    "emailTitle": "Email Us",
+    "emailAddress": "hello@cosyloops.com",
+    "responseTime": "We typically respond within 24-48 hours.",
+    "socialTitle": "Follow Us",
+    "socialText": "Follow us on social media for behind-the-scenes peeks, new product announcements, and crochet inspiration."
   },
   "locale": {
     "en": "EN",
