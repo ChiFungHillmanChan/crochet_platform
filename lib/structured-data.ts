@@ -10,14 +10,6 @@ export function generateWebsiteJsonLd() {
     url: SITE_URL,
     description:
       "Adorable handmade crochet creations, lovingly crafted in the UK.",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${SITE_URL}/en/?search={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
   };
 }
 

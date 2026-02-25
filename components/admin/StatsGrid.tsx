@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Package, ShoppingCart, DollarSign, Clock } from "lucide-react";
+import { Package, ShoppingCart, PoundSterling, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatPrice } from "@/lib/utils";
 
@@ -30,7 +30,7 @@ export function StatsGrid({
     {
       label: t("totalRevenue"),
       value: formatPrice(totalRevenue),
-      icon: DollarSign,
+      icon: PoundSterling,
       color: "bg-mint",
     },
     {

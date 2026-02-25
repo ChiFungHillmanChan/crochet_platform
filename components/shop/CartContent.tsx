@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { Trash2 } from "lucide-react";
+import { Trash2, LogIn } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useCartStore } from "@/stores/cartStore";
+import { useAuth } from "@/lib/auth-context";
 import { formatPrice } from "@/lib/utils";
 import { QuantitySelector } from "@/components/shop/QuantitySelector";
 import { Button } from "@/components/ui/button";
@@ -12,10 +13,32 @@ import { Separator } from "@/components/ui/separator";
 
 export default function CartContent() {
   const t = useTranslations("cart");
+  const ta = useTranslations("auth");
+  const { user, loading: authLoading } = useAuth();
   const items = useCartStore((s) => s.items);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
   const totalPrice = useCartStore((s) => s.totalPrice);
+
+  if (!authLoading && !user) {
+    return (
+      <main className="flex flex-1 items-center justify-center py-20">
+        <div className="space-y-4 text-center">
+          <div className="text-6xl">🧶</div>
+          <h1 className="font-heading text-2xl font-bold text-cocoa">
+            {t("title")}
+          </h1>
+          <p className="text-warm-gray">{t("signInToView")}</p>
+          <Link href="/account/login/">
+            <Button className="rounded-full bg-soft-pink text-cocoa hover:bg-soft-pink/80">
+              <LogIn className="mr-2 h-4 w-4" />
+              {ta("signIn")}
+            </Button>
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   if (items.length === 0) {
     return (
