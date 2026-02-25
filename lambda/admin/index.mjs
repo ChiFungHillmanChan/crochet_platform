@@ -49,8 +49,10 @@ async function verifyAuth(event) {
 }
 
 async function createCheckoutSession(body, origin) {
-  const { items, userId, customerName, customerEmail } = body;
+  const { items, userId, customerName, customerEmail, locale } = body;
   if (!items?.length) return error(400, "No items provided", origin);
+
+  const validLocale = ["en", "zh-hk"].includes(locale) ? locale : "en";
 
   const lineItems = items.map((item) => ({
     price_data: {
@@ -62,11 +64,10 @@ async function createCheckoutSession(body, origin) {
   }));
 
   const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
+    ui_mode: "custom",
     line_items: lineItems,
     mode: "payment",
-    success_url: `${FRONTEND_URL}/en/checkout/success/?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${FRONTEND_URL}/en/cart/`,
+    return_url: `${FRONTEND_URL}/${validLocale}/checkout/success/?session_id={CHECKOUT_SESSION_ID}`,
     customer_email: customerEmail,
     metadata: {
       userId: userId || "",
@@ -83,7 +84,7 @@ async function createCheckoutSession(body, origin) {
     },
   });
 
-  return success({ sessionId: session.id, url: session.url }, origin);
+  return success({ clientSecret: session.client_secret }, origin);
 }
 
 async function createProduct(body, origin) {

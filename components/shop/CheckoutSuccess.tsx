@@ -1,15 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { CheckCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
 
-export default function CheckoutSuccess() {
+function CheckoutSuccessInner() {
   const t = useTranslations("checkoutSuccess");
   const clearCart = useCartStore((s) => s.clearCart);
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+  const shortRef = sessionId ? sessionId.slice(-8).toUpperCase() : null;
 
   useEffect(() => {
     clearCart();
@@ -25,6 +29,11 @@ export default function CheckoutSuccess() {
           {t("title")}
         </h1>
         <p className="text-warm-gray">{t("message")}</p>
+        {shortRef && (
+          <p className="text-sm text-warm-gray">
+            {t("orderNumber")}: <span className="font-mono font-semibold text-cocoa">{shortRef}</span>
+          </p>
+        )}
         <Link href="/">
           <Button className="rounded-full bg-soft-pink text-cocoa hover:bg-soft-pink/80">
             {t("backToShop")}
@@ -32,5 +41,13 @@ export default function CheckoutSuccess() {
         </Link>
       </div>
     </main>
+  );
+}
+
+export default function CheckoutSuccess() {
+  return (
+    <Suspense>
+      <CheckoutSuccessInner />
+    </Suspense>
   );
 }
