@@ -81,6 +81,13 @@
     "email": "電郵地址",
     "payNow": "立即付款",
     "processing": "處理中...",
+    "continueToPayment": "繼續付款",
+    "paymentDetails": "付款詳情",
+    "paymentSecure": "您的付款資料由 Stripe 安全處理。",
+    "backToDetails": "返回",
+    "fillDetails": "請填寫您的姓名和電郵。",
+    "checkoutFailed": "結帳失敗，請重試。",
+    "paymentFailed": "付款失敗，請重試。",
     "comingSoon": "結帳即將推出"
   },
   "checkoutSuccess": {

@@ -18,7 +18,7 @@ When Claude makes a mistake or the user corrects a pattern, **update this file i
 | Package manager | pnpm |
 | Source directories | `app/`, `components/`, `lib/`, `stores/` |
 | Backend | `lambda/` (AWS Lambda, plain ESM `.mjs` — separate from the Next.js app) |
-| i18n | `next-intl` with `messages/en.json` and `messages/zh-hk.json` |
+| i18n | `next-intl` with `messages/en.json` and `messages/zh-hk.json` (namespaces: common, nav, footer, home, shop, product, cart, checkout, checkoutSuccess, account, auth, admin, about, notFound, orderStatus, locale, reviews, related, shipping, faq, contact) |
 | Deployment | Static export (`output: "export"`) → S3 + CloudFront |
 | CI | `.github/workflows/ci.yml` (lint + typecheck + build on PRs) |
 | CD | `.github/workflows/deploy.yml` (build + S3 sync + CloudFront invalidation on push to main) |
@@ -60,19 +60,22 @@ All routes are under `app/[locale]/` with `next-intl` handling i18n. Locales: `e
 
 Key routes:
 - `/` — Home page with hero + product grid (ShopSection loaded dynamically)
-- `/products/[slug]` — Product detail page
+- `/products/[slug]` — Product detail page (with reviews + related products)
 - `/cart` — Shopping cart (Zustand persisted store)
 - `/checkout` — Stripe checkout flow
 - `/checkout/success` — Post-payment confirmation
-- `/account` — User account/orders
+- `/account` — User account/orders (merges orders by UID + email)
 - `/account/login` — Auth (email/password + Google)
-- `/admin/**` — Admin dashboard (products CRUD, orders, stats)
+- `/shipping` — Shipping & returns info page
+- `/faq` — Frequently asked questions
+- `/contact` — Contact page with email link
+- `/admin/**` — Admin dashboard (products CRUD, orders, reviews, stats)
 
 ### Component Organization
 
 - `components/ui/` — shadcn/ui primitives (Button, Card, Dialog, etc.)
-- `components/shop/` — Storefront components (ProductCard, CartContent, CheckoutContent, etc.)
-- `components/admin/` — Admin dashboard (ProductForm, OrderTable, ImageUploader, etc.)
+- `components/shop/` — Storefront components (ProductCard, CartContent, CheckoutContent, ReviewSection, RelatedProducts, ShippingContent, FaqContent, ContactContent, etc.)
+- `components/admin/` — Admin dashboard (ProductForm, OrderTable, ImageUploader, ReviewForm, ReviewTable, etc.)
 - `components/auth/` — Login/register forms, Google sign-in
 - `components/layout/` — Navbar, Footer, AdminShell, AdminGuard, LocaleSwitcher
 - `components/account/` — Account page content
@@ -81,7 +84,9 @@ Key routes:
 
 - **Auth**: `lib/auth-context.tsx` provides `AuthProvider` + `useAuth()` hook. Firebase Auth (email/password + Google). User profiles stored in Firestore `users` collection.
 - **Cart**: `stores/cartStore.ts` — Zustand store with `persist` middleware (localStorage key: `cosy-loops-cart`). Prices in pence GBP.
-- **Products/Categories**: `lib/products.ts` — Client-side Firestore queries. Products filtered by `isActive`. Requires composite index on `isActive` + `createdAt`.
+- **Products/Categories**: `lib/products.ts` — Client-side Firestore queries. Products filtered by `isActive`. Includes `getRelatedProducts()` for same-category recommendations. Requires composite index on `isActive` + `createdAt`.
+- **Reviews**: `lib/reviews.ts` — Client-side Firestore queries for approved reviews by product. Admin CRUD via Lambda (`lambda/admin/reviews.mjs`).
+- **Orders**: `lib/orders.ts` — Queries by userId and by customerEmail (for guest checkout recovery).
 - **API calls**: `lib/api.ts` — Single `apiPost()` function that POSTs to `NEXT_PUBLIC_API_URL` with Firebase ID token. All backend actions go through this one endpoint with an `action` field.
 - **Image uploads**: `lib/r2.ts` — Gets presigned URL from backend, uploads directly to Cloudflare R2.
 - **Stripe**: `lib/stripe.ts` — Lazy-loaded client-side Stripe.js.
@@ -90,7 +95,8 @@ Key routes:
 
 The `lambda/` directory contains AWS Lambda functions (plain `.mjs`, not part of the Next.js build — excluded in `tsconfig.json`):
 
-- `lambda/admin/index.mjs` — Admin API (product CRUD, order management, R2 upload URLs, Stripe checkout)
+- `lambda/admin/index.mjs` — Admin API (product CRUD, order management, R2 upload URLs, Stripe checkout, review CRUD)
+- `lambda/admin/reviews.mjs` — Review CRUD functions (extracted to keep index.mjs under 300 lines)
 - `lambda/webhook/index.mjs` — Stripe webhook handler (order creation on payment)
 - `lambda/webhook/emails.mjs` — Transactional email templates
 - `lambda/shared/` — Shared utilities (Firebase Admin SDK init, HTTP response helpers)
@@ -100,9 +106,9 @@ The `lambda/` directory contains AWS Lambda functions (plain `.mjs`, not part of
 ### Firebase / Firestore
 
 Project: `resume-system-470420`
-Collections: `users`, `products`, `categories`, `orders`, `stripeEvents`
-- Security rules in `firestore.rules` — products/categories are read-only from client; orders readable only by owner; writes only through Lambda backend.
-- Composite indexes in `firestore.indexes.json` — required for product queries with `isActive` filter + `createdAt` sort.
+Collections: `users`, `products`, `categories`, `orders`, `stripeEvents`, `reviews`
+- Security rules in `firestore.rules` — products/categories are read-only from client; orders readable by owner (UID or email match); reviews readable if approved; all writes only through Lambda backend.
+- Composite indexes in `firestore.indexes.json` — required for product queries with `isActive` filter + `createdAt` sort, reviews by `productId` + `isApproved` + `createdAt`, orders by `customerEmail` + `createdAt`.
 
 ### Environment Variables
 
@@ -208,4 +214,11 @@ Escalations: [any, or "none"]
 - 2026-02-25: CloudFront + S3 needs a URL rewrite function to map `/path/` to `/path/index.html` for Next.js trailingSlash
 - 2026-02-25: Static export with `dynamicParams = false` only generates pages for slugs in `generateStaticParams`. For SPA-style client-rendered pages, use CloudFront Function to rewrite dynamic slugs to the placeholder page (e.g., `/en/products/[slug]/` → `/en/products/placeholder/index.html`)
 - 2026-02-25: Files in `public/generated/` are gitignored — copy assets needed in production to `public/` root (icon.png, hero-bg.png, favicon.png) so they're tracked in git and included in CI/CD builds
+- 2026-02-25: When Lambda files exceed 300 lines, extract domain logic to separate `.mjs` files (e.g., `reviews.mjs`) and import into `index.mjs` — keeps handler clean and preserves directory structure for packaging
+- 2026-02-25: Admin pages with dynamic `[id]` params need `dynamicParams = false` + `generateStaticParams` returning `{ locale, id: "placeholder" }` — the client component extracts the real ID from `window.location.pathname`
+- 2026-02-25: Use AlertDialog (shadcn) instead of `window.confirm()` for delete confirmations — use `pendingDeleteId` state pattern: set ID on click, confirm in dialog, reset to null after
+- 2026-02-25: Guest checkout orders may not have a `userId` — query orders by both `userId` AND `customerEmail` to ensure users see all their orders on the account page
+- 2026-02-25: Info pages (shipping, faq, contact) use i18n-driven content — no hardcoded text, admin edits JSON files to update content
+- 2026-02-25: After adding new Firestore collections (e.g., `reviews`), remember to deploy indexes AND rules: `firebase deploy --only firestore:indexes,firestore:rules`
+- 2026-02-25: After adding review Lambda CRUD, repackage and redeploy the admin Lambda (zip with `admin/` + `shared/` directory structure)
 -->

@@ -19,7 +19,10 @@
       "Bash(git clone:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(pnpm dlx:*)"
+      "Bash(pnpm dlx:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm build:*)"
     ]
   },
   "enabledPlugins": {

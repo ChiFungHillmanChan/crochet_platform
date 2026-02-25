@@ -81,6 +81,13 @@
     "email": "Email Address",
     "payNow": "Pay Now",
     "processing": "Processing...",
+    "continueToPayment": "Continue to Payment",
+    "paymentDetails": "Payment Details",
+    "paymentSecure": "Your payment details are securely handled by Stripe.",
+    "backToDetails": "Back",
+    "fillDetails": "Please fill in your name and email.",
+    "checkoutFailed": "Checkout failed. Please try again.",
+    "paymentFailed": "Payment failed. Please try again.",
     "comingSoon": "Checkout coming soon"
   },
   "checkoutSuccess": {
