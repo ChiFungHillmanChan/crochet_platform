@@ -60,7 +60,7 @@ export const metadata: Metadata = {
       "Adorable handmade crochet creations lovingly crafted in the UK. Shop unique crochet toys, amigurumi, and handmade gifts.",
     images: [
       {
-        url: "/generated/hero-bg.png",
+        url: "/hero-bg.png",
         width: 1200,
         height: 630,
         alt: "Cosy Loops — Handmade Crochet Creations",
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     title: "Cosy Loops | Handmade Crochet Toys & Gifts — UK",
     description:
       "Adorable handmade crochet creations lovingly crafted in the UK.",
-    images: ["/generated/hero-bg.png"],
+    images: ["/hero-bg.png"],
   },
   robots: {
     index: true,
@@ -114,8 +114,8 @@ export default function RootLayout({
         <link rel="preconnect" href="https://firestore.googleapis.com" />
         <link rel="preconnect" href="https://identitytoolkit.googleapis.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />
-        <link rel="icon" href="/generated/icon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/generated/icon.png" />
+        <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="flex min-h-screen flex-col">{children}</body>

@@ -40,13 +40,16 @@ Deploy the Cosy Loops crochet platform to production.
 | Firebase Project | `resume-system-470420` |
 | Web App ID | `1:226341126994:web:fc008f0d1338985bccb08b` |
 
-## Stripe
+## Stripe (Karen Choy — Crochet Platform 沙盒)
 
 | Resource | ID |
 |----------|----|
-| Webhook Endpoint | `we_1T4pokRs2fXWDNeZfOwAVYFc` |
+| Account | `acct_1T4k5IIpw9oLScWb` (Crochet Platform 沙盒) |
+| Webhook Endpoint | `we_1T4qgOIpw9oLScWbK29TU01n` |
 | Webhook URL | `https://2tqn1i1a3e.execute-api.eu-west-2.amazonaws.com/webhook` |
-| Mode | Test (switch to live for production) |
+| Webhook Secret | `whsec_***` (see Lambda env or GitHub Secrets) |
+| Currency | GBP (£) |
+| Mode | Test (switch to live keys for production) |
 
 ---
 
@@ -174,7 +177,7 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=resume-system-470420
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=resume-system-470420.firebasestorage.app
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=226341126994
 NEXT_PUBLIC_FIREBASE_APP_ID=1:226341126994:web:fc008f0d1338985bccb08b
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_51PLlnWRs2fXWDNeZ...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_51T4k5IIpw9oLScWbIfxt5pmThBqV8LPxZ0DnTOZgfryZflFju7O2vayLG4z5Bv8cUPEdFc9cJrnqdpwbgfRc9ghL00zeDQhNu8
 NEXT_PUBLIC_API_URL=https://2tqn1i1a3e.execute-api.eu-west-2.amazonaws.com/admin
 ```
 
@@ -182,7 +185,7 @@ NEXT_PUBLIC_API_URL=https://2tqn1i1a3e.execute-api.eu-west-2.amazonaws.com/admin
 
 ```
 FIREBASE_SERVICE_ACCOUNT=<base64>
-STRIPE_SECRET_KEY=sk_test_...
+STRIPE_SECRET_KEY=<from GitHub Secrets or Stripe Dashboard>
 ADMIN_EMAILS=hillmanchan709@gmail.com
 FRONTEND_URL=https://d25l7it29vlqk3.cloudfront.net
 ALLOWED_ORIGINS=https://d25l7it29vlqk3.cloudfront.net
@@ -197,7 +200,7 @@ R2_SECRET_ACCESS_KEY=<from Cloudflare R2 API token>
 
 ```
 FIREBASE_SERVICE_ACCOUNT=<base64>
-STRIPE_WEBHOOK_SECRET=whsec_qyqAd59IJw9g31IdzLwITiycgfEwJeD3
+STRIPE_WEBHOOK_SECRET=<from GitHub Secrets or Stripe Dashboard>
 SENDER_EMAIL=noreply@cosyloops.com
 ADMIN_EMAIL=hillmanchan709@gmail.com
 ```

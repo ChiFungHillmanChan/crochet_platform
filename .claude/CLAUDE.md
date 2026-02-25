@@ -206,4 +206,6 @@ Escalations: [any, or "none"]
 - 2026-02-25: CloudFront Functions must be created from file (`fileb://`) not inline string — test with `aws cloudfront test-function` before publishing
 - 2026-02-25: Firebase Auth providers (Email/Password, Google) cannot be enabled via CLI — must be done in Firebase Console
 - 2026-02-25: CloudFront + S3 needs a URL rewrite function to map `/path/` to `/path/index.html` for Next.js trailingSlash
+- 2026-02-25: Static export with `dynamicParams = false` only generates pages for slugs in `generateStaticParams`. For SPA-style client-rendered pages, use CloudFront Function to rewrite dynamic slugs to the placeholder page (e.g., `/en/products/[slug]/` → `/en/products/placeholder/index.html`)
+- 2026-02-25: Files in `public/generated/` are gitignored — copy assets needed in production to `public/` root (icon.png, hero-bg.png, favicon.png) so they're tracked in git and included in CI/CD builds
 -->
