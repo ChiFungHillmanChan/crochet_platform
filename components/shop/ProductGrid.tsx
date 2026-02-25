@@ -14,7 +14,7 @@ export function ProductGrid({ products, loading }: ProductGridProps) {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 lg:gap-8">
+      <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-3 lg:gap-10">
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
@@ -41,7 +41,7 @@ export function ProductGrid({ products, loading }: ProductGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 lg:gap-8">
+    <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-3 lg:gap-10">
       {products.map((product, i) => (
         <ProductCard key={product.id} product={product} priority={i < 3} />
       ))}
