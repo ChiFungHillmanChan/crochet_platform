@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(file:*)",
+      "Bash(cat:*)",
+      "Bash(tree:*)",
+      "Bash(python3:*)",
+      "Bash(git worktree:*)",
+      "Skill(code-reviewer)",
+      "Skill(eslint-fixer)",
+      "Skill(superpowers:brainstorming)",
+      "WebSearch",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(chmod:*)",
+      "Bash(git add:*)",
+      "Bash(git clone:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
+    ]
+  },
+  "enabledPlugins": {
+    "code-review@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "github@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "superpowers@superpowers-marketplace": true
+  }
+}
