@@ -1,3 +1,25 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment / secrets
+.env
+.env.*
+
+# Editor configs
+.cursor/
+.vscode/
+.idea/
+
+# Media assets (too large for git)
+Crochet videos-photos/
+
+# Archives
+*.zip
+
+# Dependencies
+node_modules/
+
+# Claude skills cache
 claude/
 claude.zip
-.DS_Store
