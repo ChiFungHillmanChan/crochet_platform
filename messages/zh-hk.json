@@ -136,6 +136,23 @@
     "editProductComingSoon": "編輯產品即將推出",
     "orderDetailComingSoon": "訂單詳情即將推出"
   },
+  "about": {
+    "seoTitle": "關於我們 | Cosy Loops",
+    "seoDescription": "了解 Cosy Loops — 在英國以愛心手工製造的鉤針作品。",
+    "heading": "關於 Cosy Loops",
+    "intro": "我們是英國一間小型家庭鉤針工作室，一針一線地製作可愛的手工創作。",
+    "storyTitle": "我們的故事",
+    "storyText": "Cosy Loops 源於對鉤針的熱愛，以及想與世界分享手工快樂的願望。我們店內的每一件商品都是用優質毛線精心手工鉤織，注重細節，傾注滿滿的愛。",
+    "whatWeDoTitle": "我們製作什麼",
+    "whatWeDoText": "從可愛的編織動物和包包掛飾，到實用的配件如手提袋、髮圈和吊掛花盆 — 每一件作品都是獨一無二，經久耐用。",
+    "valuesTitle": "我們的信念",
+    "valueHandmade": "用心手工製作 — 絕不批量生產",
+    "valueSustainable": "盡可能使用可持續材料",
+    "valueUnique": "每件作品都是獨一無二",
+    "valueLocal": "自豪地在英國製造",
+    "ctaTitle": "準備好找到你的新寵兒了嗎？",
+    "ctaButton": "瀏覽我們的系列"
+  },
   "notFound": {
     "title": "404",
     "heading": "哎呀！此頁面已鬆開了。",

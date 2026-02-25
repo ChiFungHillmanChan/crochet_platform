@@ -65,9 +65,13 @@ pnpm build
 aws s3 sync out/_next/ "s3://cosy-loops-frontend/_next/" \
   --delete --cache-control "public, max-age=31536000, immutable" --region eu-west-2
 
+# Sync product images (long cache)
+aws s3 sync out/products/ "s3://cosy-loops-frontend/products/" \
+  --cache-control "public, max-age=31536000, immutable" --region eu-west-2
+
 # Sync HTML + other files (no cache)
 aws s3 sync out/ "s3://cosy-loops-frontend/" \
-  --delete --exclude "_next/*" \
+  --delete --exclude "_next/*" --exclude "products/*" \
   --cache-control "public, max-age=0, must-revalidate" --region eu-west-2
 
 # Invalidate CloudFront

@@ -26,18 +26,34 @@ aws s3 sync out/_next/ "s3://$S3_BUCKET/_next/" \
   --cache-control "public, max-age=31536000, immutable" \
   --region "$REGION"
 
+# Sync product images with long cache
+aws s3 sync out/products/ "s3://$S3_BUCKET/products/" \
+  --cache-control "public, max-age=31536000, immutable" \
+  --region "$REGION"
+
 # Sync generated images/assets
 aws s3 sync out/generated/ "s3://$S3_BUCKET/generated/" \
   --cache-control "public, max-age=31536000, immutable" \
   --region "$REGION"
 
-# Sync everything else (excludes what we already handled)
+# Sync everything else — HTML with no-cache (excludes what we already handled)
 aws s3 sync out/ "s3://$S3_BUCKET/" \
   --delete \
   --exclude "_next/*" \
+  --exclude "products/*" \
   --exclude "generated/*" \
   --cache-control "public, max-age=0, must-revalidate" \
   --region "$REGION"
+
+# Set long cache on root-level static images (not caught by directory syncs)
+for IMG in icon.png hero-bg.png favicon.png favicon.ico; do
+  if aws s3 ls "s3://$S3_BUCKET/$IMG" --region "$REGION" > /dev/null 2>&1; then
+    aws s3 cp "s3://$S3_BUCKET/$IMG" "s3://$S3_BUCKET/$IMG" \
+      --cache-control "public, max-age=31536000, immutable" \
+      --metadata-directive REPLACE \
+      --region "$REGION"
+  fi
+done
 
 # Fix MIME types for special files
 echo "--- Fixing MIME types ---"
