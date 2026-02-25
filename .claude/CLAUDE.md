@@ -1,4 +1,6 @@
-# Project Instructions
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Self-Improving Instructions
 
@@ -10,25 +12,104 @@ When Claude makes a mistake or the user corrects a pattern, **update this file i
 
 ## Quick Reference
 
-<!-- [PROJECT: Customize these for your project] -->
-
 | Item | Location |
 |------|----------|
-| Project overview | `README.md` |
-| Package commands | `package.json` / `pyproject.toml` / `go.mod` / `Cargo.toml` / `pom.xml` / `*.csproj` |
-| Tech stack | _[Add your stack: e.g., "Next.js 15, Vitest, Playwright, TailwindCSS"]_ |
-| Package manager | _[Add: npm / pnpm / yarn / bun / pip / cargo / go / bundle / mvn / gradle / dotnet]_ |
-| Source directory | _[Add: src/ / lib/ / cmd/ / pkg/ / internal/ / app/]_ |
-| Test directory | _[Add: tests/ / __tests__/ / spec/ / test/ / *_test.go]_ |
+| Tech stack | Next.js 15, React 19, Tailwind CSS v4, shadcn/ui (new-york), Firebase Auth + Firestore, Stripe, Zustand |
+| Package manager | pnpm |
+| Source directories | `app/`, `components/`, `lib/`, `stores/` |
+| Backend | `lambda/` (AWS Lambda, plain ESM `.mjs` — separate from the Next.js app) |
+| i18n | `next-intl` with `messages/en.json` and `messages/zh-hk.json` |
+| Deployment | Static export (`output: "export"`) → S3 + CloudFront |
+| CI | `.github/workflows/ci.yml` (lint + typecheck + build on PRs) |
+| CD | `.github/workflows/deploy.yml` (build + S3 sync + CloudFront invalidation on push to main) |
 
 ### Essential Commands
 ```bash
-# [PROJECT: Replace with your actual commands]
-# Build:     <pm> run build | go build | cargo build | mvn compile | dotnet build
-# Test:      <pm> run test | pytest | go test | cargo test | rspec | mvn test
-# Lint:      <pm> run lint | ruff check | golangci-lint | cargo clippy | rubocop
-# Typecheck: <pm> run typecheck | mypy | go vet | cargo check
+pnpm dev              # Start dev server
+pnpm build            # Static export build (output: "export")
+pnpm lint             # ESLint (next/core-web-vitals + next/typescript)
+pnpm typecheck        # tsc --noEmit
+pnpm generate:seo     # Generate sitemap/robots via scripts/generate-seo.ts
+pnpm generate:images  # Generate product images via scripts/generate-images.ts
+pnpm seed             # Seed Firestore with test data via scripts/seed-firestore.ts
 ```
+
+No test runner is currently configured. When adding tests, use Vitest (preferred for Next.js).
+
+---
+
+## Architecture
+
+### Static Export with Client-Side Data
+
+This is a **statically exported** Next.js app (`output: "export"` in `next.config.ts`). There are no API routes or server-side rendering at runtime. All pages are pre-rendered at build time. Product data, auth, and orders are fetched client-side from Firebase/Firestore.
+
+### Routing: `app/[locale]/...`
+
+All routes are under `app/[locale]/` with `next-intl` handling i18n. Locales: `en`, `zh-hk` (defined in `i18n/routing.ts`).
+
+Key routes:
+- `/` — Home page with hero + product grid (ShopSection loaded dynamically)
+- `/products/[slug]` — Product detail page
+- `/cart` — Shopping cart (Zustand persisted store)
+- `/checkout` — Stripe checkout flow
+- `/checkout/success` — Post-payment confirmation
+- `/account` — User account/orders
+- `/account/login` — Auth (email/password + Google)
+- `/admin/**` — Admin dashboard (products CRUD, orders, stats)
+
+### Component Organization
+
+- `components/ui/` — shadcn/ui primitives (Button, Card, Dialog, etc.)
+- `components/shop/` — Storefront components (ProductCard, CartContent, CheckoutContent, etc.)
+- `components/admin/` — Admin dashboard (ProductForm, OrderTable, ImageUploader, etc.)
+- `components/auth/` — Login/register forms, Google sign-in
+- `components/layout/` — Navbar, Footer, AdminShell, AdminGuard, LocaleSwitcher
+- `components/account/` — Account page content
+
+### State & Data Flow
+
+- **Auth**: `lib/auth-context.tsx` provides `AuthProvider` + `useAuth()` hook. Firebase Auth (email/password + Google). User profiles stored in Firestore `users` collection.
+- **Cart**: `stores/cartStore.ts` — Zustand store with `persist` middleware (localStorage key: `cosy-loops-cart`). Prices in pence GBP.
+- **Products/Categories**: `lib/products.ts` — Client-side Firestore queries. Products filtered by `isActive`.
+- **API calls**: `lib/api.ts` — Single `apiPost()` function that POSTs to `NEXT_PUBLIC_API_URL` with Firebase ID token. All backend actions go through this one endpoint with an `action` field.
+- **Image uploads**: `lib/r2.ts` — Gets presigned URL from backend, uploads directly to Cloudflare R2.
+- **Stripe**: `lib/stripe.ts` — Lazy-loaded client-side Stripe.js.
+
+### Backend (Lambda)
+
+The `lambda/` directory contains AWS Lambda functions (plain `.mjs`, not part of the Next.js build — excluded in `tsconfig.json`):
+
+- `lambda/admin/index.mjs` — Admin API (product CRUD, order management, R2 upload URLs)
+- `lambda/webhook/index.mjs` — Stripe webhook handler (order creation on payment)
+- `lambda/webhook/emails.mjs` — Transactional email templates
+- `lambda/shared/` — Shared utilities (Firebase Admin SDK init, HTTP response helpers)
+
+### Firebase / Firestore
+
+Collections: `users`, `products`, `categories`, `orders`, `stripeEvents`
+- Security rules in `firestore.rules` — products/categories are read-only from client; orders readable only by owner; writes only through Lambda backend.
+
+### Environment Variables
+
+Frontend (must be `NEXT_PUBLIC_`):
+- `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+- `NEXT_PUBLIC_API_URL` — Lambda API Gateway endpoint
+
+Backend (in Lambda environment):
+- `S3_BUCKET`, `CF_DISTRIBUTION_ID`, AWS credentials
+
+---
+
+## Key Patterns
+
+- **Lazy Firebase imports**: `lib/firebase.ts` uses dynamic `import()` for Firebase modules to minimize bundle size. Follow this pattern when adding Firebase features.
+- **Path alias**: `@/*` maps to project root (e.g., `@/lib/utils`, `@/components/ui/button`).
+- **Tailwind v4**: Uses `@tailwindcss/postcss` plugin (not the classic `tailwind.config.js`). Config is in `app/globals.css`.
+- **shadcn/ui**: New York style, Slate base color, CSS variables enabled. Add components with `pnpm dlx shadcn@latest add <component>`.
+- **Static params**: Pages using `[locale]` must export `generateStaticParams` returning all locales.
+- **Admin guard**: Admin pages use `AdminGuard` component that checks `userDoc.role === "admin"`.
 
 ---
 
@@ -64,72 +145,22 @@ When requirements are ambiguous, **never stop and ask**. Instead:
 
 ## Verification Pipeline
 
-### Automatic Stop Gate (every time you finish)
-The Stop hook runs a 7-layer gate (6 blocking + 1 warning). You cannot stop until blocking layers pass:
-1. **Build** — project must compile
-2. **Unit tests** — auto-detected test runner (vitest/jest/pytest/go test/cargo test/rspec/etc.) — flaky tests auto-retried once
-3. **Integration tests** — `test:integration` script **(if configured)** — flaky tests auto-retried once
-4. **E2E tests** — Playwright **(if installed)** — flaky tests auto-retried once
-5. **Lint** — must be clean
-6. **Type check** — must be clean
-7. **Security audit** — dependency audit (warn only, does not block stop)
-
-If blocked 3 times, writes `DEBUG_LOG.md` with diagnosis and spawns a self-healing session (failures are not permanent blocks).
-
-### Manual Full Pipeline (`/verify-app`)
-Before any PR, merge, or deploy — 10 layers:
-- Layers 1-4: Build + unit + integration + E2E (same as Stop gate)
-- Layer 5: **MCP Chrome browser check** (visual, console errors, navigation, forms)
-- Layer 6: **Accessibility check** (alt text, labels, heading hierarchy, keyboard nav)
-- Layer 7: **Performance check** (load time, bundle size)
-- Layers 8-10: Lint + types + security/code review
-
 ### After EVERY code change you must:
-1. Run unit tests — fix until green
-2. Run E2E tests — fix until green
-3. Run lint + typecheck — fix until clean
+1. Run `pnpm lint` — fix until clean
+2. Run `pnpm typecheck` — fix until clean
+3. Run `pnpm build` — fix until it succeeds
 4. Only stop when all pass
 5. If stuck after 3 attempts, write `DEBUG_LOG.md`
 
 ---
 
-## Available Commands
-
-### Workflow (day-to-day)
-| Command | Purpose |
-|---------|---------|
-| `/plan [feature]` | Plan before coding. Explore codebase, write plan, wait for "go". |
-| `/verify-app` | Full 10-layer verification pipeline with browser + a11y + perf checks. |
-| `/commit-push-pr` | Auto: git add, commit (conventional), push, open draft PR. |
-| `/fix-and-verify` | Autonomous bug fixing. Loops until green, escalates after 3 tries. |
-| `/code-review` | 4 parallel reviewers (security, logic, architecture, tests) + challenge pass. |
-| `/simplify` | Clean up code without changing behaviour. Dead code, naming, structure. |
-| `/daily-standup` | Engineering report: shipped, blockers, priorities, velocity. |
-
-### Reference (load coding standards on demand)
-| Command | Purpose |
-|---------|---------|
-| `/core-rules` | DRY, naming, 300-line limit, variable conventions |
-| `/typescript-rules` | No `any`, type guards, explicit types |
-| `/error-handling` | Meaningful catches, context logging |
-| `/security-rules` | No hardcoded secrets, env var patterns |
-| `/code-cleanup` | Dead code detection, duplication, complexity |
-| `/style-guide` | Visual design and styling rules |
-| `/troubleshooting` | Common issues and solutions |
-| `/techdebt` | Scan codebase for tech debt and violations |
-| `/worktree-workflow` | Git worktree parallel sessions |
-| `/plan-mode` | Plan-first development discipline |
-| `/framework-rules` | Add framework-specific rules (Next.js, Django, etc.) |
-
----
-
-## Coding Standards (enforced — load `/core-rules` for details)
+## Coding Standards
 
 - Every file under 300 lines. No exceptions.
 - No code duplication. Extract shared functions.
 - Self-documenting names: `isVisible`, `fetchData`, `API_BASE_URL`
-- No type-safety bypasses without justification (e.g., `any`, `@ts-ignore`, `# type: ignore`, `unsafe` blocks).
-- No hardcoded secrets. Use env vars via factory functions.
+- No type-safety bypasses without justification (e.g., `any`, `@ts-ignore`).
+- No hardcoded secrets. Use env vars.
 - No empty catch blocks. Handle errors meaningfully or let them propagate.
 
 ---
@@ -152,16 +183,6 @@ Coverage: [X%]
 Assumptions: [any, or "none"]
 Escalations: [any, or "none"]
 ```
-
----
-
-## Never Do These
-- Never use `--dangerously-skip-permissions` unless explicitly told
-- Never `rm -rf` without absolute certainty
-- Never modify `.env.production` without human confirmation
-- Never commit secrets, API keys, or passwords
-- Never skip tests because "it's a small change"
-- Never ship without the verification pipeline passing
 
 <!-- Lessons Learned (append new entries here)
 - YYYY-MM-DD: [correction description]

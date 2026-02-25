@@ -5,6 +5,7 @@ Thumbs.db
 # Environment / secrets
 .env
 .env.*
+*credentials*.csv
 
 # Editor configs
 .cursor/
@@ -20,6 +21,16 @@ Crochet videos-photos/
 # Dependencies
 node_modules/
 
+# Next.js
+.next/
+out/
+
 # Claude skills cache
 claude/
 claude.zip
+
+# Generated AI images
+public/generated/
+
+# Debug
+DEBUG_LOG.md

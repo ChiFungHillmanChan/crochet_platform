@@ -1,0 +1,156 @@
+{
+  "common": {
+    "brandName": "Cosy Loops",
+    "tagline": "Adorable handmade crochet, lovingly crafted in the UK",
+    "loading": "Loading...",
+    "comingSoon": "Coming soon",
+    "backToShop": "Back to Shop",
+    "currency": "£",
+    "or": "or"
+  },
+  "nav": {
+    "shop": "Shop",
+    "about": "About",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "myOrders": "My Orders",
+    "admin": "Admin",
+    "userMenu": "User menu",
+    "openMenu": "Open menu",
+    "cart": "Shopping cart"
+  },
+  "footer": {
+    "copyright": "© 2026 Cosy Loops. Handmade with love in the UK.",
+    "shop": "Shop",
+    "about": "About"
+  },
+  "home": {
+    "title": "Cosy Loops",
+    "subtitle": "Adorable handmade crochet, coming soon.",
+    "heroHeadline": "Handmade crochet creations, lovingly crafted",
+    "heroCta": "Shop Now",
+    "featuredTitle": "Our Collection",
+    "seoTitle": "Handmade Crochet Toys & Gifts | Cosy Loops UK",
+    "seoDescription": "Shop adorable handmade crochet toys, amigurumi, and unique handcrafted gifts. Lovingly made in the UK. Free delivery on orders over £30."
+  },
+  "shop": {
+    "allCategories": "All",
+    "addToCart": "Add to Cart",
+    "added": "Added!",
+    "outOfStock": "Out of Stock",
+    "price": "Price",
+    "stock": "In stock",
+    "description": "Description",
+    "noProducts": "No products found",
+    "viewProduct": "View product"
+  },
+  "product": {
+    "backToShop": "Back to Shop",
+    "addToCart": "Add to Cart",
+    "added": "Added to cart!",
+    "outOfStock": "Out of Stock",
+    "quantity": "Quantity",
+    "details": "Details",
+    "seoTitle": "Handmade Crochet Product | Cosy Loops",
+    "seoDescription": "Discover this adorable handmade crochet creation from Cosy Loops. Lovingly crafted in the UK."
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "emptyDescription": "Add some adorable crochet creations to get started!",
+    "continueShopping": "Continue Shopping",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "remove": "Remove",
+    "quantity": "Quantity",
+    "itemCount": "{count, plural, =0 {No items} one {1 item} other {# items}}"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "orderSummary": "Order Summary",
+    "customerDetails": "Your Details",
+    "name": "Full Name",
+    "email": "Email Address",
+    "payNow": "Pay Now",
+    "processing": "Processing...",
+    "comingSoon": "Checkout coming soon"
+  },
+  "checkoutSuccess": {
+    "title": "Order Confirmed!",
+    "message": "Thank you for your purchase.",
+    "orderNumber": "Order Number",
+    "backToShop": "Continue Shopping",
+    "seoTitle": "Order Confirmed | Cosy Loops"
+  },
+  "account": {
+    "title": "My Account",
+    "orders": "Order History",
+    "noOrders": "No orders yet",
+    "noOrdersDescription": "Your order history will appear here after your first purchase.",
+    "comingSoon": "My account coming soon"
+  },
+  "auth": {
+    "welcomeTitle": "Welcome to Cosy Loops",
+    "signIn": "Sign In",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "signInButton": "Sign In",
+    "registerButton": "Create Account",
+    "googleSignIn": "Continue with Google",
+    "signingIn": "Signing in...",
+    "registering": "Creating account..."
+  },
+  "admin": {
+    "title": "Admin",
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "orders": "Orders",
+    "newProduct": "New Product",
+    "editProduct": "Edit Product",
+    "orderDetail": "Order Detail",
+    "totalOrders": "Total Orders",
+    "totalRevenue": "Total Revenue",
+    "totalProducts": "Total Products",
+    "pendingOrders": "Pending Orders",
+    "recentOrders": "Recent Orders",
+    "productName": "Product Name",
+    "price": "Price",
+    "stock": "Stock",
+    "category": "Category",
+    "status": "Status",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "create": "Create",
+    "active": "Active",
+    "inactive": "Inactive",
+    "dashboardComingSoon": "Admin dashboard coming soon.",
+    "productsComingSoon": "Product management coming soon.",
+    "ordersComingSoon": "Order management coming soon.",
+    "newProductComingSoon": "New product form coming soon.",
+    "editProductComingSoon": "Edit product coming soon",
+    "orderDetailComingSoon": "Order detail coming soon"
+  },
+  "notFound": {
+    "title": "404",
+    "heading": "Oops! This page unravelled.",
+    "message": "The page you're looking for doesn't exist.",
+    "backToShop": "Back to Shop"
+  },
+  "orderStatus": {
+    "pending": "Pending",
+    "paid": "Paid",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled"
+  },
+  "locale": {
+    "en": "EN",
+    "zh-hk": "粵"
+  }
+}
