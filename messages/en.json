@@ -136,6 +136,23 @@
     "editProductComingSoon": "Edit product coming soon",
     "orderDetailComingSoon": "Order detail coming soon"
   },
+  "about": {
+    "seoTitle": "About Us | Cosy Loops",
+    "seoDescription": "Learn about Cosy Loops — handmade crochet creations lovingly crafted in the UK.",
+    "heading": "About Cosy Loops",
+    "intro": "We're a small, home-based crochet studio in the UK, making adorable handmade creations one stitch at a time.",
+    "storyTitle": "Our Story",
+    "storyText": "Cosy Loops started from a love of crochet and a desire to share handmade joy with the world. Every item in our shop is carefully crocheted by hand using premium yarn, with attention to detail and a whole lot of love.",
+    "whatWeDoTitle": "What We Make",
+    "whatWeDoText": "From cute amigurumi animals and bag charms to practical accessories like tote bags, scrunchies, and hanging planters — each piece is unique and made to last.",
+    "valuesTitle": "What We Believe In",
+    "valueHandmade": "Handmade with care — no mass production, ever",
+    "valueSustainable": "Sustainable materials wherever possible",
+    "valueUnique": "Every piece is one-of-a-kind",
+    "valueLocal": "Proudly crafted in the UK",
+    "ctaTitle": "Ready to find your new favourite?",
+    "ctaButton": "Shop Our Collection"
+  },
   "notFound": {
     "title": "404",
     "heading": "Oops! This page unravelled.",

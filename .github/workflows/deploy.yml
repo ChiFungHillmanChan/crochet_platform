@@ -41,6 +41,10 @@ jobs:
           aws s3 sync out/_next/ "s3://${S3_BUCKET}/_next/" \
             --delete \
             --cache-control "public, max-age=31536000, immutable"
+      - name: Deploy product images (long cache)
+        run: |
+          aws s3 sync out/products/ "s3://${S3_BUCKET}/products/" \
+            --cache-control "public, max-age=31536000, immutable"
       - name: Deploy generated assets (long cache)
         run: |
           aws s3 sync out/generated/ "s3://${S3_BUCKET}/generated/" \
@@ -50,8 +54,18 @@ jobs:
           aws s3 sync out/ "s3://${S3_BUCKET}/" \
             --delete \
             --exclude "_next/*" \
+            --exclude "products/*" \
             --exclude "generated/*" \
             --cache-control "public, max-age=0, must-revalidate"
+      - name: Set long cache on root-level images
+        run: |
+          for IMG in icon.png hero-bg.png favicon.png favicon.ico; do
+            if aws s3 ls "s3://${S3_BUCKET}/$IMG" > /dev/null 2>&1; then
+              aws s3 cp "s3://${S3_BUCKET}/$IMG" "s3://${S3_BUCKET}/$IMG" \
+                --cache-control "public, max-age=31536000, immutable" \
+                --metadata-directive REPLACE
+            fi
+          done
       - name: Fix MIME types
         run: |
           aws s3 cp "s3://${S3_BUCKET}/sitemap.xml" "s3://${S3_BUCKET}/sitemap.xml" \
