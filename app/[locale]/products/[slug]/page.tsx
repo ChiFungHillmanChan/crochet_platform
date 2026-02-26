@@ -23,7 +23,9 @@ const ProductDetail = dynamic(
 
 const SITE_URL = "https://cosyloops.com";
 
-export const dynamicParams = false;
+// Allow dynamic params in dev; in production the static export only builds
+// the placeholder page and CloudFront rewrites unknown slugs to it.
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   return routing.locales.flatMap((locale) => [
