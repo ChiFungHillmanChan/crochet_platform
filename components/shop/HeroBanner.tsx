@@ -9,90 +9,47 @@ export function HeroBanner() {
   const t = useTranslations("homepage");
 
   return (
-    <section className="relative min-h-[70vh] overflow-hidden bg-gradient-to-b from-blush/30 to-white">
-      {/* Desktop: split layout */}
-      <div className="hidden md:flex md:min-h-[70vh]">
-        {/* Left — banner image (60%) */}
-        <div className="relative w-[60%]">
-          <picture>
-            <source
-              media="(max-width: 768px)"
-              srcSet="/banners/hero-banner-mobile.png"
-            />
-            <Image
-              src="/banners/hero-banner-desktop.png"
-              alt=""
-              fill
-              className="object-cover"
-              priority
-              sizes="60vw"
-            />
-          </picture>
-        </div>
-
-        {/* Right — text content (40%) */}
-        <div className="flex w-[40%] flex-col items-center justify-center px-8 lg:px-16">
-          <div className="max-w-md space-y-6 text-center">
-            <Image
-              src="/generated/icon-removebg-preview.png"
-              alt="Cosy Loops"
-              width={72}
-              height={72}
-              className="mx-auto drop-shadow-md"
-              priority
-            />
-            <h1 className="font-heading text-4xl font-bold text-cocoa lg:text-5xl">
-              {t("heroHeadline")}
-            </h1>
-            <p className="text-lg text-warm-gray">{t("heroSubtitle")}</p>
-            <Link href="/shop">
-              <Button
-                size="lg"
-                className="rounded-full bg-soft-pink px-8 text-cocoa shadow-md transition-all hover:-translate-y-0.5 hover:bg-soft-pink/80 hover:shadow-lg"
-              >
-                {t("heroCta")}
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile: full-width image + text overlay */}
-      <div className="relative min-h-[70vh] md:hidden">
+    <section className="relative min-h-[70vh] overflow-hidden">
+      {/* Full-width background image */}
+      <div className="absolute inset-0">
         <picture>
           <source
             media="(max-width: 768px)"
             srcSet="/banners/hero-banner-mobile.png"
           />
-          <Image
+          <img
             src="/banners/hero-banner-desktop.png"
             alt=""
-            fill
-            className="object-cover"
-            priority
-            sizes="100vw"
+            className="h-full w-full object-cover"
           />
         </picture>
-        <div className="absolute inset-0 flex items-end">
-          <div className="w-full rounded-t-3xl bg-white/80 px-6 py-8 text-center backdrop-blur-sm">
+      </div>
+
+      {/* Gradient overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/60 to-transparent md:from-white/70 md:via-white/40" />
+
+      {/* Text content overlay */}
+      <div className="relative flex min-h-[70vh] items-center">
+        <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12">
+          <div className="max-w-lg space-y-6">
             <Image
               src="/generated/icon-removebg-preview.png"
               alt="Cosy Loops"
-              width={56}
-              height={56}
-              className="mx-auto mb-4 drop-shadow-md"
+              width={72}
+              height={72}
+              className="drop-shadow-md"
               priority
             />
-            <h1 className="font-heading text-3xl font-bold text-cocoa">
+            <h1 className="font-heading text-4xl font-bold text-cocoa md:text-5xl lg:text-6xl">
               {t("heroHeadline")}
             </h1>
-            <p className="mt-2 text-base text-warm-gray">
+            <p className="text-lg text-cocoa/70 md:text-xl">
               {t("heroSubtitle")}
             </p>
             <Link href="/shop">
               <Button
                 size="lg"
-                className="mt-4 rounded-full bg-soft-pink px-8 text-cocoa shadow-md"
+                className="rounded-full bg-soft-pink px-8 text-cocoa shadow-md transition-all hover:-translate-y-0.5 hover:bg-soft-pink/80 hover:shadow-lg"
               >
                 {t("heroCta")}
               </Button>
