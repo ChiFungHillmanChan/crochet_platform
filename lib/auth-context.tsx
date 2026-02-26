@@ -40,43 +40,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Handle Google redirect result + auth state changes
+  // Listen for auth state changes
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
     (async () => {
       const auth = await getFirebaseAuth();
-      const db = await getFirebaseDb();
-      const { onAuthStateChanged, getRedirectResult, GoogleAuthProvider } =
-        await import("firebase/auth");
-      const { doc, getDoc, setDoc, serverTimestamp } = await import(
-        "firebase/firestore"
-      );
-
-      // Process redirect result (from signInWithRedirect)
-      try {
-        const result = await getRedirectResult(auth);
-        if (result && GoogleAuthProvider.credentialFromResult(result)) {
-          const ADMIN_EMAILS = [
-            "hillmanchan709@gmail.com",
-            "choysy@gmail.com",
-          ];
-          const snap = await getDoc(doc(db, "users", result.user.uid));
-          if (!snap.exists()) {
-            const email = result.user.email ?? "";
-            const role = ADMIN_EMAILS.includes(email.toLowerCase())
-              ? "admin"
-              : "customer";
-            await setDoc(doc(db, "users", result.user.uid), {
-              name: result.user.displayName ?? "",
-              email,
-              role,
-              createdAt: serverTimestamp(),
-            });
-          }
-        }
-      } catch {
-        // Redirect result may not exist on normal page loads
-      }
+      const { onAuthStateChanged } = await import("firebase/auth");
 
       unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
         setUser(firebaseUser);
@@ -119,14 +88,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogleFn = useCallback(async () => {
     const auth = await getFirebaseAuth();
-    const { GoogleAuthProvider, signInWithRedirect } = await import(
+    const db = await getFirebaseDb();
+    const { GoogleAuthProvider, signInWithPopup } = await import(
       "firebase/auth"
     );
+    const { doc, getDoc, setDoc, serverTimestamp } = await import(
+      "firebase/firestore"
+    );
     const provider = new GoogleAuthProvider();
-    await signInWithRedirect(auth, provider);
-    // User will be redirected to Google, then back. The redirect result
-    // is handled in the useEffect above via getRedirectResult().
-  }, []);
+    const result = await signInWithPopup(auth, provider);
+    // Create user doc if first-time Google sign-in
+    const snap = await getDoc(doc(db, "users", result.user.uid));
+    if (!snap.exists()) {
+      const ADMIN_EMAILS = [
+        "hillmanchan709@gmail.com",
+        "choysy@gmail.com",
+      ];
+      const email = result.user.email ?? "";
+      const role = ADMIN_EMAILS.includes(email.toLowerCase())
+        ? "admin"
+        : "customer";
+      await setDoc(doc(db, "users", result.user.uid), {
+        name: result.user.displayName ?? "",
+        email,
+        role,
+        createdAt: serverTimestamp(),
+      });
+    }
+    await fetchUserDoc(result.user.uid);
+  }, [fetchUserDoc]);
 
   const signOutFn = useCallback(async () => {
     const auth = await getFirebaseAuth();
