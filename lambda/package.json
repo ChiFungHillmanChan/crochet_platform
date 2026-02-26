@@ -1,0 +1,12 @@
+{
+  "name": "cosy-loops-lambda",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.0.0",
+    "@aws-sdk/client-ses": "^3.0.0",
+    "@aws-sdk/s3-request-presigner": "^3.0.0",
+    "firebase-admin": "^13.0.0",
+    "stripe": "^17.0.0"
+  }
+}
