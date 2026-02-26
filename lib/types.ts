@@ -1,3 +1,9 @@
+export interface MediaItem {
+  type: "image" | "video" | "youtube" | "vimeo";
+  url: string;
+  thumbnailUrl?: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -6,8 +12,10 @@ export interface Product {
   price: number; // pence GBP
   stock: number;
   isActive: boolean;
+  isArchived?: boolean;
   categorySlug: string;
   images: string[];
+  media?: MediaItem[];
   createdAt: Date;
 }
 

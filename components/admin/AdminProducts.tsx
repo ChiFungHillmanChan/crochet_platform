@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { getProducts } from "@/lib/products";
+import { getAllProducts } from "@/lib/products";
 import { apiPost } from "@/lib/api";
 import type { Product } from "@/lib/types";
 import { ProductTable } from "@/components/admin/ProductTable";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,16 +23,18 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
+type PendingAction = { type: "delete" | "archive"; id: string } | null;
+
 export default function AdminProducts() {
   const t = useTranslations("admin");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [pendingAction, setPendingAction] = useState<PendingAction>(null);
 
   useEffect(() => {
     async function load() {
       try {
-        const data = await getProducts();
+        const data = await getAllProducts();
         setProducts(data);
       } catch {
         // Firestore unreachable
@@ -42,22 +45,59 @@ export default function AdminProducts() {
     load();
   }, []);
 
-  async function handleDelete(id: string) {
-    setPendingDeleteId(id);
+  const activeProducts = products.filter((p) => !p.isArchived);
+  const archivedProducts = products.filter((p) => p.isArchived);
+
+  function handleDelete(id: string) {
+    setPendingAction({ type: "delete", id });
   }
 
-  async function confirmDelete() {
-    if (!pendingDeleteId) return;
-    const id = pendingDeleteId;
-    setPendingDeleteId(null);
+  function handleArchive(id: string) {
+    setPendingAction({ type: "archive", id });
+  }
+
+  async function confirmAction() {
+    if (!pendingAction) return;
+    const { type, id } = pendingAction;
+    setPendingAction(null);
+
     try {
-      await apiPost("delete-product", { id });
-      setProducts((prev) => prev.filter((p) => p.id !== id));
-      toast.success("Product deleted");
+      if (type === "delete") {
+        await apiPost("delete-product", { id });
+        setProducts((prev) => prev.filter((p) => p.id !== id));
+        toast.success("Product deleted");
+      } else {
+        await apiPost("archive-product", { id });
+        setProducts((prev) =>
+          prev.map((p) =>
+            p.id === id ? { ...p, isArchived: true, isActive: false } : p
+          )
+        );
+        toast.success(t("productArchived"));
+      }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Delete failed");
+      toast.error(err instanceof Error ? err.message : "Action failed");
     }
   }
+
+  async function handleRestore(id: string) {
+    try {
+      await apiPost("restore-product", { id });
+      setProducts((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, isArchived: false } : p))
+      );
+      toast.success(t("productRestored"));
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Restore failed");
+    }
+  }
+
+  const dialogTitle =
+    pendingAction?.type === "archive" ? t("archiveConfirm") : `${t("delete")} product?`;
+  const dialogDesc =
+    pendingAction?.type === "archive"
+      ? t("archiveDescription")
+      : "This action cannot be undone. This will permanently delete the product.";
 
   return (
     <div className="space-y-6">
@@ -79,32 +119,61 @@ export default function AdminProducts() {
             <Skeleton key={i} className="h-12 rounded-xl" />
           ))}
         </div>
-      ) : products.length > 0 ? (
-        <ProductTable products={products} onDelete={handleDelete} />
       ) : (
-        <p className="py-8 text-center text-warm-gray">
-          {t("productsComingSoon")}
-        </p>
+        <Tabs defaultValue="active">
+          <TabsList>
+            <TabsTrigger value="active">
+              {t("active")} ({activeProducts.length})
+            </TabsTrigger>
+            <TabsTrigger value="archived">
+              {t("archived")} ({archivedProducts.length})
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="active">
+            {activeProducts.length > 0 ? (
+              <ProductTable
+                products={activeProducts}
+                onDelete={handleDelete}
+                onArchive={handleArchive}
+              />
+            ) : (
+              <p className="py-8 text-center text-warm-gray">
+                {t("productsComingSoon")}
+              </p>
+            )}
+          </TabsContent>
+          <TabsContent value="archived">
+            {archivedProducts.length > 0 ? (
+              <ProductTable
+                products={archivedProducts}
+                onDelete={handleDelete}
+                onRestore={handleRestore}
+                showRestore
+              />
+            ) : (
+              <p className="py-8 text-center text-warm-gray">
+                {t("productsComingSoon")}
+              </p>
+            )}
+          </TabsContent>
+        </Tabs>
       )}
 
       <AlertDialog
-        open={pendingDeleteId !== null}
+        open={pendingAction !== null}
         onOpenChange={(open) => {
-          if (!open) setPendingDeleteId(null);
+          if (!open) setPendingAction(null);
         }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("delete")} product?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              product.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{dialogTitle}</AlertDialogTitle>
+            <AlertDialogDescription>{dialogDesc}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete}>
-              {t("delete")}
+            <AlertDialogAction onClick={confirmAction}>
+              {pendingAction?.type === "archive" ? t("archive") : t("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

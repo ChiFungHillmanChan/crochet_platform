@@ -161,7 +161,7 @@ export function ProductDetail() {
       />
 
       <div className="grid gap-8 lg:grid-cols-[3fr_2fr]">
-        <ImageGallery images={product.images} productName={product.name} />
+        <ImageGallery images={product.images} productName={product.name} media={product.media} />
 
         <div className="space-y-6">
           <div>

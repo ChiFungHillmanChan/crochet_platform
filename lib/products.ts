@@ -26,6 +26,21 @@ export async function getProducts(): Promise<Product[]> {
   return snap.docs.map(docToProduct);
 }
 
+export async function getAllProducts(): Promise<Product[]> {
+  const db = await getFirebaseDb();
+  const { collection, getDocs, query, orderBy, limit } = await import(
+    "firebase/firestore"
+  );
+
+  const q = query(
+    collection(db, "products"),
+    orderBy("createdAt", "desc"),
+    limit(200)
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(docToProduct);
+}
+
 export async function getProductsByCategory(
   categorySlug: string
 ): Promise<Product[]> {

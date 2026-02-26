@@ -214,7 +214,21 @@
     "reviewUpdated": "Review updated",
     "reviewCreated": "Review created",
     "orderNumber": "Order #",
-    "date": "Date"
+    "date": "Date",
+    "archived": "Archived",
+    "archive": "Archive",
+    "restore": "Restore",
+    "productArchived": "Product archived",
+    "productRestored": "Product restored",
+    "archiveConfirm": "Archive this product?",
+    "archiveDescription": "The product will be hidden from the storefront. You can restore it later.",
+    "media": "Media",
+    "addVideo": "Add Video",
+    "addEmbed": "Add Embed URL",
+    "embedUrl": "YouTube or Vimeo URL",
+    "invalidEmbed": "Invalid YouTube or Vimeo URL",
+    "uploadMedia": "Upload Media",
+    "dragDropMedia": "Drag & drop images or videos, or click to browse"
   },
   "about": {
     "seoTitle": "About Us | Cosy Loops",

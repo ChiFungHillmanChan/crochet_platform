@@ -214,7 +214,21 @@
     "reviewUpdated": "評論已更新",
     "reviewCreated": "評論已建立",
     "orderNumber": "訂單 #",
-    "date": "日期"
+    "date": "日期",
+    "archived": "已封存",
+    "archive": "封存",
+    "restore": "還原",
+    "productArchived": "產品已封存",
+    "productRestored": "產品已還原",
+    "archiveConfirm": "封存此產品？",
+    "archiveDescription": "產品將從商店隱藏。您可以稍後還原。",
+    "media": "媒體",
+    "addVideo": "新增影片",
+    "addEmbed": "新增嵌入網址",
+    "embedUrl": "YouTube 或 Vimeo 網址",
+    "invalidEmbed": "無效的 YouTube 或 Vimeo 網址",
+    "uploadMedia": "上傳媒體",
+    "dragDropMedia": "拖放圖片或影片，或點擊瀏覽"
   },
   "about": {
     "seoTitle": "關於我們 | Cosy Loops",

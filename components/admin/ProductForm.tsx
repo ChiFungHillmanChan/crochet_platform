@@ -4,16 +4,24 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { apiPost } from "@/lib/api";
-import type { Product } from "@/lib/types";
+import type { Product, MediaItem } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ImageUploader } from "@/components/admin/ImageUploader";
+import { MediaUploader } from "@/components/admin/MediaUploader";
 import { toast } from "sonner";
 
 interface ProductFormProps {
   product?: Product;
+}
+
+function legacyImagesToMedia(images: string[]): MediaItem[] {
+  return images.map((url) => ({ type: "image" as const, url }));
+}
+
+function mediaToImages(media: MediaItem[]): string[] {
+  return media.filter((m) => m.type === "image").map((m) => m.url);
 }
 
 export function ProductForm({ product }: ProductFormProps) {
@@ -30,7 +38,11 @@ export function ProductForm({ product }: ProductFormProps) {
     product?.categorySlug ?? ""
   );
   const [isActive, setIsActive] = useState(product?.isActive ?? true);
-  const [images, setImages] = useState<string[]>(product?.images ?? []);
+  const [media, setMedia] = useState<MediaItem[]>(
+    product?.media?.length
+      ? product.media
+      : legacyImagesToMedia(product?.images ?? [])
+  );
   const [saving, setSaving] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -46,7 +58,8 @@ export function ProductForm({ product }: ProductFormProps) {
         stock: parseInt(stock) || 0,
         categorySlug,
         isActive,
-        images,
+        images: mediaToImages(media),
+        media,
       };
 
       if (isEdit) {
@@ -155,8 +168,12 @@ export function ProductForm({ product }: ProductFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label>{t("images")}</Label>
-        <ImageUploader images={images} onImagesChange={setImages} />
+        <Label>{t("media")}</Label>
+        <MediaUploader
+          media={media}
+          onMediaChange={setMedia}
+          productSlug={slug}
+        />
       </div>
 
       <div className="flex gap-3">

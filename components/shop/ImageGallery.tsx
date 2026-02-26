@@ -6,17 +6,28 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { getOptimizedImageUrl } from "@/lib/image-utils";
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
+import { MediaPlayer } from "@/components/shop/MediaPlayer";
+import type { MediaItem } from "@/lib/types";
+import { Film } from "lucide-react";
 
 interface ImageGalleryProps {
   images: string[];
   productName: string;
+  media?: MediaItem[];
 }
 
-export function ImageGallery({ images, productName }: ImageGalleryProps) {
+function buildMediaList(images: string[], media?: MediaItem[]): MediaItem[] {
+  if (media?.length) return media;
+  return images.map((url) => ({ type: "image" as const, url }));
+}
+
+export function ImageGallery({ images, productName, media }: ImageGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [fullscreen, setFullscreen] = useState(false);
 
-  if (images.length === 0) {
+  const items = buildMediaList(images, media);
+
+  if (items.length === 0) {
     return (
       <div className="flex aspect-square items-center justify-center rounded-2xl bg-blush/30">
         <span className="text-6xl">🧶</span>
@@ -24,42 +35,66 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
     );
   }
 
+  const current = items[selectedIndex];
+  const isImage = current.type === "image";
+
   return (
     <>
       <div className="space-y-3">
-        <button
-          onClick={() => setFullscreen(true)}
-          className="relative aspect-square w-full overflow-hidden rounded-2xl bg-blush/30"
-        >
-          <Image
-            src={getOptimizedImageUrl(images[selectedIndex], "full")}
-            alt={`${productName} - Image ${selectedIndex + 1}`}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 50vw"
-            priority
-          />
-        </button>
-        {images.length > 1 && (
+        {isImage ? (
+          <button
+            onClick={() => setFullscreen(true)}
+            className="relative aspect-square w-full overflow-hidden rounded-2xl bg-blush/30"
+          >
+            <Image
+              src={getOptimizedImageUrl(current.url, "full")}
+              alt={`${productName} - Image ${selectedIndex + 1}`}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority
+            />
+          </button>
+        ) : (
+          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-blush/30">
+            <MediaPlayer
+              item={current}
+              className="h-full w-full object-contain"
+            />
+          </div>
+        )}
+        {items.length > 1 && (
           <div className="flex gap-2">
-            {images.map((img, i) => (
+            {items.map((item, i) => (
               <button
                 key={i}
                 onClick={() => setSelectedIndex(i)}
                 className={cn(
-                  "relative h-16 w-16 overflow-hidden rounded-lg border-2 transition-colors",
+                  "relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg border-2 transition-colors",
                   i === selectedIndex
                     ? "border-soft-pink"
                     : "border-transparent hover:border-blush"
                 )}
               >
-                <Image
-                  src={getOptimizedImageUrl(img, "thumb")}
-                  alt={`${productName} thumbnail ${i + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="64px"
-                />
+                {item.type === "image" ? (
+                  <Image
+                    src={getOptimizedImageUrl(item.url, "thumb")}
+                    alt={`${productName} thumbnail ${i + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="64px"
+                  />
+                ) : item.thumbnailUrl ? (
+                  <Image
+                    src={item.thumbnailUrl}
+                    alt={`${productName} thumbnail ${i + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="64px"
+                  />
+                ) : (
+                  <Film className="h-6 w-6 text-warm-gray" />
+                )}
               </button>
             ))}
           </div>
@@ -72,13 +107,20 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
             <DialogTitle>{productName}</DialogTitle>
           </VisuallyHidden>
           <div className="relative aspect-square overflow-hidden rounded-2xl">
-            <Image
-              src={getOptimizedImageUrl(images[selectedIndex], "full")}
-              alt={`${productName} - Full size`}
-              fill
-              className="object-contain"
-              sizes="90vw"
-            />
+            {isImage ? (
+              <Image
+                src={getOptimizedImageUrl(current.url, "full")}
+                alt={`${productName} - Full size`}
+                fill
+                className="object-contain"
+                sizes="90vw"
+              />
+            ) : (
+              <MediaPlayer
+                item={current}
+                className="h-full w-full object-contain"
+              />
+            )}
           </div>
         </DialogContent>
       </Dialog>

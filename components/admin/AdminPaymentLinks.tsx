@@ -40,7 +40,8 @@ export default function AdminPaymentLinks() {
     try {
       const data = await apiPost<{ links: PaymentLink[] }>("get-payment-links", {});
       setLinks(data.links);
-    } catch {
+    } catch (err) {
+      console.error("Failed to load payment links:", err);
       toast.error(t("loadError"));
     } finally {
       setLoading(false);

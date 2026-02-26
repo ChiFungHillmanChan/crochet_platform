@@ -48,17 +48,19 @@ async function createProduct(body, origin) {
   const existing = await db.collection("products").where("slug", "==", slug).limit(1).get();
   if (!existing.empty) return error(409, `Product with slug "${slug}" already exists`, origin);
 
+  const { media } = body;
   const ref = await db.collection("products").add({
     name, slug, description: description || "",
     price: price || 0, stock: stock || 0,
     categorySlug: categorySlug || "",
-    images: images || [], isActive: isActive ?? true,
+    images: images || [], media: media || [],
+    isActive: isActive ?? true, isArchived: false,
     createdAt: new Date(),
   });
   return success({ id: ref.id }, origin);
 }
 
-const PRODUCT_ALLOWED_FIELDS = ["name", "slug", "description", "price", "stock", "categorySlug", "images", "isActive"];
+const PRODUCT_ALLOWED_FIELDS = ["name", "slug", "description", "price", "stock", "categorySlug", "images", "isActive", "isArchived", "media"];
 
 async function updateProduct(body, origin) {
   const { id } = body;
@@ -85,6 +87,27 @@ async function deleteProduct(body, origin) {
   return success({ deleted: true }, origin);
 }
 
+async function archiveProduct(body, origin) {
+  const { id } = body;
+  if (!id) return error(400, "Product ID required", origin);
+
+  await db.collection("products").doc(id).update({
+    isArchived: true,
+    isActive: false,
+  });
+  return success({ archived: true }, origin);
+}
+
+async function restoreProduct(body, origin) {
+  const { id } = body;
+  if (!id) return error(400, "Product ID required", origin);
+
+  await db.collection("products").doc(id).update({
+    isArchived: false,
+  });
+  return success({ restored: true }, origin);
+}
+
 async function updateOrderStatus(body, origin) {
   const { id, status } = body;
   const validStatuses = ["pending", "paid", "shipped", "delivered", "cancelled"];
@@ -103,23 +126,34 @@ async function getOrders(origin) {
 }
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm"];
+const ALLOWED_MEDIA_TYPES = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_VIDEO_TYPES];
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
 
-async function getUploadUrl(body, origin) {
-  const { filename, contentType } = body;
+async function getUploadUrl(body, origin, userEmail) {
+  const { filename, contentType, productSlug, mediaType } = body;
   if (!filename) return error(400, "Filename required", origin);
-  if (contentType && !ALLOWED_IMAGE_TYPES.includes(contentType)) {
-    return error(400, `Invalid content type. Allowed: ${ALLOWED_IMAGE_TYPES.join(", ")}`, origin);
+
+  const isVideo = mediaType === "videos" || contentType?.startsWith("video/");
+  const allowedTypes = isVideo ? ALLOWED_MEDIA_TYPES : ALLOWED_IMAGE_TYPES;
+  const maxSize = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
+
+  if (contentType && !allowedTypes.includes(contentType)) {
+    return error(400, `Invalid content type. Allowed: ${allowedTypes.join(", ")}`, origin);
   }
-  if (body.fileSize && body.fileSize > MAX_FILE_SIZE) {
-    return error(400, `File too large. Maximum size: ${MAX_FILE_SIZE / 1024 / 1024}MB`, origin);
+  if (body.fileSize && body.fileSize > maxSize) {
+    return error(400, `File too large. Maximum size: ${maxSize / 1024 / 1024}MB`, origin);
   }
   if (!R2_ACCOUNT_ID || !R2_BUCKET_NAME) {
     return error(500, "R2 not configured", origin);
   }
 
   const sanitised = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const key = `products/${Date.now()}-${sanitised}`;
+  const emailPrefix = (userEmail || "unknown").replace(/[^a-zA-Z0-9._-]/g, "_");
+  const slugPrefix = (productSlug || "general").replace(/[^a-zA-Z0-9._-]/g, "_");
+  const folder = mediaType || "images";
+  const key = `${emailPrefix}/${slugPrefix}/${folder}/${Date.now()}-${sanitised}`;
 
   const command = new PutObjectCommand({
     Bucket: R2_BUCKET_NAME,
@@ -211,8 +245,12 @@ export async function handler(event) {
         return await getOrders(origin);
       case "get-dashboard-stats":
         return await getDashboardStats(origin);
+      case "archive-product":
+        return await archiveProduct(body, origin);
+      case "restore-product":
+        return await restoreProduct(body, origin);
       case "get-upload-url":
-        return await getUploadUrl(body, origin);
+        return await getUploadUrl(body, origin, user.email);
       case "get-reviews":
         return await getReviews(origin);
       case "create-review":

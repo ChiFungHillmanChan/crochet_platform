@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Archive, ArchiveRestore } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/lib/types";
@@ -19,9 +19,18 @@ import { Button } from "@/components/ui/button";
 interface ProductTableProps {
   products: Product[];
   onDelete: (id: string) => void;
+  onArchive?: (id: string) => void;
+  onRestore?: (id: string) => void;
+  showRestore?: boolean;
 }
 
-export function ProductTable({ products, onDelete }: ProductTableProps) {
+export function ProductTable({
+  products,
+  onDelete,
+  onArchive,
+  onRestore,
+  showRestore,
+}: ProductTableProps) {
   const t = useTranslations("admin");
 
   return (
@@ -46,15 +55,21 @@ export function ProductTable({ products, onDelete }: ProductTableProps) {
               <Badge variant="outline">{product.categorySlug}</Badge>
             </TableCell>
             <TableCell>
-              <Badge
-                className={
-                  product.isActive
-                    ? "bg-mint text-cocoa"
-                    : "bg-warm-gray/20 text-warm-gray"
-                }
-              >
-                {product.isActive ? t("active") : t("inactive")}
-              </Badge>
+              {product.isArchived ? (
+                <Badge className="bg-warm-gray/20 text-warm-gray">
+                  {t("archived")}
+                </Badge>
+              ) : (
+                <Badge
+                  className={
+                    product.isActive
+                      ? "bg-mint text-cocoa"
+                      : "bg-warm-gray/20 text-warm-gray"
+                  }
+                >
+                  {product.isActive ? t("active") : t("inactive")}
+                </Badge>
+              )}
             </TableCell>
             <TableCell className="text-right">
               <div className="flex justify-end gap-2">
@@ -63,6 +78,27 @@ export function ProductTable({ products, onDelete }: ProductTableProps) {
                     <Pencil className="h-4 w-4" />
                   </Button>
                 </Link>
+                {showRestore && onRestore ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onRestore(product.id)}
+                    title={t("restore")}
+                  >
+                    <ArchiveRestore className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  onArchive && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onArchive(product.id)}
+                      title={t("archive")}
+                    >
+                      <Archive className="h-4 w-4" />
+                    </Button>
+                  )
+                )}
                 <Button
                   variant="ghost"
                   size="icon"
