@@ -26,7 +26,7 @@ export function generateOrganizationJsonLd() {
       "@type": "PostalAddress",
       addressCountry: "GB",
     },
-    sameAs: [],
+    sameAs: ["https://www.instagram.com/cosyloops"],
   };
 }
 
@@ -84,6 +84,38 @@ export function generateBreadcrumbJsonLd(
       position: index + 1,
       name: item.name,
       item: item.url,
+    })),
+  };
+}
+
+export function generateItemListJsonLd(
+  products: { name: string; url: string }[]
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: products.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: p.name,
+      url: p.url,
+    })),
+  };
+}
+
+export function generateFaqPageJsonLd(
+  faqs: { question: string; answer: string }[]
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
     })),
   };
 }
