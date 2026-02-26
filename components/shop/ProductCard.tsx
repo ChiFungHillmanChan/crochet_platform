@@ -141,7 +141,7 @@ export function ProductCard({
         >
           {product.categorySlug}
         </Badge>
-        <h3 className="font-heading text-sm font-semibold leading-tight text-cocoa sm:text-xl">
+        <h3 className="line-clamp-2 font-heading text-sm font-semibold leading-tight text-cocoa sm:text-xl">
           {product.name}
         </h3>
         <p className="mt-auto pt-2 text-sm font-semibold text-soft-pink sm:pt-3 sm:text-lg">
