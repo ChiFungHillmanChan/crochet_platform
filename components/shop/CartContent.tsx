@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { useCartStore } from "@/stores/cartStore";
 import { useAuth } from "@/lib/auth-context";
 import { formatPrice } from "@/lib/utils";
+import { getOptimizedImageUrl } from "@/lib/image-utils";
 import { QuantitySelector } from "@/components/shop/QuantitySelector";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -74,7 +75,7 @@ export default function CartContent() {
             <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-blush/30">
               {item.image ? (
                 <Image
-                  src={item.image}
+                  src={getOptimizedImageUrl(item.image, "thumb")}
                   alt={item.name}
                   fill
                   className="object-cover"

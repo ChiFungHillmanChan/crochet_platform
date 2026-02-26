@@ -4,6 +4,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { firebaseAuth, db } from "../shared/firebase-admin.mjs";
 import { success, error } from "../shared/response.mjs";
 import { getReviews, createReview, updateReview, deleteReview } from "./reviews.mjs";
+import { createPaymentLink, getPaymentLinks, deactivatePaymentLink } from "./payment-links.mjs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -49,7 +50,7 @@ async function verifyAuth(event) {
 }
 
 async function createCheckoutSession(body, origin) {
-  const { items, userId, customerName, customerEmail, locale } = body;
+  const { items, userId, customerName, customerEmail, customerPhone, shippingAddress, notes, locale } = body;
   if (!items?.length) return error(400, "No items provided", origin);
 
   const validLocale = ["en", "zh-hk"].includes(locale) ? locale : "en";
@@ -72,13 +73,20 @@ async function createCheckoutSession(body, origin) {
     metadata: {
       userId: userId || "",
       customerName: customerName || "",
+      customerPhone: customerPhone || "",
+      shippingLine1: shippingAddress?.line1 || "",
+      shippingLine2: shippingAddress?.line2 || "",
+      shippingCity: shippingAddress?.city || "",
+      shippingPostcode: shippingAddress?.postcode || "",
+      shippingCountry: shippingAddress?.country || "GB",
+      notes: notes || "",
+      source: "checkout",
       items: JSON.stringify(
         items.map((i) => ({
           productId: i.productId,
           name: i.name,
           price: i.price,
           quantity: i.quantity,
-          image: i.image || "",
         }))
       ),
     },
@@ -226,6 +234,12 @@ export async function handler(event) {
         return await updateReview(body, origin);
       case "delete-review":
         return await deleteReview(body, origin);
+      case "create-payment-link":
+        return await createPaymentLink(body, origin, stripe);
+      case "get-payment-links":
+        return await getPaymentLinks(origin);
+      case "deactivate-payment-link":
+        return await deactivatePaymentLink(body, origin, stripe);
       default:
         return error(400, `Unknown action: ${action}`, origin);
     }

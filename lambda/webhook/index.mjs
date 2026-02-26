@@ -61,16 +61,55 @@ function generateOrderNumber() {
   return `${prefix}-${random}`;
 }
 
+function buildAddressFromMetadata(metadata) {
+  if (!metadata.shippingLine1) return null;
+  return {
+    line1: metadata.shippingLine1 || "",
+    line2: metadata.shippingLine2 || "",
+    city: metadata.shippingCity || "",
+    postcode: metadata.shippingPostcode || "",
+    country: metadata.shippingCountry || "GB",
+  };
+}
+
+function buildAddressFromStripe(address) {
+  if (!address) return null;
+  return {
+    line1: address.line1 || "",
+    line2: address.line2 || "",
+    city: address.city || "",
+    postcode: address.postal_code || "",
+    country: address.country || "GB",
+  };
+}
+
 async function handleCheckoutCompleted(session) {
   const metadata = session.metadata || {};
   const userId = metadata.userId || "";
-  const items = JSON.parse(metadata.items || "[]");
+  const source = metadata.source || "checkout";
+  const isPaymentLink = source === "payment_link";
+
+  const items = isPaymentLink
+    ? [{ productId: "payment-link", name: metadata.productName || "Payment Link Order", price: session.amount_total, quantity: 1 }]
+    : JSON.parse(metadata.items || "[]");
+
+  // Extract customer details from metadata (custom checkout) or session (payment link)
+  const customerDetails = session.customer_details || {};
+  const customerPhone = metadata.customerPhone || customerDetails.phone || "";
+  const shippingAddress = isPaymentLink
+    ? buildAddressFromStripe(customerDetails.address || session.shipping_details?.address)
+    : buildAddressFromMetadata(metadata);
+  const notes = metadata.notes || "";
 
   const orderNumber = generateOrderNumber();
   const order = {
     orderNumber,
-    customerEmail: session.customer_details?.email || session.customer_email || "",
-    customerName: session.customer_details?.name || metadata.customerName || "",
+    customerEmail: customerDetails.email || session.customer_email || "",
+    customerName: customerDetails.name || metadata.customerName || "",
+    customerPhone,
+    shippingAddress,
+    notes,
+    source,
     items,
     totalAmount: session.amount_total,
     status: "paid",
@@ -82,24 +121,26 @@ async function handleCheckoutCompleted(session) {
   const orderRef = await db.collection("orders").add(order);
   order.id = orderRef.id;
 
-  // Decrement stock for each item
-  const batch = db.batch();
-  for (const item of items) {
-    const productQuery = await db
-      .collection("products")
-      .where("slug", "==", item.productId)
-      .limit(1)
-      .get();
+  // Decrement stock for each item (skip for payment link orders)
+  if (!isPaymentLink) {
+    const batch = db.batch();
+    for (const item of items) {
+      const productQuery = await db
+        .collection("products")
+        .where("slug", "==", item.productId)
+        .limit(1)
+        .get();
 
-    if (!productQuery.empty) {
-      const productDoc = productQuery.docs[0];
-      const currentStock = productDoc.data().stock || 0;
-      batch.update(productDoc.ref, {
-        stock: Math.max(0, currentStock - item.quantity),
-      });
+      if (!productQuery.empty) {
+        const productDoc = productQuery.docs[0];
+        const currentStock = productDoc.data().stock || 0;
+        batch.update(productDoc.ref, {
+          stock: Math.max(0, currentStock - item.quantity),
+        });
+      }
     }
+    await batch.commit();
   }
-  await batch.commit();
 
   // Send confirmation email to customer
   try {
