@@ -40,7 +40,7 @@ export function Navbar() {
   const t = useTranslations("nav");
 
   const navLinks = [
-    { href: "/" as const, label: t("shop") },
+    { href: "/shop/" as const, label: t("shop") },
     { href: "/about/" as const, label: t("about") },
   ];
 
