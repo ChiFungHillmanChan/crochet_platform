@@ -6,43 +6,99 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 
 export function HeroBanner() {
-  const t = useTranslations("home");
+  const t = useTranslations("homepage");
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-blush/50 via-soft-pink/20 to-white px-4 py-16 text-center md:py-24">
-      <Image
-        src="/hero-bg.webp"
-        alt=""
-        fill
-        className="object-cover opacity-40"
-        priority
-        sizes="100vw"
-      />
-      <div className="relative mx-auto max-w-3xl space-y-6">
-        <div className="mx-auto mb-4 flex justify-center">
-          <Image
-            src="/icon.png"
-            alt="Cosy Loops"
-            width={80}
-            height={80}
-            className="drop-shadow-md"
-            priority
-          />
+    <section className="relative min-h-[70vh] overflow-hidden bg-gradient-to-b from-blush/30 to-white">
+      {/* Desktop: split layout */}
+      <div className="hidden md:flex md:min-h-[70vh]">
+        {/* Left — banner image (60%) */}
+        <div className="relative w-[60%]">
+          <picture>
+            <source
+              media="(max-width: 768px)"
+              srcSet="/banners/hero-banner-mobile.png"
+            />
+            <Image
+              src="/banners/hero-banner-desktop.png"
+              alt=""
+              fill
+              className="object-cover"
+              priority
+              sizes="60vw"
+            />
+          </picture>
         </div>
-        <h1 className="font-heading text-4xl font-bold text-cocoa md:text-5xl lg:text-6xl">
-          {t("heroHeadline")}
-        </h1>
-        <p className="mx-auto max-w-xl text-lg text-warm-gray">
-          {t("title")}
-        </p>
-        <Link href="#collection">
-          <Button
-            size="lg"
-            className="rounded-full bg-soft-pink px-8 text-cocoa shadow-md transition-all hover:-translate-y-0.5 hover:bg-soft-pink/80 hover:shadow-lg"
-          >
-            {t("heroCta")}
-          </Button>
-        </Link>
+
+        {/* Right — text content (40%) */}
+        <div className="flex w-[40%] flex-col items-center justify-center px-8 lg:px-16">
+          <div className="max-w-md space-y-6 text-center">
+            <Image
+              src="/generated/icon-removebg-preview.png"
+              alt="Cosy Loops"
+              width={72}
+              height={72}
+              className="mx-auto drop-shadow-md"
+              priority
+            />
+            <h1 className="font-heading text-4xl font-bold text-cocoa lg:text-5xl">
+              {t("heroHeadline")}
+            </h1>
+            <p className="text-lg text-warm-gray">{t("heroSubtitle")}</p>
+            <Link href="/shop">
+              <Button
+                size="lg"
+                className="rounded-full bg-soft-pink px-8 text-cocoa shadow-md transition-all hover:-translate-y-0.5 hover:bg-soft-pink/80 hover:shadow-lg"
+              >
+                {t("heroCta")}
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile: full-width image + text overlay */}
+      <div className="relative min-h-[70vh] md:hidden">
+        <picture>
+          <source
+            media="(max-width: 768px)"
+            srcSet="/banners/hero-banner-mobile.png"
+          />
+          <Image
+            src="/banners/hero-banner-desktop.png"
+            alt=""
+            fill
+            className="object-cover"
+            priority
+            sizes="100vw"
+          />
+        </picture>
+        <div className="absolute inset-0 flex items-end">
+          <div className="w-full rounded-t-3xl bg-white/80 px-6 py-8 text-center backdrop-blur-sm">
+            <Image
+              src="/generated/icon-removebg-preview.png"
+              alt="Cosy Loops"
+              width={56}
+              height={56}
+              className="mx-auto mb-4 drop-shadow-md"
+              priority
+            />
+            <h1 className="font-heading text-3xl font-bold text-cocoa">
+              {t("heroHeadline")}
+            </h1>
+            <p className="mt-2 text-base text-warm-gray">
+              {t("heroSubtitle")}
+            </p>
+            <Link href="/shop">
+              <Button
+                size="lg"
+                className="mt-4 rounded-full bg-soft-pink px-8 text-cocoa shadow-md"
+              >
+                {t("heroCta")}
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
     </section>
   );
