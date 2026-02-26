@@ -25,7 +25,8 @@
     "about": "About",
     "shipping": "Shipping & Returns",
     "faq": "FAQ",
-    "contact": "Contact"
+    "contact": "Contact",
+    "etsy": "Etsy"
   },
   "home": {
     "title": "Cosy Loops",
@@ -85,7 +86,15 @@
     "paymentDetails": "Payment Details",
     "paymentSecure": "Your payment details are securely handled by Stripe.",
     "backToDetails": "Back",
-    "fillDetails": "Please fill in your name and email.",
+    "phone": "Phone Number",
+    "shippingAddress": "Shipping Address",
+    "addressLine1": "Address Line 1",
+    "addressLine2": "Address Line 2 (optional)",
+    "city": "City",
+    "postcode": "Postcode",
+    "notes": "Order Notes",
+    "notesPlaceholder": "Any special instructions or requests...",
+    "fillDetails": "Please fill in all required fields (name, email, phone, address).",
     "checkoutFailed": "Checkout failed. Please try again.",
     "paymentFailed": "Payment failed. Please try again.",
     "comingSoon": "Checkout coming soon"
@@ -161,7 +170,25 @@
     "confirmDeleteDescription": "This action cannot be undone.",
     "productId": "Product",
     "loadError": "Failed to load data. Please try again.",
-    "retry": "Retry"
+    "retry": "Retry",
+    "paymentLinks": "Payment Links",
+    "createPaymentLink": "Create Payment Link",
+    "productNameLabel": "Product Name",
+    "customPrice": "Custom",
+    "priceLabel": "Price (pence)",
+    "linkUrl": "Link URL",
+    "copied": "Copied!",
+    "copyLink": "Copy",
+    "deactivate": "Deactivate",
+    "deactivateConfirm": "Deactivate this payment link?",
+    "deactivateDescription": "The link will no longer accept payments.",
+    "noPaymentLinks": "No payment links yet.",
+    "source": "Source",
+    "sourceCheckout": "Checkout",
+    "sourcePaymentLink": "Payment Link",
+    "phone": "Phone",
+    "shippingAddress": "Shipping Address",
+    "customerNotes": "Customer Notes"
   },
   "about": {
     "seoTitle": "About Us | Cosy Loops",
@@ -241,6 +268,60 @@
     "responseTime": "We typically respond within 24-48 hours.",
     "socialTitle": "Follow Us",
     "socialText": "Follow us on social media for behind-the-scenes peeks, new product announcements, and crochet inspiration."
+  },
+  "announcement": {
+    "shipping": "Free UK shipping on orders over £50",
+    "newArrivals": "New handmade creations just arrived!",
+    "dismiss": "Dismiss"
+  },
+  "homepage": {
+    "heroHeadline": "Every Stitch Tells a Story",
+    "heroSubtitle": "Handmade crochet creations, lovingly crafted in the UK",
+    "heroCta": "Shop Now",
+    "newArrivals": "Fresh From The Hook",
+    "bestSellers": "Loved By You",
+    "reviewsTitle": "What Our Customers Say",
+    "instagramTitle": "Follow Our Journey",
+    "instagramHandle": "@cosyloops",
+    "instagramCta": "Follow on Instagram",
+    "newsletterTitle": "Stay in the Loop",
+    "newsletterSubtitle": "Get updates on new creations, behind-the-scenes peeks, and exclusive offers.",
+    "subscribe": "Subscribe",
+    "emailPlaceholder": "Your email address",
+    "collectionPlushies": "Plushies & Toys",
+    "collectionCharms": "Charms & Keyrings",
+    "collectionHome": "Home & Bags",
+    "viewCollection": "View Collection"
+  },
+  "shopPage": {
+    "seoTitle": "Shop All | Cosy Loops",
+    "seoDescription": "Browse our collection of handcrafted crochet plushies, keyrings, bag charms, and home accessories.",
+    "title": "Handcrafted with Love",
+    "subtitle": "Browse our collection of unique crochet creations",
+    "filterAll": "All",
+    "sortNewest": "Newest",
+    "sortPriceLow": "Price: Low to High",
+    "sortPriceHigh": "Price: High to Low",
+    "sortPopular": "Popular",
+    "itemCount": "{count, plural, one {1 item} other {# items}}",
+    "loadMore": "Load More",
+    "sortBy": "Sort by"
+  },
+  "productPage": {
+    "ourStory": "Our Story",
+    "reviews": "Reviews",
+    "productDetails": "Product Details",
+    "careInstructions": "Care Instructions",
+    "careText": "Gentle hand wash in cool water. Lay flat to dry. Avoid machine washing.",
+    "shippingReturns": "Shipping & Returns",
+    "shippingText": "Free UK shipping over £50. Standard delivery 3-5 working days. 14-day returns.",
+    "youMightAlsoLove": "You Might Also Love",
+    "addToWishlist": "Add to Wishlist"
+  },
+  "badges": {
+    "new": "New",
+    "bestSeller": "Best Seller",
+    "lowStock": "Low Stock"
   },
   "locale": {
     "en": "EN",
