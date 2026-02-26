@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductCard } from "@/components/shop/ProductCard";
 import type { Product } from "@/lib/types";
 
-const AUTO_SCROLL_INTERVAL = 3000;
+const AUTO_SCROLL_INTERVAL = 5000;
 
 interface ProductCarouselProps {
   title: string;

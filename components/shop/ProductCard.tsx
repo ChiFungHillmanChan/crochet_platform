@@ -66,7 +66,7 @@ export function ProductCard({
   return (
     <Link
       href={`/products/${product.slug}/`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg"
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg"
     >
       {/* Image container */}
       <div className="relative aspect-[3/4] overflow-hidden bg-blush/30">
@@ -133,65 +133,69 @@ export function ProductCard({
         </div>
       </div>
 
-      {/* Product info */}
-      <div className="flex flex-1 flex-col p-3 sm:p-5">
-        <Badge
-          variant="outline"
-          className="mb-1.5 w-fit text-[10px] text-warm-gray sm:mb-2 sm:text-xs"
-        >
-          {product.categorySlug}
-        </Badge>
-        <h3 className="line-clamp-2 font-heading text-sm font-semibold leading-tight text-cocoa sm:text-xl">
-          {product.name}
-        </h3>
-        <p className="mt-auto pt-2 text-sm font-semibold text-soft-pink sm:pt-3 sm:text-lg">
-          {formatPrice(product.price)}
-        </p>
-        {showRating && averageRating > 0 && (
-          <div className="mt-1 flex items-center gap-1">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={`h-3.5 w-3.5 ${
-                  i < Math.round(averageRating)
-                    ? "fill-amber-400 text-amber-400"
-                    : "fill-none text-warm-gray/40"
-                }`}
-              />
-            ))}
-            <span className="ml-1 text-xs text-warm-gray">({reviewCount})</span>
-          </div>
-        )}
-
-        {/* Mobile action button (always visible, no hover needed) */}
-        {!isOutOfStock && (
-          <div className="mt-2 md:hidden">
-            {isSignedIn ? (
-              <button
-                onClick={handleAddToCart}
-                className="flex w-full items-center justify-center gap-1.5 rounded-full bg-soft-pink/90 px-3 py-2 text-xs font-semibold text-cocoa transition-colors active:bg-soft-pink"
-              >
-                {added ? (
-                  <>
-                    <Check className="h-3.5 w-3.5" />
-                    {t("added")}
-                  </>
-                ) : (
-                  <>
-                    <ShoppingBag className="h-3.5 w-3.5" />
-                    {t("addToCart")}
-                  </>
-                )}
-              </button>
-            ) : (
-              <span className="flex w-full items-center justify-center gap-1.5 rounded-full bg-soft-pink/90 px-3 py-2 text-xs font-semibold text-cocoa">
-                <LogIn className="h-3.5 w-3.5" />
-                {t("signInToAdd")}
-              </span>
-            )}
-          </div>
-        )}
+      {/* Product info — fixed height so all cards match */}
+      <div className="flex h-[140px] flex-col justify-between p-3 sm:h-[160px] sm:p-5">
+        <div>
+          <Badge
+            variant="outline"
+            className="mb-1.5 w-fit text-[10px] text-warm-gray sm:mb-2 sm:text-xs"
+          >
+            {product.categorySlug}
+          </Badge>
+          <h3 className="line-clamp-2 font-heading text-sm font-semibold leading-tight text-cocoa sm:text-xl">
+            {product.name}
+          </h3>
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-soft-pink sm:text-lg">
+            {formatPrice(product.price)}
+          </p>
+          {showRating && averageRating > 0 && (
+            <div className="mt-1 flex items-center gap-1">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  className={`h-3.5 w-3.5 ${
+                    i < Math.round(averageRating)
+                      ? "fill-amber-400 text-amber-400"
+                      : "fill-none text-warm-gray/40"
+                  }`}
+                />
+              ))}
+              <span className="ml-1 text-xs text-warm-gray">({reviewCount})</span>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Mobile action button (always visible, no hover needed) */}
+      {!isOutOfStock && (
+        <div className="px-3 pb-3 md:hidden sm:px-5 sm:pb-5">
+          {isSignedIn ? (
+            <button
+              onClick={handleAddToCart}
+              className="flex w-full items-center justify-center gap-1.5 rounded-full bg-soft-pink/90 px-3 py-2 text-xs font-semibold text-cocoa transition-colors active:bg-soft-pink"
+            >
+              {added ? (
+                <>
+                  <Check className="h-3.5 w-3.5" />
+                  {t("added")}
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="h-3.5 w-3.5" />
+                  {t("addToCart")}
+                </>
+              )}
+            </button>
+          ) : (
+            <span className="flex w-full items-center justify-center gap-1.5 rounded-full bg-soft-pink/90 px-3 py-2 text-xs font-semibold text-cocoa">
+              <LogIn className="h-3.5 w-3.5" />
+              {t("signInToAdd")}
+            </span>
+          )}
+        </div>
+      )}
     </Link>
   );
 }
