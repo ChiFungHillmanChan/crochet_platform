@@ -234,4 +234,6 @@ Escalations: [any, or "none"]
 - 2026-02-26: `useRef<T>()` with no args fails typecheck in strict mode — use `useRef<T>(undefined)` explicitly
 - 2026-02-26: When extracting components (e.g., MobileNav from Navbar), pass translation hooks as props or use `useTranslations` inside the extracted component
 - 2026-02-26: After Lambda security changes, must repackage and redeploy BOTH admin and webhook Lambdas
+- 2026-02-26: NEVER commit real secrets (API keys, webhook secrets, service account keys, passwords) to git — even in documentation files like deploy.md. Always use placeholders like `<from GitHub Secrets>` or `***`. If a secret is accidentally committed, it lives in git history forever until scrubbed with `git filter-repo`. Rotate the secret immediately, scrub history, force push ALL branches, and dismiss GitHub security alerts.
+- 2026-02-26: deploy.md and all .claude/ files must NEVER contain real secret values — only resource IDs, public keys (NEXT_PUBLIC_), and placeholder references to where secrets are stored (GitHub Secrets, Lambda env, Stripe Dashboard)
 -->
