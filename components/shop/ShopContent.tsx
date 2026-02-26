@@ -83,11 +83,12 @@ export default function ShopContent() {
           priority
           sizes="100vw"
         />
+        <div className="absolute inset-0 bg-white/60" />
         <div className="relative text-center">
           <h1 className="font-heading text-3xl font-bold text-cocoa sm:text-4xl">
             {t("title")}
           </h1>
-          <p className="mt-2 text-warm-gray">{t("subtitle")}</p>
+          <p className="mt-2 text-cocoa/70">{t("subtitle")}</p>
         </div>
       </section>
 
