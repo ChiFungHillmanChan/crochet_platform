@@ -47,8 +47,10 @@ jobs:
             --cache-control "public, max-age=31536000, immutable"
       - name: Deploy generated assets (long cache)
         run: |
-          aws s3 sync out/generated/ "s3://${S3_BUCKET}/generated/" \
-            --cache-control "public, max-age=31536000, immutable"
+          if [ -d out/generated ]; then
+            aws s3 sync out/generated/ "s3://${S3_BUCKET}/generated/" \
+              --cache-control "public, max-age=31536000, immutable"
+          fi
       - name: Deploy HTML and other files (no cache)
         run: |
           aws s3 sync out/ "s3://${S3_BUCKET}/" \
