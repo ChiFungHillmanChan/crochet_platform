@@ -9,6 +9,7 @@ import {
   generateWebsiteJsonLd,
   generateOrganizationJsonLd,
 } from "@/lib/structured-data";
+import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 
 const SITE_URL = "https://cosyloops.com";
 
@@ -73,6 +74,7 @@ export default async function LocaleLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: organizationJsonLd }}
         />
+        <AnnouncementBar />
         <div className="flex-1">{children}</div>
         <Footer />
       </ClientProviders>
