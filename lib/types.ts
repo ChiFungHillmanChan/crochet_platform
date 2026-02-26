@@ -26,16 +26,38 @@ export interface OrderItem {
   image: string;
 }
 
+export interface ShippingAddress {
+  line1: string;
+  line2?: string;
+  city: string;
+  postcode: string;
+  country: string;
+}
+
 export interface Order {
   id: string;
   orderNumber: string;
   customerEmail: string;
   customerName: string;
+  customerPhone?: string;
+  shippingAddress?: ShippingAddress;
+  notes?: string;
+  source?: "checkout" | "payment_link";
   items: OrderItem[];
   totalAmount: number;
   status: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
   stripeSessionId: string;
   userId: string;
+  createdAt: Date;
+}
+
+export interface PaymentLink {
+  id: string;
+  stripePaymentLinkId: string;
+  url: string;
+  productName: string;
+  amountPence: number;
+  active: boolean;
   createdAt: Date;
 }
 

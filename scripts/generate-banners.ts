@@ -13,7 +13,7 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-const MODEL = "gemini-2.0-flash-exp";
+const MODEL = "gemini-3-pro-image-preview";
 const OUTPUT_DIR = join(process.cwd(), "public", "banners");
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
@@ -76,8 +76,7 @@ async function generateImage(config: BannerConfig): Promise<void> {
       },
     ],
     generationConfig: {
-      responseModalities: ["IMAGE", "TEXT"],
-      responseMimeType: "image/png",
+      responseModalities: ["TEXT", "IMAGE"],
     },
   };
 

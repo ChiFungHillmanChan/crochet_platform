@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Phone, MapPin, MessageSquare } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { getFirebaseDb } from "@/lib/firebase";
@@ -10,6 +10,7 @@ import { apiPost } from "@/lib/api";
 import { formatPrice } from "@/lib/utils";
 import type { Order } from "@/lib/types";
 import { OrderStatusBadge } from "@/components/shop/OrderStatusBadge";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -76,6 +77,8 @@ export function OrderDetailClient() {
     return <p className="text-warm-gray">Order not found</p>;
   }
 
+  const addr = order.shippingAddress;
+
   return (
     <div className="space-y-6">
       <Link
@@ -86,11 +89,16 @@ export function OrderDetailClient() {
         {t("orders")}
       </Link>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3">
         <h1 className="font-heading text-2xl font-bold text-cocoa">
           #{order.orderNumber}
         </h1>
         <OrderStatusBadge status={order.status} />
+        {order.source && (
+          <Badge variant="outline" className="rounded-full capitalize">
+            {order.source === "payment_link" ? t("sourcePaymentLink") : t("sourceCheckout")}
+          </Badge>
+        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -98,6 +106,12 @@ export function OrderDetailClient() {
           <h2 className="font-heading font-semibold text-cocoa">Customer</h2>
           <p className="text-cocoa">{order.customerName}</p>
           <p className="text-sm text-warm-gray">{order.customerEmail}</p>
+          {order.customerPhone && (
+            <p className="flex items-center gap-2 text-sm text-warm-gray">
+              <Phone className="h-3.5 w-3.5" />
+              {order.customerPhone}
+            </p>
+          )}
           <p className="text-xs text-warm-gray">
             {new Date(order.createdAt).toLocaleString()}
           </p>
@@ -126,6 +140,33 @@ export function OrderDetailClient() {
           </Select>
         </div>
       </div>
+
+      {addr && (
+        <div className="rounded-2xl bg-white p-6 shadow-sm">
+          <h2 className="mb-3 flex items-center gap-2 font-heading font-semibold text-cocoa">
+            <MapPin className="h-4 w-4" />
+            {t("shippingAddress")}
+          </h2>
+          <div className="text-sm text-warm-gray">
+            <p>{addr.line1}</p>
+            {addr.line2 && <p>{addr.line2}</p>}
+            <p>{addr.city}, {addr.postcode}</p>
+            <p>{addr.country}</p>
+          </div>
+        </div>
+      )}
+
+      {order.notes && (
+        <div className="rounded-2xl bg-white p-6 shadow-sm">
+          <h2 className="mb-3 flex items-center gap-2 font-heading font-semibold text-cocoa">
+            <MessageSquare className="h-4 w-4" />
+            {t("customerNotes")}
+          </h2>
+          <p className="text-sm text-warm-gray whitespace-pre-wrap">
+            {order.notes}
+          </p>
+        </div>
+      )}
 
       <div className="rounded-2xl bg-white p-6 shadow-sm">
         <h2 className="mb-4 font-heading font-semibold text-cocoa">Items</h2>
