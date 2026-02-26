@@ -3,9 +3,16 @@ import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 
 if (!getApps().length) {
-  const sa = JSON.parse(
-    Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT, "base64").toString()
-  );
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (!raw) {
+    throw new Error("FIREBASE_SERVICE_ACCOUNT environment variable is required");
+  }
+  let sa;
+  try {
+    sa = JSON.parse(Buffer.from(raw, "base64").toString());
+  } catch (err) {
+    throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT: ${err.message}`);
+  }
   initializeApp({ credential: cert(sa) });
 }
 

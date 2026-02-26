@@ -39,10 +39,14 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
+      - name: Install Lambda dependencies
+        run: |
+          cd lambda
+          npm install --omit=dev
       - name: Package and deploy Admin Lambda
         run: |
           cd lambda
-          zip -r /tmp/admin-lambda.zip admin/ shared/
+          zip -r /tmp/admin-lambda.zip admin/ shared/ node_modules/
           aws lambda update-function-code \
             --function-name "$ADMIN_LAMBDA_NAME" \
             --zip-file fileb:///tmp/admin-lambda.zip \
@@ -50,7 +54,7 @@ jobs:
       - name: Package and deploy Webhook Lambda
         run: |
           cd lambda
-          zip -r /tmp/webhook-lambda.zip webhook/ shared/
+          zip -r /tmp/webhook-lambda.zip webhook/ shared/ node_modules/
           aws lambda update-function-code \
             --function-name "$WEBHOOK_LAMBDA_NAME" \
             --zip-file fileb:///tmp/webhook-lambda.zip \

@@ -1,7 +1,8 @@
 import Stripe from "stripe";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { firebaseAuth, db } from "../shared/firebase-admin.mjs";
+import { db } from "../shared/firebase-admin.mjs";
+import { verifyToken } from "../shared/auth.mjs";
 import { success, error } from "../shared/response.mjs";
 import { getReviews, createReview, updateReview, deleteReview } from "./reviews.mjs";
 import { createPaymentLink, getPaymentLinks, deactivatePaymentLink } from "./payment-links.mjs";
@@ -35,22 +36,17 @@ function isAdmin(email) {
 }
 
 async function verifyAuth(event) {
-  const authHeader = event.headers?.authorization || event.headers?.Authorization || "";
-  const token = authHeader.replace("Bearer ", "");
-  if (!token) return null;
-
-  try {
-    const decoded = await firebaseAuth.verifyIdToken(token);
-    if (!isAdmin(decoded.email)) return null;
-    return decoded;
-  } catch {
-    return null;
-  }
+  const decoded = await verifyToken(event);
+  if (!decoded || !isAdmin(decoded.email)) return null;
+  return decoded;
 }
 
 async function createProduct(body, origin) {
   const { name, slug, description, price, stock, categorySlug, images, isActive } = body;
   if (!name || !slug) return error(400, "Name and slug required", origin);
+
+  const existing = await db.collection("products").where("slug", "==", slug).limit(1).get();
+  if (!existing.empty) return error(409, `Product with slug "${slug}" already exists`, origin);
 
   const ref = await db.collection("products").add({
     name, slug, description: description || "",
@@ -107,12 +103,16 @@ async function getOrders(origin) {
 }
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 async function getUploadUrl(body, origin) {
   const { filename, contentType } = body;
   if (!filename) return error(400, "Filename required", origin);
   if (contentType && !ALLOWED_IMAGE_TYPES.includes(contentType)) {
     return error(400, `Invalid content type. Allowed: ${ALLOWED_IMAGE_TYPES.join(", ")}`, origin);
+  }
+  if (body.fileSize && body.fileSize > MAX_FILE_SIZE) {
+    return error(400, `File too large. Maximum size: ${MAX_FILE_SIZE / 1024 / 1024}MB`, origin);
   }
   if (!R2_ACCOUNT_ID || !R2_BUCKET_NAME) {
     return error(500, "R2 not configured", origin);
@@ -136,25 +136,36 @@ async function getUploadUrl(body, origin) {
 }
 
 async function getDashboardStats(origin) {
-  const [ordersSnap, productsSnap, usersSnap] = await Promise.all([
-    db.collection("orders").get(),
-    db.collection("products").where("isActive", "==", true).get(),
-    db.collection("users").get(),
+  const [statsSnap, productsCount, usersCount, pendingSnap] = await Promise.all([
+    db.doc("stats/dashboard").get(),
+    db.collection("products").where("isActive", "==", true).count().get(),
+    db.collection("users").count().get(),
+    db.collection("orders").where("status", "==", "pending").count().get(),
   ]);
 
-  const orders = ordersSnap.docs.map((d) => d.data());
-  const totalRevenue = orders
-    .filter((o) => o.status === "paid" || o.status === "shipped" || o.status === "delivered")
-    .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-  const pendingOrders = orders.filter((o) => o.status === "pending").length;
+  const stats = statsSnap.exists ? statsSnap.data() : {};
 
   return success({
-    totalOrders: orders.length,
-    totalRevenue,
-    totalProducts: productsSnap.size,
-    pendingOrders,
-    totalUsers: usersSnap.size,
+    totalOrders: stats.totalOrders || 0,
+    totalRevenue: stats.totalRevenue || 0,
+    totalProducts: productsCount.data().count,
+    pendingOrders: pendingSnap.data().count,
+    totalUsers: usersCount.data().count,
   }, origin);
+}
+
+async function setAdminRole(body, origin) {
+  const { userId } = body;
+  if (!userId) return error(400, "userId required", origin);
+
+  const userDoc = await db.collection("users").doc(userId).get();
+  if (!userDoc.exists) return error(404, "User not found", origin);
+
+  const email = userDoc.data().email || "";
+  if (!isAdmin(email)) return error(403, "Email not in admin list", origin);
+
+  await db.collection("users").doc(userId).update({ role: "admin" });
+  return success({ updated: true }, origin);
 }
 
 export async function handler(event) {
@@ -216,6 +227,8 @@ export async function handler(event) {
         return await getPaymentLinks(origin);
       case "deactivate-payment-link":
         return await deactivatePaymentLink(body, origin, stripe);
+      case "set-admin-role":
+        return await setAdminRole(body, origin);
       default:
         return error(400, `Unknown action: ${action}`, origin);
     }

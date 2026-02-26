@@ -8,8 +8,10 @@ import { Footer } from "@/components/layout/Footer";
 import {
   generateWebsiteJsonLd,
   generateOrganizationJsonLd,
+  safeJsonLd,
 } from "@/lib/structured-data";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
+import { LangUpdater } from "@/components/layout/LangUpdater";
 
 const SITE_URL = "https://cosyloops.com";
 
@@ -30,9 +32,12 @@ export async function generateMetadata({
     description: t("seoDescription"),
     alternates: {
       canonical: `${SITE_URL}/${locale}/`,
-      languages: Object.fromEntries(
-        routing.locales.map((l) => [l, `${SITE_URL}/${l}/`])
-      ),
+      languages: {
+        ...Object.fromEntries(
+          routing.locales.map((l) => [l, `${SITE_URL}/${l}/`])
+        ),
+        "x-default": `${SITE_URL}/en/`,
+      },
     },
     openGraph: {
       locale: locale === "en" ? "en_GB" : "zh_HK",
@@ -60,12 +65,13 @@ export default async function LocaleLayout({
 
   // JSON-LD structured data is generated from trusted internal functions,
   // not from user input, so dangerouslySetInnerHTML is safe here.
-  const websiteJsonLd = JSON.stringify(generateWebsiteJsonLd());
-  const organizationJsonLd = JSON.stringify(generateOrganizationJsonLd());
+  const websiteJsonLd = safeJsonLd(generateWebsiteJsonLd());
+  const organizationJsonLd = safeJsonLd(generateOrganizationJsonLd());
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <ClientProviders>
+        <LangUpdater locale={locale} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: websiteJsonLd }}

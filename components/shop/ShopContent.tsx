@@ -17,10 +17,17 @@ import {
 } from "@/components/ui/select";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { generateCollectionPageJsonLd, safeJsonLd } from "@/lib/structured-data";
 import type { Product, Category } from "@/lib/types";
 
 const PAGE_SIZE = 20;
 type SortOption = "newest" | "priceLow" | "priceHigh";
+
+function getLocaleFromUrl(): string {
+  if (typeof window === "undefined") return "en";
+  const match = window.location.pathname.match(/^\/(en|zh-hk)\//);
+  return match?.[1] ?? "en";
+}
 
 export default function ShopContent() {
   const t = useTranslations("shopPage");
@@ -35,6 +42,10 @@ export default function ShopContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const locale = getLocaleFromUrl();
+  // Collection JSON-LD from trusted internal data, sanitized via safeJsonLd
+  const collectionJsonLd = safeJsonLd(generateCollectionPageJsonLd(locale));
 
   useEffect(() => {
     Promise.all([getProducts(), getCategories()])
@@ -87,7 +98,13 @@ export default function ShopContent() {
   }
 
   return (
-    <main className="flex-1">
+    <>
+      {/* Safe: content sanitized via safeJsonLd which escapes < to \u003c */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: collectionJsonLd }}
+      />
+      <main className="flex-1">
       {/* Shop Hero */}
       <section className="relative flex h-[30vh] items-center justify-center overflow-hidden">
         <Image
@@ -241,5 +258,6 @@ export default function ShopContent() {
         )}
       </div>
     </main>
+    </>
   );
 }

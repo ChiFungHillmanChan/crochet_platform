@@ -1,7 +1,10 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { routing, type Locale } from "@/i18n/routing";
+import { buildAlternates, buildOpenGraph } from "@/lib/seo";
 import ShopContent from "@/components/shop/ShopContent";
+
+const SITE_URL = "https://cosyloops.com";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -15,9 +18,17 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "shopPage" });
 
+  const title = t("seoTitle");
+  const description = t("seoDescription");
+
   return {
-    title: t("seoTitle"),
-    description: t("seoDescription"),
+    title,
+    description,
+    alternates: {
+      canonical: `${SITE_URL}/${locale}/shop/`,
+      ...buildAlternates("/shop/"),
+    },
+    openGraph: buildOpenGraph(locale, "/shop/", title, description),
   };
 }
 

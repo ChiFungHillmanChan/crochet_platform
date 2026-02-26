@@ -24,7 +24,7 @@ export async function getReviewsByProduct(
   productId: string
 ): Promise<Review[]> {
   const db = await getFirebaseDb();
-  const { collection, getDocs, query, where, orderBy } = await import(
+  const { collection, getDocs, query, where, orderBy, limit } = await import(
     "firebase/firestore"
   );
 
@@ -32,7 +32,8 @@ export async function getReviewsByProduct(
     collection(db, "reviews"),
     where("productId", "==", productId),
     where("isApproved", "==", true),
-    orderBy("createdAt", "desc")
+    orderBy("createdAt", "desc"),
+    limit(20)
   );
   const snap = await getDocs(q);
   return snap.docs.map((doc) => ({

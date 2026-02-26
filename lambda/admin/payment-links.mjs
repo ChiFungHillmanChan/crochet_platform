@@ -9,11 +9,16 @@ export async function createPaymentLink(body, origin, stripe) {
     return error(400, "productName and amountPence required", origin);
   }
 
+  const parsedAmount = parseInt(amountPence, 10);
+  if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+    return error(400, "amountPence must be a positive integer", origin);
+  }
+
   const product = await stripe.products.create({ name: productName });
 
   const price = await stripe.prices.create({
     product: product.id,
-    unit_amount: amountPence,
+    unit_amount: parsedAmount,
     currency: "gbp",
   });
 
@@ -34,7 +39,7 @@ export async function createPaymentLink(body, origin, stripe) {
     stripePaymentLinkId: paymentLink.id,
     url: paymentLink.url,
     productName,
-    amountPence,
+    amountPence: parsedAmount,
     active: true,
     createdAt: new Date(),
   };

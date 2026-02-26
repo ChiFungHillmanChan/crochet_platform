@@ -13,7 +13,7 @@ export async function getReviews(origin) {
 
 export async function createReview(body, origin) {
   const { productId, authorName, rating, body: reviewBody, isApproved } = body;
-  if (!productId || !authorName || !rating) {
+  if (!productId || !authorName || rating == null) {
     return error(400, "productId, authorName, and rating required", origin);
   }
 

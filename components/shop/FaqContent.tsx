@@ -1,14 +1,28 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { generateFaqPageJsonLd, safeJsonLd } from "@/lib/structured-data";
 
 const FAQ_KEYS = ["1", "2", "3", "4", "5", "6"] as const;
 
 export function FaqContent() {
   const t = useTranslations("faq");
 
+  const faqs = FAQ_KEYS.map((key) => ({
+    question: t(`q${key}`),
+    answer: t(`a${key}`),
+  }));
+  // JSON-LD from trusted i18n strings, sanitized via safeJsonLd (escapes <)
+  const faqJsonLd = safeJsonLd(generateFaqPageJsonLd(faqs));
+
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12">
+    <>
+      {/* Safe: safeJsonLd escapes < to prevent script injection */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: faqJsonLd }}
+      />
+      <main className="mx-auto max-w-3xl px-4 py-12">
       <h1 className="mb-8 font-heading text-3xl font-bold text-cocoa">
         {t("heading")}
       </h1>
@@ -25,5 +39,6 @@ export function FaqContent() {
         ))}
       </div>
     </main>
+    </>
   );
 }

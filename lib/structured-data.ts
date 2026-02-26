@@ -120,6 +120,10 @@ export function generateFaqPageJsonLd(
   };
 }
 
+export function safeJsonLd(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
 export function generateCollectionPageJsonLd(locale: string) {
   return {
     "@context": "https://schema.org",

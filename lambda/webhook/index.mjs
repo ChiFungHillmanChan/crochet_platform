@@ -12,6 +12,8 @@ const SENDER_EMAIL = process.env.SENDER_EMAIL || "noreply@cosyloops.com";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "";
 const ses = new SESClient({ region: process.env.AWS_REGION || "eu-west-2" });
 
+const HANDLED_EVENTS = ["checkout.session.completed"];
+
 function verifyStripeSignature(payload, sigHeader) {
   if (!STRIPE_WEBHOOK_SECRET || !sigHeader) return false;
 
@@ -55,11 +57,18 @@ async function markStripeEvent(eventId, payload, options = {}) {
   await db.doc(`stripeEvents/${eventId}`).set(data, { merge: true });
 }
 
-function generateOrderNumber() {
+async function generateOrderNumber() {
+  const counterRef = db.doc("counters/orders");
+  const result = await db.runTransaction(async (transaction) => {
+    const snap = await transaction.get(counterRef);
+    const current = snap.exists ? (snap.data().count || 0) : 0;
+    const next = current + 1;
+    transaction.set(counterRef, { count: next }, { merge: true });
+    return next;
+  });
   const date = new Date();
   const prefix = `CL${date.getFullYear().toString().slice(-2)}${String(date.getMonth() + 1).padStart(2, "0")}`;
-  const random = Math.random().toString(36).substring(2, 7).toUpperCase();
-  return `${prefix}-${random}`;
+  return `${prefix}-${String(result).padStart(5, "0")}`;
 }
 
 function buildAddressFromMetadata(metadata) {
@@ -95,7 +104,17 @@ async function handleCheckoutCompleted(session) {
     items = [{ productId: "payment-link", name: metadata.productName || "Payment Link Order", price: session.amount_total, quantity: 1 }];
   } else {
     try {
-      items = JSON.parse(metadata.items || "[]");
+      const raw = metadata.items || "";
+      if (raw.startsWith("[")) {
+        // Legacy JSON format
+        items = JSON.parse(raw);
+      } else {
+        // Compact format: slug:qty:price,...
+        items = raw.split(",").filter(Boolean).map(entry => {
+          const [productId, quantity, price] = entry.split(":");
+          return { productId, quantity: parseInt(quantity, 10) || 1, price: parseInt(price, 10) || 0, name: productId };
+        });
+      }
     } catch {
       console.error("Failed to parse items metadata:", metadata.items);
       items = [];
@@ -110,7 +129,7 @@ async function handleCheckoutCompleted(session) {
     : buildAddressFromMetadata(metadata);
   const notes = metadata.notes || "";
 
-  const orderNumber = generateOrderNumber();
+  const orderNumber = await generateOrderNumber();
   const order = {
     orderNumber,
     customerEmail: customerDetails.email || session.customer_email || "",
@@ -130,44 +149,60 @@ async function handleCheckoutCompleted(session) {
   const orderRef = await db.collection("orders").add(order);
   order.id = orderRef.id;
 
-  // Decrement stock atomically for each item (skip for payment link orders)
-  if (!isPaymentLink) {
-    const batch = db.batch();
-    for (const item of items) {
-      const productQuery = await db
-        .collection("products")
-        .where("slug", "==", item.productId)
-        .limit(1)
-        .get();
+  // Update dashboard stats atomically
+  await db.doc("stats/dashboard").set({
+    totalOrders: FieldValue.increment(1),
+    totalRevenue: FieldValue.increment(session.amount_total || 0),
+    lastUpdated: new Date(),
+  }, { merge: true });
 
-      if (!productQuery.empty) {
-        const productDoc = productQuery.docs[0];
-        batch.update(productDoc.ref, {
-          stock: FieldValue.increment(-item.quantity),
-        });
-      }
+  // Decrement stock using transaction with batch query (skip for payment link orders)
+  if (!isPaymentLink && items.length > 0) {
+    const slugs = items.map(i => i.productId).filter(Boolean);
+    if (slugs.length > 0) {
+      const productSnap = await db.collection("products").where("slug", "in", slugs.slice(0, 30)).get();
+      const slugToRef = new Map();
+      productSnap.docs.forEach(d => slugToRef.set(d.data().slug, d.ref));
+
+      await db.runTransaction(async (transaction) => {
+        const reads = [];
+        for (const item of items) {
+          const ref = slugToRef.get(item.productId);
+          if (ref) reads.push({ ref, item, doc: await transaction.get(ref) });
+        }
+        for (const { ref, item, doc: snap } of reads) {
+          const current = snap.data()?.stock ?? 0;
+          if (current >= item.quantity) {
+            transaction.update(ref, { stock: FieldValue.increment(-item.quantity) });
+          } else {
+            console.warn(`Low stock: ${item.productId} has ${current}, need ${item.quantity}. Setting to 0.`);
+            transaction.update(ref, { stock: 0 });
+          }
+        }
+      });
     }
-    await batch.commit();
   }
 
   // Send confirmation email to customer
-  try {
-    const customerEmail = buildOrderConfirmationEmail(order);
-    await ses.send(
-      new SendEmailCommand({
-        Source: SENDER_EMAIL,
-        Destination: { ToAddresses: [order.customerEmail] },
-        Message: {
-          Subject: { Data: customerEmail.subject, Charset: "UTF-8" },
-          Body: {
-            Html: { Data: customerEmail.html, Charset: "UTF-8" },
-            Text: { Data: customerEmail.text, Charset: "UTF-8" },
+  if (order.customerEmail) {
+    try {
+      const customerEmail = buildOrderConfirmationEmail(order);
+      await ses.send(
+        new SendEmailCommand({
+          Source: SENDER_EMAIL,
+          Destination: { ToAddresses: [order.customerEmail] },
+          Message: {
+            Subject: { Data: customerEmail.subject, Charset: "UTF-8" },
+            Body: {
+              Html: { Data: customerEmail.html, Charset: "UTF-8" },
+              Text: { Data: customerEmail.text, Charset: "UTF-8" },
+            },
           },
-        },
-      })
-    );
-  } catch (err) {
-    console.error("Failed to send customer email:", err);
+        })
+      );
+    } catch (err) {
+      console.error("Failed to send customer email:", err);
+    }
   }
 
   // Send notification to admin
@@ -214,6 +249,12 @@ export async function handler(event) {
   const existing = await getProcessedStripeEvent(stripeEvent.id);
   if (existing?.processedAt) {
     return { statusCode: 200, body: JSON.stringify({ received: true, deduplicated: true }) };
+  }
+
+  // Early return for unhandled event types
+  if (!HANDLED_EVENTS.includes(stripeEvent.type)) {
+    await markStripeEvent(stripeEvent.id, { type: stripeEvent.type });
+    return { statusCode: 200, body: JSON.stringify({ received: true, unhandled: true }) };
   }
 
   await markStripeEvent(stripeEvent.id, { type: stripeEvent.type }, { markProcessed: false });

@@ -1,3 +1,8 @@
+function sanitizeText(str) {
+  if (!str) return "";
+  return String(str).replace(/[\r\n\t]/g, " ").trim();
+}
+
 function escapeHtml(str) {
   if (!str) return "";
   return String(str)
@@ -98,7 +103,7 @@ export function buildOrderConfirmationEmail(order) {
   </div>
 </body>
 </html>`,
-    text: `Order Confirmed! #${order.orderNumber}\n\nThank you, ${order.customerName}!\n\n${addressStr ? `Shipping to: ${addressStr}\n` : ""}${order.customerPhone ? `Phone: ${order.customerPhone}\n` : ""}\nTotal: ${total}\n\n${order.notes ? `Notes: ${order.notes}\n\n` : ""}We'll start crafting your order with love.\n\n— Cosy Loops`,
+    text: `Order Confirmed! #${order.orderNumber}\n\nThank you, ${sanitizeText(order.customerName)}!\n\n${addressStr ? `Shipping to: ${sanitizeText(addressStr)}\n` : ""}${order.customerPhone ? `Phone: ${sanitizeText(order.customerPhone)}\n` : ""}\nTotal: ${total}\n\n${order.notes ? `Notes: ${sanitizeText(order.notes)}\n\n` : ""}We'll start crafting your order with love.\n\n— Cosy Loops`,
   };
 }
 
@@ -136,6 +141,6 @@ export function buildAdminNotificationEmail(order) {
   <ul>${order.items.map((i) => `<li>${escapeHtml(i.name)} x${i.quantity} — &pound;${(i.price / 100).toFixed(2)}</li>`).join("")}</ul>
 </body>
 </html>`,
-    text: `New Order #${order.orderNumber} [${sourceLabel}]\nCustomer: ${order.customerName} (${order.customerEmail})\n${order.customerPhone ? `Phone: ${order.customerPhone}\n` : ""}${addressStr ? `Address: ${addressStr}\n` : ""}${order.notes ? `Notes: ${order.notes}\n` : ""}Total: ${total}\n\nItems:\n${itemList}`,
+    text: `New Order #${order.orderNumber} [${sourceLabel}]\nCustomer: ${sanitizeText(order.customerName)} (${sanitizeText(order.customerEmail)})\n${order.customerPhone ? `Phone: ${sanitizeText(order.customerPhone)}\n` : ""}${addressStr ? `Address: ${sanitizeText(addressStr)}\n` : ""}${order.notes ? `Notes: ${sanitizeText(order.notes)}\n` : ""}Total: ${total}\n\nItems:\n${itemList}`,
   };
 }

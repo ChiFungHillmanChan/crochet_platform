@@ -1,7 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { generateBreadcrumbJsonLd } from "@/lib/structured-data";
+import { generateBreadcrumbJsonLd, safeJsonLd } from "@/lib/structured-data";
 
 interface BreadcrumbItem {
   label: string;
@@ -10,21 +10,21 @@ interface BreadcrumbItem {
 
 interface BreadcrumbsProps {
   items: BreadcrumbItem[];
+  locale?: string;
 }
 
 const SITE_URL = "https://cosyloops.com";
 
-export function Breadcrumbs({ items }: BreadcrumbsProps) {
+export function Breadcrumbs({ items, locale }: BreadcrumbsProps) {
+  const localePrefix = locale ? `/${locale}` : "";
   const jsonLdItems = items
     .filter((item) => item.href)
     .map((item) => ({
       name: item.label,
-      url: `${SITE_URL}${item.href}`,
+      url: `${SITE_URL}${localePrefix}${item.href}`,
     }));
 
-  // JSON-LD structured data is generated from trusted internal functions,
-  // not from user input, so dangerouslySetInnerHTML is safe here.
-  const jsonLd = JSON.stringify(generateBreadcrumbJsonLd(jsonLdItems));
+  const jsonLd = safeJsonLd(generateBreadcrumbJsonLd(jsonLdItems));
 
   return (
     <>

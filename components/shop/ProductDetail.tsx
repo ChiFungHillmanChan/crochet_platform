@@ -6,7 +6,7 @@ import { usePathname } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/utils";
-import { generateProductJsonLd } from "@/lib/structured-data";
+import { generateProductJsonLd, safeJsonLd } from "@/lib/structured-data";
 import type { Product } from "@/lib/types";
 import { ImageGallery } from "@/components/shop/ImageGallery";
 import { AddToCartButton } from "@/components/shop/AddToCartButton";
@@ -66,6 +66,44 @@ export function ProductDetail() {
     load();
   }, [pathname]);
 
+  useEffect(() => {
+    if (!product) return;
+    const loc = getLocaleFromUrl();
+    const SITE_URL = "https://cosyloops.com";
+
+    document.title = `${product.name} | Cosy Loops`;
+
+    const setMeta = (name: string, content: string, property = false) => {
+      const attr = property ? "property" : "name";
+      let el = document.querySelector(`meta[${attr}="${name}"]`);
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute(attr, name);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+    };
+
+    setMeta("description", product.description);
+    setMeta("og:title", `${product.name} | Cosy Loops`, true);
+    setMeta("og:description", product.description, true);
+    setMeta("og:url", `${SITE_URL}/${loc}/products/${product.slug}/`, true);
+    if (product.images?.[0]) {
+      setMeta("og:image", product.images[0], true);
+    }
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute(
+      "href",
+      `${SITE_URL}/${loc}/products/${product.slug}/`
+    );
+  }, [product]);
+
   if (loading) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-8">
@@ -100,7 +138,7 @@ export function ProductDetail() {
   const locale = getLocaleFromUrl();
   // JSON-LD structured data generated from trusted internal product data,
   // not from user input, so dangerouslySetInnerHTML is safe here.
-  const productJsonLd = JSON.stringify(generateProductJsonLd(product, locale));
+  const productJsonLd = safeJsonLd(generateProductJsonLd(product, locale));
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
@@ -110,6 +148,7 @@ export function ProductDetail() {
       />
 
       <Breadcrumbs
+        locale={locale}
         items={[
           { label: tc("home"), href: "/" },
           { label: tn("shop"), href: "/shop" },

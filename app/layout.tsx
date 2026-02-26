@@ -90,6 +90,7 @@ export const metadata: Metadata = {
     languages: {
       en: `${SITE_URL}/en/`,
       "zh-hk": `${SITE_URL}/zh-hk/`,
+      "x-default": `${SITE_URL}/en/`,
     },
   },
   verification: {

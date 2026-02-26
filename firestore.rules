@@ -32,5 +32,17 @@ service cloud.firestore {
       allow read: if resource.data.isApproved == true;
       allow write: if false;
     }
+
+    match /paymentLinks/{linkId} {
+      allow read, write: if false;
+    }
+
+    match /stats/{docId} {
+      allow read, write: if false;
+    }
+
+    match /counters/{counterId} {
+      allow read, write: if false;
+    }
   }
 }

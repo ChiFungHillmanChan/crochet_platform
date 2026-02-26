@@ -12,14 +12,15 @@ function docToProduct(doc: QueryDocumentSnapshot): Product {
 
 export async function getProducts(): Promise<Product[]> {
   const db = await getFirebaseDb();
-  const { collection, getDocs, query, where, orderBy } = await import(
+  const { collection, getDocs, query, where, orderBy, limit } = await import(
     "firebase/firestore"
   );
 
   const q = query(
     collection(db, "products"),
     where("isActive", "==", true),
-    orderBy("createdAt", "desc")
+    orderBy("createdAt", "desc"),
+    limit(50)
   );
   const snap = await getDocs(q);
   return snap.docs.map(docToProduct);
@@ -54,6 +55,7 @@ export async function getProductBySlug(
   const q = query(
     collection(db, "products"),
     where("slug", "==", slug),
+    where("isActive", "==", true),
     limit(1)
   );
   const snap = await getDocs(q);

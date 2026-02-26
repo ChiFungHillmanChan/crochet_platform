@@ -12,18 +12,24 @@ interface SitemapRoute {
 
 const routes: SitemapRoute[] = [
   { path: "/", changefreq: "daily", priority: "1.0" },
+  { path: "/shop/", changefreq: "daily", priority: "0.9" },
+  { path: "/about/", changefreq: "monthly", priority: "0.6" },
+  { path: "/faq/", changefreq: "monthly", priority: "0.5" },
+  { path: "/shipping/", changefreq: "monthly", priority: "0.5" },
+  { path: "/contact/", changefreq: "monthly", priority: "0.5" },
   { path: "/account/login/", changefreq: "monthly", priority: "0.3" },
 ];
 
 function generateSitemap(): string {
   const urls = locales.flatMap((locale) =>
     routes.map((route) => {
-      const hreflangs = locales
-        .map(
+      const hreflangs = [
+        ...locales.map(
           (l) =>
             `    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE_URL}/${l}${route.path}" />`
-        )
-        .join("\n");
+        ),
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}/en${route.path}" />`,
+      ].join("\n");
 
       return `  <url>
     <loc>${SITE_URL}/${locale}${route.path}</loc>
