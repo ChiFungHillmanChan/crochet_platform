@@ -25,7 +25,8 @@
     "about": "關於我們",
     "shipping": "運送與退貨",
     "faq": "常見問題",
-    "contact": "聯絡我們"
+    "contact": "聯絡我們",
+    "etsy": "Etsy"
   },
   "home": {
     "title": "Cosy Loops",
@@ -85,7 +86,15 @@
     "paymentDetails": "付款詳情",
     "paymentSecure": "您的付款資料由 Stripe 安全處理。",
     "backToDetails": "返回",
-    "fillDetails": "請填寫您的姓名和電郵。",
+    "phone": "電話號碼",
+    "shippingAddress": "送貨地址",
+    "addressLine1": "地址第一行",
+    "addressLine2": "地址第二行（選填）",
+    "city": "城市",
+    "postcode": "郵遞區號",
+    "notes": "訂單備註",
+    "notesPlaceholder": "任何特別指示或要求...",
+    "fillDetails": "請填寫所有必填欄位（姓名、電郵、電話、地址）。",
     "checkoutFailed": "結帳失敗，請重試。",
     "paymentFailed": "付款失敗，請重試。",
     "comingSoon": "結帳即將推出"
@@ -161,7 +170,25 @@
     "confirmDeleteDescription": "此操作無法撤銷。",
     "productId": "產品",
     "loadError": "載入數據失敗，請重試。",
-    "retry": "重試"
+    "retry": "重試",
+    "paymentLinks": "付款連結",
+    "createPaymentLink": "建立付款連結",
+    "productNameLabel": "產品名稱",
+    "customPrice": "自訂",
+    "priceLabel": "價格（便士）",
+    "linkUrl": "連結網址",
+    "copied": "已複製！",
+    "copyLink": "複製",
+    "deactivate": "停用",
+    "deactivateConfirm": "停用此付款連結？",
+    "deactivateDescription": "此連結將不再接受付款。",
+    "noPaymentLinks": "暫無付款連結。",
+    "source": "來源",
+    "sourceCheckout": "結帳",
+    "sourcePaymentLink": "付款連結",
+    "phone": "電話",
+    "shippingAddress": "送貨地址",
+    "customerNotes": "客戶備註"
   },
   "about": {
     "seoTitle": "關於我們 | Cosy Loops",
@@ -241,6 +268,60 @@
     "responseTime": "我們通常在 24-48 小時內回覆。",
     "socialTitle": "關注我們",
     "socialText": "在社交媒體上關注我們，了解幕後花絮、新產品公告和鉤針靈感。"
+  },
+  "announcement": {
+    "shipping": "訂單滿 £50 英國免費送貨",
+    "newArrivals": "全新手工創作剛剛上架！",
+    "dismiss": "關閉"
+  },
+  "homepage": {
+    "heroHeadline": "每一針都訴說一個故事",
+    "heroSubtitle": "手工鉤針創作，在英國以愛心製造",
+    "heroCta": "立即選購",
+    "newArrivals": "最新上架",
+    "bestSellers": "深受喜愛",
+    "reviewsTitle": "顧客評價",
+    "instagramTitle": "追蹤我們的旅程",
+    "instagramHandle": "@cosyloops",
+    "instagramCta": "追蹤 Instagram",
+    "newsletterTitle": "保持聯繫",
+    "newsletterSubtitle": "獲取新作品更新、幕後花絮和獨家優惠。",
+    "subscribe": "訂閱",
+    "emailPlaceholder": "您的電郵地址",
+    "collectionPlushies": "公仔與玩具",
+    "collectionCharms": "吊飾與鑰匙扣",
+    "collectionHome": "家居與手袋",
+    "viewCollection": "查看系列"
+  },
+  "shopPage": {
+    "seoTitle": "所有商品 | Cosy Loops",
+    "seoDescription": "瀏覽我們的手工鉤針公仔、鑰匙扣、包包掛飾和家居配件系列。",
+    "title": "以愛手工製作",
+    "subtitle": "瀏覽我們獨特的鉤針創作系列",
+    "filterAll": "全部",
+    "sortNewest": "最新",
+    "sortPriceLow": "價格：低至高",
+    "sortPriceHigh": "價格：高至低",
+    "sortPopular": "熱門",
+    "itemCount": "{count, plural, one {1 件商品} other {# 件商品}}",
+    "loadMore": "載入更多",
+    "sortBy": "排序方式"
+  },
+  "productPage": {
+    "ourStory": "我們的故事",
+    "reviews": "評價",
+    "productDetails": "產品詳情",
+    "careInstructions": "護理說明",
+    "careText": "用冷水輕柔手洗。平放晾乾。避免機洗。",
+    "shippingReturns": "運送與退貨",
+    "shippingText": "訂單滿 £50 英國免費送貨。標準送貨 3-5 個工作天。14 天退貨。",
+    "youMightAlsoLove": "你可能也會喜歡",
+    "addToWishlist": "加入願望清單"
+  },
+  "badges": {
+    "new": "新品",
+    "bestSeller": "暢銷",
+    "lowStock": "少量存貨"
   },
   "locale": {
     "en": "EN",

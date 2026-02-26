@@ -5,7 +5,12 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   output: "export",
-  images: { unoptimized: true },
+  images: {
+    unoptimized: true,
+    localPatterns: [
+      { pathname: "/products/**", search: "" },
+    ],
+  },
   trailingSlash: true,
   poweredByHeader: false,
 };

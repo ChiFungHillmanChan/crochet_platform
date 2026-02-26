@@ -7,16 +7,24 @@ import { Link } from "@/i18n/navigation";
 import { useCartStore } from "@/stores/cartStore";
 import { useAuth } from "@/lib/auth-context";
 import { formatPrice } from "@/lib/utils";
+import { getOptimizedImageUrl } from "@/lib/image-utils";
 import { apiPost } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import CheckoutDetailsForm from "./CheckoutDetailsForm";
+import type { CheckoutDetails } from "./CheckoutDetailsForm";
 import CheckoutPaymentForm from "./CheckoutPaymentForm";
 
 type Phase = "details" | "payment";
+
+const EMPTY_DETAILS: CheckoutDetails = {
+  name: "",
+  email: "",
+  phone: "",
+  shippingAddress: { line1: "", line2: "", city: "", postcode: "", country: "GB" },
+  notes: "",
+};
 
 export default function CheckoutContent() {
   const t = useTranslations("checkout");
@@ -25,8 +33,10 @@ export default function CheckoutContent() {
   const items = useCartStore((s) => s.items);
   const totalPrice = useCartStore((s) => s.totalPrice);
   const { user } = useAuth();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState(user?.email ?? "");
+  const [details, setDetails] = useState<CheckoutDetails>({
+    ...EMPTY_DETAILS,
+    email: user?.email ?? "",
+  });
   const [phase, setPhase] = useState<Phase>("details");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
@@ -47,7 +57,8 @@ export default function CheckoutContent() {
   }
 
   async function handleContinueToPayment() {
-    if (!name.trim() || !email.trim()) {
+    const { name, email, phone, shippingAddress } = details;
+    if (!name.trim() || !email.trim() || !phone.trim() || !shippingAddress.line1.trim() || !shippingAddress.city.trim() || !shippingAddress.postcode.trim()) {
       toast.error(t("fillDetails"));
       return;
     }
@@ -67,6 +78,9 @@ export default function CheckoutContent() {
           userId: user?.uid ?? "",
           customerName: name,
           customerEmail: email,
+          customerPhone: phone,
+          shippingAddress,
+          notes: details.notes,
           locale,
         },
         { requireAuth: false }
@@ -88,15 +102,12 @@ export default function CheckoutContent() {
       </h1>
 
       <div className="grid gap-8 md:grid-cols-2">
-        {/* Left column: details form or payment form */}
         <div className="space-y-6">
           {phase === "details" ? (
-            <DetailsForm
-              name={name}
-              email={email}
+            <CheckoutDetailsForm
+              details={details}
               processing={processing}
-              onNameChange={setName}
-              onEmailChange={setEmail}
+              onChange={setDetails}
               onContinue={handleContinueToPayment}
             />
           ) : clientSecret ? (
@@ -107,72 +118,9 @@ export default function CheckoutContent() {
           ) : null}
         </div>
 
-        {/* Right column: order summary */}
         <OrderSummary items={items} totalPrice={totalPrice()} />
       </div>
     </main>
-  );
-}
-
-function DetailsForm({
-  name,
-  email,
-  processing,
-  onNameChange,
-  onEmailChange,
-  onContinue,
-}: {
-  name: string;
-  email: string;
-  processing: boolean;
-  onNameChange: (v: string) => void;
-  onEmailChange: (v: string) => void;
-  onContinue: () => void;
-}) {
-  const t = useTranslations("checkout");
-
-  return (
-    <>
-      <h2 className="font-heading text-lg font-semibold text-cocoa">
-        {t("customerDetails")}
-      </h2>
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="name">{t("name")}</Label>
-          <Input
-            id="name"
-            value={name}
-            onChange={(e) => onNameChange(e.target.value)}
-            className="rounded-xl"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">{t("email")}</Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => onEmailChange(e.target.value)}
-            className="rounded-xl"
-          />
-        </div>
-      </div>
-      <Button
-        onClick={onContinue}
-        disabled={processing}
-        className="w-full rounded-full bg-soft-pink text-cocoa hover:bg-soft-pink/80"
-        size="lg"
-      >
-        {processing ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {t("processing")}
-          </>
-        ) : (
-          t("continueToPayment")
-        )}
-      </Button>
-    </>
   );
 }
 
@@ -205,7 +153,7 @@ function OrderSummary({
             <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-white">
               {item.image ? (
                 <Image
-                  src={item.image}
+                  src={getOptimizedImageUrl(item.image, "thumb")}
                   alt={item.name}
                   fill
                   className="object-cover"

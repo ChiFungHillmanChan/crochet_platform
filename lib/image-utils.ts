@@ -21,7 +21,7 @@ export function getOptimizedImageUrl(
 
   const name = filename.replace(/\.(jpg|jpeg|png)$/i, "");
   // Cache-bust version — increment when images are re-processed
-  return `/products/${variant}/${name}.webp?v=4`;
+  return `/products/${variant}/${name}.webp?v=5`;
 }
 
 /**

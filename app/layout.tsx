@@ -114,9 +114,12 @@ export default function RootLayout({
         <link rel="preconnect" href="https://firestore.googleapis.com" />
         <link rel="preconnect" href="https://identitytoolkit.googleapis.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />
+        <link rel="preconnect" href="https://pub-ae88baaaf33e44938f1264f28d62ec7c.r2.dev" />
         <link rel="icon" href="/favicon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/generated/icon-removebg-preview.png" />
         <link rel="manifest" href="/manifest.json" />
+        <meta name="application-name" content="Cosy Loops" />
+        <meta name="apple-mobile-web-app-title" content="Cosy Loops" />
       </head>
       <body className="flex min-h-screen flex-col">{children}</body>
     </html>

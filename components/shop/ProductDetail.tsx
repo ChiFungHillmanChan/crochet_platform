@@ -2,16 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/utils";
+import { generateProductJsonLd } from "@/lib/structured-data";
 import type { Product } from "@/lib/types";
 import { ImageGallery } from "@/components/shop/ImageGallery";
 import { AddToCartButton } from "@/components/shop/AddToCartButton";
 import { QuantitySelector } from "@/components/shop/QuantitySelector";
-import { ReviewSection } from "@/components/shop/ReviewSection";
 import { RelatedProducts } from "@/components/shop/RelatedProducts";
+import { ProductTabs } from "@/components/shop/ProductTabs";
+import { ProductAccordion } from "@/components/shop/ProductAccordion";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -19,7 +21,6 @@ import { Skeleton } from "@/components/ui/skeleton";
  *  because the static placeholder page bakes "placeholder" into RSC params. */
 function getSlugFromUrl(): string | null {
   if (typeof window === "undefined") return null;
-  // URL pattern: /{locale}/products/{slug}/
   const match = window.location.pathname.match(
     /\/(?:en|zh-hk)\/products\/([^/]+)/
   );
@@ -27,8 +28,15 @@ function getSlugFromUrl(): string | null {
   return slug === "placeholder" ? null : slug;
 }
 
+function getLocaleFromUrl(): string {
+  if (typeof window === "undefined") return "en";
+  const match = window.location.pathname.match(/^\/(en|zh-hk)\//);
+  return match?.[1] ?? "en";
+}
+
 export function ProductDetail() {
   const t = useTranslations("product");
+  const tp = useTranslations("productPage");
   const ts = useTranslations("shop");
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,7 +64,7 @@ export function ProductDetail() {
   if (loading) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-8">
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-8 lg:grid-cols-[3fr_2fr]">
           <Skeleton className="aspect-square rounded-2xl" />
           <div className="space-y-4">
             <Skeleton className="h-8 w-3/4" />
@@ -84,17 +92,31 @@ export function ProductDetail() {
     );
   }
 
+  const locale = getLocaleFromUrl();
+  // JSON-LD structured data generated from trusted internal product data,
+  // not from user input, so dangerouslySetInnerHTML is safe here.
+  const productJsonLd = JSON.stringify(generateProductJsonLd(product, locale));
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
-      <Link
-        href="/"
-        className="mb-6 inline-flex items-center gap-2 text-sm text-warm-gray hover:text-cocoa"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        {t("backToShop")}
-      </Link>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: productJsonLd }}
+      />
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Shop", href: "/shop" },
+          {
+            label: product.categorySlug,
+            href: `/shop?category=${product.categorySlug}`,
+          },
+          { label: product.name },
+        ]}
+      />
+
+      <div className="grid gap-8 lg:grid-cols-[3fr_2fr]">
         <ImageGallery images={product.images} productName={product.name} />
 
         <div className="space-y-6">
@@ -134,8 +156,26 @@ export function ProductDetail() {
         </div>
       </div>
 
-      <ReviewSection productId={product.id} />
-      <RelatedProducts categorySlug={product.categorySlug} excludeId={product.id} />
+      <div className="mt-12">
+        <ProductTabs
+          description={product.description}
+          productId={product.id}
+        />
+      </div>
+
+      <div className="mt-8">
+        <ProductAccordion description={product.description} />
+      </div>
+
+      <div className="mt-12">
+        <h2 className="mb-6 font-heading text-2xl font-bold text-cocoa">
+          {tp("youMightAlsoLove")}
+        </h2>
+        <RelatedProducts
+          categorySlug={product.categorySlug}
+          excludeId={product.id}
+        />
+      </div>
     </main>
   );
 }
