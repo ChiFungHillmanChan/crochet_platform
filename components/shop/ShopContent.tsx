@@ -15,8 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { Product, Category } from "@/lib/types";
 
+const PAGE_SIZE = 20;
 type SortOption = "newest" | "priceLow" | "priceHigh";
 
 export default function ShopContent() {
@@ -26,6 +29,7 @@ export default function ShopContent() {
 
   const activeCategory = searchParams.get("category") ?? "";
   const activeSort = (searchParams.get("sort") ?? "newest") as SortOption;
+  const currentPage = Math.max(1, Number(searchParams.get("page") ?? "1"));
 
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -61,12 +65,22 @@ export default function ShopContent() {
     return result;
   }, [products, activeCategory, activeSort]);
 
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
   function updateParams(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
     if (value) {
       params.set(key, value);
     } else {
       params.delete(key);
+    }
+    // Reset to page 1 when changing filter/sort
+    if (key !== "page") {
+      params.delete("page");
     }
     router.push(`/shop/?${params.toString()}`);
   }
@@ -168,7 +182,7 @@ export default function ShopContent() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {filtered.map((product, i) => (
+            {paginated.map((product, i) => (
               <ProductCard key={product.id} product={product} priority={i < 4} />
             ))}
           </div>
@@ -178,6 +192,45 @@ export default function ShopContent() {
           <p className="py-20 text-center text-warm-gray">
             No products found.
           </p>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-10 flex items-center justify-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full border-blush"
+              disabled={currentPage <= 1}
+              onClick={() => updateParams("page", String(currentPage - 1))}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <Button
+                key={i}
+                variant={currentPage === i + 1 ? "default" : "outline"}
+                size="icon"
+                className={`rounded-full ${
+                  currentPage === i + 1
+                    ? "bg-soft-pink text-cocoa hover:bg-soft-pink/80"
+                    : "border-blush text-warm-gray hover:bg-blush/20"
+                }`}
+                onClick={() => updateParams("page", String(i + 1))}
+              >
+                {i + 1}
+              </Button>
+            ))}
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full border-blush"
+              disabled={currentPage >= totalPages}
+              onClick={() => updateParams("page", String(currentPage + 1))}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         )}
       </div>
     </main>
