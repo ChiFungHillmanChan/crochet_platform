@@ -42,10 +42,11 @@ echo "Role ARN: $ROLE_ARN"
 # Package and deploy webhook Lambda
 echo "--- Deploying Webhook Lambda ---"
 WEBHOOK_DIR=$(mktemp -d)
-cp lambda/webhook/index.mjs "$WEBHOOK_DIR/"
-cp lambda/webhook/emails.mjs "$WEBHOOK_DIR/"
-cp lambda/shared/firebase-admin.mjs "$WEBHOOK_DIR/"
-cp lambda/shared/response.mjs "$WEBHOOK_DIR/"
+mkdir -p "$WEBHOOK_DIR/webhook" "$WEBHOOK_DIR/shared"
+cp lambda/webhook/index.mjs "$WEBHOOK_DIR/webhook/"
+cp lambda/webhook/emails.mjs "$WEBHOOK_DIR/webhook/"
+cp lambda/shared/firebase-admin.mjs "$WEBHOOK_DIR/shared/"
+cp lambda/shared/response.mjs "$WEBHOOK_DIR/shared/"
 (cd "$WEBHOOK_DIR" && npm init -y --quiet && npm install firebase-admin @aws-sdk/client-ses stripe --quiet)
 (cd "$WEBHOOK_DIR" && zip -r webhook.zip . -q)
 
@@ -71,9 +72,12 @@ echo "Webhook Lambda deployed."
 # Package and deploy admin Lambda
 echo "--- Deploying Admin Lambda ---"
 ADMIN_DIR=$(mktemp -d)
-cp lambda/admin/index.mjs "$ADMIN_DIR/"
-cp lambda/shared/firebase-admin.mjs "$ADMIN_DIR/"
-cp lambda/shared/response.mjs "$ADMIN_DIR/"
+mkdir -p "$ADMIN_DIR/admin" "$ADMIN_DIR/shared"
+cp lambda/admin/index.mjs "$ADMIN_DIR/admin/"
+cp lambda/admin/checkout.mjs "$ADMIN_DIR/admin/"
+cp lambda/admin/reviews.mjs "$ADMIN_DIR/admin/"
+cp lambda/shared/firebase-admin.mjs "$ADMIN_DIR/shared/"
+cp lambda/shared/response.mjs "$ADMIN_DIR/shared/"
 (cd "$ADMIN_DIR" && npm init -y --quiet && npm install firebase-admin stripe @aws-sdk/s3-request-presigner @aws-sdk/client-s3 --quiet)
 (cd "$ADMIN_DIR" && zip -r admin.zip . -q)
 
