@@ -9,17 +9,30 @@ import { formatPrice } from "@/lib/utils";
 import { getOptimizedImageUrl, getBlurDataUrl } from "@/lib/image-utils";
 import type { Product } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
+import { ProductBadge } from "@/components/shop/ProductBadge";
 import { useAuth } from "@/lib/auth-context";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
+import { Star } from "lucide-react";
 
 interface ProductCardProps {
   product: Product;
   /** Cards with index < 3 load eagerly (above the fold). */
   priority?: boolean;
+  badge?: "new" | "bestSeller" | "lowStock";
+  showRating?: boolean;
+  averageRating?: number;
+  reviewCount?: number;
 }
 
-export function ProductCard({ product, priority = false }: ProductCardProps) {
+export function ProductCard({
+  product,
+  priority = false,
+  badge,
+  showRating = false,
+  averageRating = 0,
+  reviewCount = 0,
+}: ProductCardProps) {
   const t = useTranslations("shop");
   const { user, loading: authLoading } = useAuth();
   const addItem = useCartStore((s) => s.addItem);
@@ -74,6 +87,9 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
             <span className="text-4xl sm:text-5xl">🧶</span>
           </div>
         )}
+
+        {/* Product badge */}
+        {badge && !isOutOfStock && <ProductBadge type={badge} />}
 
         {/* Out of stock badge */}
         {isOutOfStock && (
@@ -131,6 +147,21 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         <p className="mt-auto pt-2 text-sm font-semibold text-soft-pink sm:pt-3 sm:text-lg">
           {formatPrice(product.price)}
         </p>
+        {showRating && averageRating > 0 && (
+          <div className="mt-1 flex items-center gap-1">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`h-3.5 w-3.5 ${
+                  i < Math.round(averageRating)
+                    ? "fill-amber-400 text-amber-400"
+                    : "fill-none text-warm-gray/40"
+                }`}
+              />
+            ))}
+            <span className="ml-1 text-xs text-warm-gray">({reviewCount})</span>
+          </div>
+        )}
 
         {/* Mobile action button (always visible, no hover needed) */}
         {!isOutOfStock && (
