@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/utils";
@@ -36,16 +37,18 @@ function getLocaleFromUrl(): string {
 
 export function ProductDetail() {
   const t = useTranslations("product");
-  const tp = useTranslations("productPage");
   const ts = useTranslations("shop");
   const tc = useTranslations("common");
   const tn = useTranslations("nav");
+  const pathname = usePathname();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     async function load() {
+      setLoading(true);
+      setQuantity(1);
       const slug = getSlugFromUrl();
       if (!slug) {
         setLoading(false);
@@ -61,7 +64,7 @@ export function ProductDetail() {
       }
     }
     load();
-  }, []);
+  }, [pathname]);
 
   if (loading) {
     return (
@@ -169,15 +172,10 @@ export function ProductDetail() {
         <ProductAccordion description={product.description} />
       </div>
 
-      <div className="mt-12">
-        <h2 className="mb-6 font-heading text-2xl font-bold text-cocoa">
-          {tp("youMightAlsoLove")}
-        </h2>
-        <RelatedProducts
-          categorySlug={product.categorySlug}
-          excludeId={product.id}
-        />
-      </div>
+      <RelatedProducts
+        categorySlug={product.categorySlug}
+        excludeId={product.id}
+      />
     </main>
   );
 }
