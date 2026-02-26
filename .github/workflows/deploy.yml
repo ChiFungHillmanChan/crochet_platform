@@ -20,6 +20,8 @@ jobs:
       NEXT_PUBLIC_ADMIN_EMAILS: ${{ secrets.NEXT_PUBLIC_ADMIN_EMAILS }}
       S3_BUCKET: ${{ secrets.S3_BUCKET }}
       CF_DISTRIBUTION_ID: ${{ secrets.CF_DISTRIBUTION_ID }}
+      ADMIN_LAMBDA_NAME: cosy-loops-admin
+      WEBHOOK_LAMBDA_NAME: cosy-loops-webhook
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -37,6 +39,22 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
+      - name: Package and deploy Admin Lambda
+        run: |
+          cd lambda
+          zip -r /tmp/admin-lambda.zip admin/ shared/
+          aws lambda update-function-code \
+            --function-name "$ADMIN_LAMBDA_NAME" \
+            --zip-file fileb:///tmp/admin-lambda.zip \
+            --region eu-west-2
+      - name: Package and deploy Webhook Lambda
+        run: |
+          cd lambda
+          zip -r /tmp/webhook-lambda.zip webhook/ shared/
+          aws lambda update-function-code \
+            --function-name "$WEBHOOK_LAMBDA_NAME" \
+            --zip-file fileb:///tmp/webhook-lambda.zip \
+            --region eu-west-2
       - name: Deploy static assets (long cache)
         run: |
           aws s3 sync out/_next/ "s3://${S3_BUCKET}/_next/" \
