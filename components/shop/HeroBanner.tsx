@@ -25,11 +25,11 @@ export function HeroBanner() {
         </picture>
       </div>
 
-      {/* Gradient overlay for text readability — right side */}
-      <div className="absolute inset-0 bg-gradient-to-l from-white/80 via-white/60 to-transparent md:from-white/70 md:via-white/40" />
+      {/* Gradient overlay — bottom on mobile, right on desktop */}
+      <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-white/50 to-transparent md:bg-gradient-to-l md:from-white/80 md:via-white/50 md:to-transparent" />
 
-      {/* Text content overlay — right-aligned */}
-      <div className="relative flex min-h-[70vh] items-center">
+      {/* Desktop: text right-aligned, vertically centered */}
+      <div className="relative hidden min-h-[70vh] items-center md:flex">
         <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12">
           <div className="ml-auto max-w-lg space-y-6 text-right">
             <Image
@@ -38,7 +38,7 @@ export function HeroBanner() {
               width={72}
               height={72}
               className="ml-auto drop-shadow-md"
-              priority
+              loading="eager"
             />
             <h1 className="font-heading text-4xl font-bold text-cocoa md:text-5xl lg:text-6xl">
               {t("heroHeadline")}
@@ -55,6 +55,34 @@ export function HeroBanner() {
               </Button>
             </Link>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile: text at bottom, centered */}
+      <div className="relative flex min-h-[70vh] items-end md:hidden">
+        <div className="w-full px-6 pb-10 pt-4 text-center">
+          <Image
+            src="/generated/icon-removebg-preview.png"
+            alt="Cosy Loops"
+            width={56}
+            height={56}
+            className="mx-auto mb-4 drop-shadow-md"
+            loading="eager"
+          />
+          <h1 className="font-heading text-3xl font-bold text-cocoa">
+            {t("heroHeadline")}
+          </h1>
+          <p className="mt-2 text-base text-cocoa/70">
+            {t("heroSubtitle")}
+          </p>
+          <Link href="/shop">
+            <Button
+              size="lg"
+              className="mt-4 rounded-full bg-soft-pink px-8 text-cocoa shadow-md"
+            >
+              {t("heroCta")}
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
