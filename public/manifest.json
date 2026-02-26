@@ -1,0 +1,17 @@
+{
+  "name": "Cosy Loops — Handmade Crochet",
+  "short_name": "Cosy Loops",
+  "description": "Adorable handmade crochet creations, lovingly crafted in the UK.",
+  "start_url": "/en/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#F8C8DC",
+  "icons": [
+    {
+      "src": "/generated/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
