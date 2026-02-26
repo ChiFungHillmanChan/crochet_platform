@@ -17,9 +17,9 @@ if (!getApps().length) {
 const db = getFirestore();
 
 const categories = [
-  { name: "Animals", slug: "animals", sortOrder: 1 },
-  { name: "Accessories", slug: "accessories", sortOrder: 2 },
-  { name: "Keychains", slug: "keychains", sortOrder: 3 },
+  { name: "Plushies & Toys", slug: "plushies", sortOrder: 1 },
+  { name: "Charms & Keychains", slug: "charms", sortOrder: 2 },
+  { name: "Home & Bags", slug: "home", sortOrder: 3 },
 ];
 
 interface SeedProduct {
@@ -43,7 +43,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "accessories",
+    categorySlug: "home",
     images: ["/products/rainbow-hanging-planter.jpg"],
   },
   {
@@ -54,7 +54,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "accessories",
+    categorySlug: "home",
     images: ["/products/pink-sunset-hanging-planter.jpg"],
   },
   {
@@ -65,7 +65,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "accessories",
+    categorySlug: "home",
     images: ["/products/autumn-stripe-hanging-planter.jpg"],
   },
   {
@@ -76,7 +76,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "accessories",
+    categorySlug: "home",
     images: ["/products/lavender-velvet-scrunchie.jpg"],
   },
   {
@@ -87,7 +87,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "accessories",
+    categorySlug: "home",
     images: ["/products/coral-velvet-scrunchie.jpg"],
   },
   {
@@ -98,7 +98,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "accessories",
+    categorySlug: "home",
     images: ["/products/festive-scrunchie-rwb.jpg"],
   },
   {
@@ -109,7 +109,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "accessories",
+    categorySlug: "home",
     images: [
       "/products/cloud-friends-airpods-case-1.jpg",
       "/products/cloud-friends-airpods-case-2.jpg",
@@ -123,7 +123,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "accessories",
+    categorySlug: "home",
     images: [
       "/products/drawstring-pouch-1.jpg",
       "/products/drawstring-pouch-2.jpg",
@@ -140,7 +140,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "accessories",
+    categorySlug: "home",
     images: [
       "/products/crochet-tote-bag-sunset-stripe-1.png",
       "/products/crochet-tote-bag-sunset-stripe-2.png",
@@ -156,7 +156,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "keychains",
+    categorySlug: "charms",
     images: ["/products/christmas-bell-bag-charm.jpg"],
   },
   {
@@ -167,7 +167,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "keychains",
+    categorySlug: "charms",
     images: ["/products/christmas-wreath-keyring.jpg"],
   },
   {
@@ -178,7 +178,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "keychains",
+    categorySlug: "charms",
     images: ["/products/lily-of-the-valley-bag-charm.jpg"],
   },
   {
@@ -189,7 +189,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "keychains",
+    categorySlug: "charms",
     images: ["/products/chinese-lantern-bag-charm.jpg"],
   },
   // ── Animals ──
@@ -201,7 +201,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "animals",
+    categorySlug: "plushies",
     images: [
       "/products/alice-wonderland-bunny-1.jpg",
       "/products/alice-wonderland-bunny-2.jpg",
@@ -215,7 +215,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "animals",
+    categorySlug: "plushies",
     images: [
       "/products/capybara-sunflower-1.jpg",
       "/products/capybara-sunflower-2.jpg",
@@ -229,7 +229,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "animals",
+    categorySlug: "plushies",
     images: [
       "/products/floppy-ear-bunny-pink-hat-1.jpg",
       "/products/floppy-ear-bunny-pink-hat-2.png",
@@ -243,7 +243,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "animals",
+    categorySlug: "plushies",
     images: [
       "/products/floppy-ear-bunny-green-overalls-1.jpg",
       "/products/floppy-ear-bunny-green-overalls-2.jpg",
@@ -257,7 +257,7 @@ const products: SeedProduct[] = [
     price: 2000,
     stock: 5,
     isActive: true,
-    categorySlug: "animals",
+    categorySlug: "plushies",
     images: ["/products/mini-jellyfish-couple.png"],
   },
 ];

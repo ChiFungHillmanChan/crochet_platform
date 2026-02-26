@@ -19,20 +19,20 @@ export function CollectionCard({
   return (
     <Link
       href={href}
-      className="group block overflow-hidden rounded-2xl shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+      className="group block overflow-hidden rounded-xl shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg sm:rounded-2xl"
     >
-      <div className="relative aspect-[4/5] overflow-hidden">
+      <div className="relative aspect-square overflow-hidden sm:aspect-[4/5]">
         <Image
           src={imageSrc}
           alt={imageAlt}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 33vw"
+          sizes="(max-width: 640px) 33vw, (max-width: 1024px) 33vw, 33vw"
           loading="lazy"
         />
       </div>
-      <div className="bg-white px-4 py-3">
-        <span className="font-heading text-base font-semibold text-cocoa underline decoration-soft-pink decoration-2 underline-offset-4 group-hover:decoration-cocoa">
+      <div className="bg-white px-2 py-2 sm:px-4 sm:py-3">
+        <span className="font-heading text-xs font-semibold text-cocoa underline decoration-soft-pink decoration-2 underline-offset-4 group-hover:decoration-cocoa sm:text-base">
           {title}
         </span>
       </div>

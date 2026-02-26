@@ -67,7 +67,7 @@ export default async function HomePage({
 
       {/* Collection Feature Cards */}
       <section className="py-[60px]">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 sm:grid-cols-3 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-3 gap-3 px-4 sm:gap-6 sm:px-6 lg:px-8">
           <CollectionCard
             title={t("collectionPlushies")}
             href="/shop?category=plushies"

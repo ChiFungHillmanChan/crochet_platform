@@ -26,7 +26,7 @@ export function generateOrganizationJsonLd() {
       "@type": "PostalAddress",
       addressCountry: "GB",
     },
-    sameAs: ["https://www.instagram.com/cosyloops"],
+    sameAs: ["https://www.instagram.com/littleyinshop_/"],
   };
 }
 
