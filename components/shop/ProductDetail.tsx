@@ -38,6 +38,8 @@ export function ProductDetail() {
   const t = useTranslations("product");
   const tp = useTranslations("productPage");
   const ts = useTranslations("shop");
+  const tc = useTranslations("common");
+  const tn = useTranslations("nav");
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -106,8 +108,8 @@ export function ProductDetail() {
 
       <Breadcrumbs
         items={[
-          { label: "Home", href: "/" },
-          { label: "Shop", href: "/shop" },
+          { label: tc("home"), href: "/" },
+          { label: tn("shop"), href: "/shop" },
           {
             label: product.categorySlug,
             href: `/shop?category=${product.categorySlug}`,

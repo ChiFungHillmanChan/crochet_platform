@@ -100,12 +100,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Create user doc if first-time Google sign-in
     const snap = await getDoc(doc(db, "users", result.user.uid));
     if (!snap.exists()) {
-      const ADMIN_EMAILS = [
-        "hillmanchan709@gmail.com",
-        "choysy@gmail.com",
-      ];
+      const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "")
+        .split(",")
+        .map((e) => e.trim().toLowerCase());
       const email = result.user.email ?? "";
-      const role = ADMIN_EMAILS.includes(email.toLowerCase())
+      const role = adminEmails.includes(email.toLowerCase())
         ? "admin"
         : "customer";
       await setDoc(doc(db, "users", result.user.uid), {

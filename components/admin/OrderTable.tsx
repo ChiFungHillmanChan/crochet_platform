@@ -25,11 +25,11 @@ export function OrderTable({ orders }: OrderTableProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Order #</TableHead>
-          <TableHead>Customer</TableHead>
+          <TableHead>{t("orderNumber")}</TableHead>
+          <TableHead>{t("customer")}</TableHead>
           <TableHead>{t("status")}</TableHead>
           <TableHead className="text-right">{t("price")}</TableHead>
-          <TableHead>Date</TableHead>
+          <TableHead>{t("date")}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
