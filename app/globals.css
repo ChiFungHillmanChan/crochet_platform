@@ -128,3 +128,76 @@ section[id],
 img {
   decoding: async;
 }
+
+/* ── Scroll Reveal Animations ── */
+.scroll-reveal {
+  will-change: transform, opacity;
+  transition-property: transform, opacity;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-fade-up {
+  opacity: 0;
+  transform: translateY(32px);
+}
+.scroll-reveal-fade-in {
+  opacity: 0;
+}
+.scroll-reveal-fade-left {
+  opacity: 0;
+  transform: translateX(40px);
+}
+.scroll-reveal-fade-right {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+.scroll-reveal-scale-in {
+  opacity: 0;
+  transform: scale(0.92);
+}
+
+.scroll-revealed.scroll-reveal-fade-up {
+  opacity: 1;
+  transform: translateY(0);
+}
+.scroll-revealed.scroll-reveal-fade-in {
+  opacity: 1;
+}
+.scroll-revealed.scroll-reveal-fade-left {
+  opacity: 1;
+  transform: translateX(0);
+}
+.scroll-revealed.scroll-reveal-fade-right {
+  opacity: 1;
+  transform: translateX(0);
+}
+.scroll-revealed.scroll-reveal-scale-in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Hero parallax layer */
+.hero-parallax {
+  will-change: transform;
+}
+
+/* Hero text entrance — starts hidden, animates on load */
+.hero-text {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hero-text-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Reduced motion: skip all scroll animations */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -7,11 +8,51 @@ import { Button } from "@/components/ui/button";
 
 export function HeroBanner() {
   const t = useTranslations("homepage");
+  const bgRef = useRef<HTMLDivElement>(null);
+  const textDesktopRef = useRef<HTMLDivElement>(null);
+  const textMobileRef = useRef<HTMLDivElement>(null);
+
+  // Subtle parallax on hero background
+  const handleScroll = useCallback(() => {
+    const el = bgRef.current;
+    if (!el) return;
+    const scrollY = window.scrollY;
+    // Only parallax while hero is visible
+    if (scrollY > window.innerHeight) return;
+    el.style.transform = `translateY(${scrollY * 0.25}px)`;
+  }, []);
+
+  useEffect(() => {
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReduced) return;
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Entrance animation for hero text
+    const animate = (el: HTMLElement | null) => {
+      if (!el) return;
+      requestAnimationFrame(() => {
+        el.classList.add("hero-text-visible");
+      });
+    };
+    // Small delay so the entrance feels intentional
+    const timer = setTimeout(() => {
+      animate(textDesktopRef.current);
+      animate(textMobileRef.current);
+    }, 200);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(timer);
+    };
+  }, [handleScroll]);
 
   return (
     <section className="relative min-h-[70vh] overflow-hidden">
-      {/* Full-width background image */}
-      <div className="absolute inset-0">
+      {/* Full-width background image with parallax */}
+      <div ref={bgRef} className="absolute inset-0 hero-parallax">
         <picture>
           <source
             media="(max-width: 768px)"
@@ -31,7 +72,10 @@ export function HeroBanner() {
       {/* Desktop: text right-aligned, vertically centered */}
       <div className="relative hidden min-h-[70vh] items-center md:flex">
         <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12">
-          <div className="ml-auto max-w-lg space-y-6 text-right">
+          <div
+            ref={textDesktopRef}
+            className="hero-text ml-auto max-w-lg space-y-6 text-right"
+          >
             <Image
               src="/icons/icon-removebg-preview.png"
               alt="Cosy Loops"
@@ -60,7 +104,10 @@ export function HeroBanner() {
 
       {/* Mobile: text at bottom, centered */}
       <div className="relative flex min-h-[70vh] items-end md:hidden">
-        <div className="w-full px-6 pb-10 pt-4 text-center">
+        <div
+          ref={textMobileRef}
+          className="hero-text w-full px-6 pb-10 pt-4 text-center"
+        >
           <Image
             src="/icons/icon-removebg-preview.png"
             alt="Cosy Loops"

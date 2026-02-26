@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { HeroBanner } from "@/components/shop/HeroBanner";
 import { CollectionCard } from "@/components/shop/CollectionCard";
 import { NewsletterSignup } from "@/components/shop/NewsletterSignup";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
 
 const NewArrivalsSection = dynamic(
   () => import("@/components/shop/NewArrivalsSection"),
@@ -61,47 +62,63 @@ export default async function HomePage({
     <main className="flex-1">
       <HeroBanner />
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <NewArrivalsSection />
-      </Suspense>
+      <ScrollReveal animation="fade-up">
+        <Suspense fallback={<SectionSkeleton />}>
+          <NewArrivalsSection />
+        </Suspense>
+      </ScrollReveal>
 
-      {/* Collection Feature Cards */}
+      {/* Collection Feature Cards — staggered reveal */}
       <section className="py-[60px]">
         <div className="mx-auto grid max-w-7xl grid-cols-3 gap-3 px-4 sm:gap-6 sm:px-6 lg:px-8">
-          <CollectionCard
-            title={t("collectionPlushies")}
-            href="/shop?category=plushies"
-            imageSrc="/banners/collection-plushies.png"
-            imageAlt={t("collectionPlushies")}
-          />
-          <CollectionCard
-            title={t("collectionCharms")}
-            href="/shop?category=charms"
-            imageSrc="/banners/collection-charms.png"
-            imageAlt={t("collectionCharms")}
-          />
-          <CollectionCard
-            title={t("collectionHome")}
-            href="/shop?category=home"
-            imageSrc="/banners/collection-home.png"
-            imageAlt={t("collectionHome")}
-          />
+          <ScrollReveal animation="fade-up" delay={0}>
+            <CollectionCard
+              title={t("collectionPlushies")}
+              href="/shop?category=plushies"
+              imageSrc="/banners/collection-plushies.png"
+              imageAlt={t("collectionPlushies")}
+            />
+          </ScrollReveal>
+          <ScrollReveal animation="fade-up" delay={120}>
+            <CollectionCard
+              title={t("collectionCharms")}
+              href="/shop?category=charms"
+              imageSrc="/banners/collection-charms.png"
+              imageAlt={t("collectionCharms")}
+            />
+          </ScrollReveal>
+          <ScrollReveal animation="fade-up" delay={240}>
+            <CollectionCard
+              title={t("collectionHome")}
+              href="/shop?category=home"
+              imageSrc="/banners/collection-home.png"
+              imageAlt={t("collectionHome")}
+            />
+          </ScrollReveal>
         </div>
       </section>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <BestSellersSection />
-      </Suspense>
+      <ScrollReveal animation="fade-up">
+        <Suspense fallback={<SectionSkeleton />}>
+          <BestSellersSection />
+        </Suspense>
+      </ScrollReveal>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <ReviewCarousel />
-      </Suspense>
+      <ScrollReveal animation="fade-up">
+        <Suspense fallback={<SectionSkeleton />}>
+          <ReviewCarousel />
+        </Suspense>
+      </ScrollReveal>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <InstagramFeed />
-      </Suspense>
+      <ScrollReveal animation="scale-in">
+        <Suspense fallback={<SectionSkeleton />}>
+          <InstagramFeed />
+        </Suspense>
+      </ScrollReveal>
 
-      <NewsletterSignup />
+      <ScrollReveal animation="fade-up">
+        <NewsletterSignup />
+      </ScrollReveal>
     </main>
   );
 }

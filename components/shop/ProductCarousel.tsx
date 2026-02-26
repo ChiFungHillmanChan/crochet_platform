@@ -107,9 +107,12 @@ export function ProductCarousel({
     <section className="py-[60px]" style={{ contentVisibility: "auto" }}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-center justify-between">
-          <h2 className="font-heading text-2xl font-bold text-cocoa sm:text-3xl">
-            {title}
-          </h2>
+          <div className="flex items-center gap-3">
+            <div className="hidden h-px w-8 bg-soft-pink sm:block" />
+            <h2 className="font-heading text-2xl font-bold text-cocoa sm:text-3xl">
+              {title}
+            </h2>
+          </div>
           <div className="flex gap-2">
             <button
               onClick={() => scroll("left")}
