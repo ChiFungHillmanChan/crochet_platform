@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "crypto";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import { FieldValue } from "firebase-admin/firestore";
 import { db } from "../shared/firebase-admin.mjs";
 import {
   buildOrderConfirmationEmail,
@@ -89,9 +90,17 @@ async function handleCheckoutCompleted(session) {
   const source = metadata.source || "checkout";
   const isPaymentLink = source === "payment_link";
 
-  const items = isPaymentLink
-    ? [{ productId: "payment-link", name: metadata.productName || "Payment Link Order", price: session.amount_total, quantity: 1 }]
-    : JSON.parse(metadata.items || "[]");
+  let items;
+  if (isPaymentLink) {
+    items = [{ productId: "payment-link", name: metadata.productName || "Payment Link Order", price: session.amount_total, quantity: 1 }];
+  } else {
+    try {
+      items = JSON.parse(metadata.items || "[]");
+    } catch {
+      console.error("Failed to parse items metadata:", metadata.items);
+      items = [];
+    }
+  }
 
   // Extract customer details from metadata (custom checkout) or session (payment link)
   const customerDetails = session.customer_details || {};
@@ -121,7 +130,7 @@ async function handleCheckoutCompleted(session) {
   const orderRef = await db.collection("orders").add(order);
   order.id = orderRef.id;
 
-  // Decrement stock for each item (skip for payment link orders)
+  // Decrement stock atomically for each item (skip for payment link orders)
   if (!isPaymentLink) {
     const batch = db.batch();
     for (const item of items) {
@@ -133,9 +142,8 @@ async function handleCheckoutCompleted(session) {
 
       if (!productQuery.empty) {
         const productDoc = productQuery.docs[0];
-        const currentStock = productDoc.data().stock || 0;
         batch.update(productDoc.ref, {
-          stock: Math.max(0, currentStock - item.quantity),
+          stock: FieldValue.increment(-item.quantity),
         });
       }
     }
@@ -195,7 +203,12 @@ export async function handler(event) {
     return { statusCode: 400, body: JSON.stringify({ error: "Invalid signature" }) };
   }
 
-  const stripeEvent = JSON.parse(body);
+  let stripeEvent;
+  try {
+    stripeEvent = JSON.parse(body);
+  } catch {
+    return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON body" }) };
+  }
 
   // Deduplication check
   const existing = await getProcessedStripeEvent(stripeEvent.id);

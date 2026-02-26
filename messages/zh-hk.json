@@ -6,7 +6,14 @@
     "comingSoon": "即將推出",
     "backToShop": "返回商店",
     "currency": "£",
-    "or": "或"
+    "or": "或",
+    "home": "首頁",
+    "noResults": "找不到產品。"
+  },
+  "errors": {
+    "somethingWentWrong": "出現錯誤",
+    "unexpectedError": "抱歉，發生了意外錯誤。",
+    "tryAgain": "重試"
   },
   "nav": {
     "shop": "商店",
@@ -188,7 +195,25 @@
     "sourcePaymentLink": "付款連結",
     "phone": "電話",
     "shippingAddress": "送貨地址",
-    "customerNotes": "客戶備註"
+    "customerNotes": "客戶備註",
+    "customer": "客戶",
+    "items": "項目",
+    "updateStatus": "更新狀態",
+    "statusUpdated": "狀態已更新",
+    "updateFailed": "更新失敗",
+    "orderNotFound": "找不到訂單",
+    "productUpdated": "產品已更新",
+    "productCreated": "產品已建立",
+    "failedToSave": "儲存失敗",
+    "slug": "網址代碼",
+    "description": "描述",
+    "pence": "(便士)",
+    "images": "圖片",
+    "saving": "...",
+    "reviewUpdated": "評論已更新",
+    "reviewCreated": "評論已建立",
+    "orderNumber": "訂單 #",
+    "date": "日期"
   },
   "about": {
     "seoTitle": "關於我們 | Cosy Loops",
@@ -282,8 +307,9 @@
     "bestSellers": "深受喜愛",
     "reviewsTitle": "顧客評價",
     "instagramTitle": "追蹤我們的旅程",
-    "instagramHandle": "@cosyloops",
+    "instagramHandle": "@littleyinshop_",
     "instagramCta": "追蹤 Instagram",
+    "instagramComingSoon": "相片即將上線",
     "newsletterTitle": "保持聯繫",
     "newsletterSubtitle": "獲取新作品更新、幕後花絮和獨家優惠。",
     "subscribe": "訂閱",

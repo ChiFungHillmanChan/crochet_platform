@@ -1,3 +1,13 @@
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function formatAddress(addr) {
   if (!addr) return null;
   const parts = [addr.line1, addr.line2, addr.city, addr.postcode, addr.country].filter(Boolean);
@@ -9,7 +19,7 @@ export function buildOrderConfirmationEmail(order) {
     .map(
       (item) => `
     <tr>
-      <td style="padding: 12px; border-bottom: 1px solid #F0E6E3;">${item.name}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #F0E6E3;">${escapeHtml(item.name)}</td>
       <td style="padding: 12px; border-bottom: 1px solid #F0E6E3; text-align: center;">${item.quantity}</td>
       <td style="padding: 12px; border-bottom: 1px solid #F0E6E3; text-align: right;">&pound;${(item.price / 100).toFixed(2)}</td>
     </tr>`
@@ -19,18 +29,19 @@ export function buildOrderConfirmationEmail(order) {
   const total = `&pound;${(order.totalAmount / 100).toFixed(2)}`;
   const addressStr = formatAddress(order.shippingAddress);
 
-  const shippingBlock = addressStr
+  const escapedAddress = escapeHtml(addressStr);
+  const shippingBlock = escapedAddress
     ? `<div style="background: #FFF5F5; border-radius: 12px; padding: 16px; margin: 16px 0;">
         <p style="color: #8D7B6A; font-size: 0.85rem; margin-bottom: 4px;">Shipping To</p>
-        <p style="color: #5D4037; margin: 0;">${addressStr}</p>
-        ${order.customerPhone ? `<p style="color: #8D7B6A; font-size: 0.85rem; margin: 8px 0 0;">Phone: ${order.customerPhone}</p>` : ""}
+        <p style="color: #5D4037; margin: 0;">${escapedAddress}</p>
+        ${order.customerPhone ? `<p style="color: #8D7B6A; font-size: 0.85rem; margin: 8px 0 0;">Phone: ${escapeHtml(order.customerPhone)}</p>` : ""}
       </div>`
     : "";
 
   const notesBlock = order.notes
     ? `<div style="background: #FFF5F5; border-radius: 12px; padding: 16px; margin: 16px 0;">
         <p style="color: #8D7B6A; font-size: 0.85rem; margin-bottom: 4px;">Order Notes</p>
-        <p style="color: #5D4037; margin: 0;">${order.notes}</p>
+        <p style="color: #5D4037; margin: 0;">${escapeHtml(order.notes)}</p>
       </div>`
     : "";
 
@@ -46,7 +57,7 @@ export function buildOrderConfirmationEmail(order) {
       Order Confirmed!
     </h1>
     <p style="color: #8D7B6A; font-size: 0.95rem;">
-      Thank you for your order, ${order.customerName}!
+      Thank you for your order, ${escapeHtml(order.customerName)}!
     </p>
 
     <div style="background: #FFF5F5; border-radius: 16px; padding: 20px; margin: 24px 0;">
@@ -97,15 +108,15 @@ export function buildAdminNotificationEmail(order) {
   const sourceLabel = order.source === "payment_link" ? "Payment Link" : "Checkout";
 
   const itemList = order.items
-    .map((item) => `- ${item.name} x${item.quantity}`)
+    .map((item) => `- ${escapeHtml(item.name)} x${item.quantity}`)
     .join("\n");
 
   const detailsRows = [
-    `<tr><td style="padding: 8px 12px; color: #8D7B6A; font-weight: 600;">Name</td><td style="padding: 8px 12px;">${order.customerName}</td></tr>`,
-    `<tr><td style="padding: 8px 12px; color: #8D7B6A; font-weight: 600;">Email</td><td style="padding: 8px 12px;">${order.customerEmail}</td></tr>`,
-    order.customerPhone ? `<tr><td style="padding: 8px 12px; color: #8D7B6A; font-weight: 600;">Phone</td><td style="padding: 8px 12px;">${order.customerPhone}</td></tr>` : "",
-    addressStr ? `<tr><td style="padding: 8px 12px; color: #8D7B6A; font-weight: 600;">Address</td><td style="padding: 8px 12px;">${addressStr}</td></tr>` : "",
-    order.notes ? `<tr><td style="padding: 8px 12px; color: #8D7B6A; font-weight: 600;">Notes</td><td style="padding: 8px 12px;">${order.notes}</td></tr>` : "",
+    `<tr><td style="padding: 8px 12px; color: #8D7B6A; font-weight: 600;">Name</td><td style="padding: 8px 12px;">${escapeHtml(order.customerName)}</td></tr>`,
+    `<tr><td style="padding: 8px 12px; color: #8D7B6A; font-weight: 600;">Email</td><td style="padding: 8px 12px;">${escapeHtml(order.customerEmail)}</td></tr>`,
+    order.customerPhone ? `<tr><td style="padding: 8px 12px; color: #8D7B6A; font-weight: 600;">Phone</td><td style="padding: 8px 12px;">${escapeHtml(order.customerPhone)}</td></tr>` : "",
+    addressStr ? `<tr><td style="padding: 8px 12px; color: #8D7B6A; font-weight: 600;">Address</td><td style="padding: 8px 12px;">${escapeHtml(addressStr)}</td></tr>` : "",
+    order.notes ? `<tr><td style="padding: 8px 12px; color: #8D7B6A; font-weight: 600;">Notes</td><td style="padding: 8px 12px;">${escapeHtml(order.notes)}</td></tr>` : "",
     `<tr><td style="padding: 8px 12px; color: #8D7B6A; font-weight: 600;">Source</td><td style="padding: 8px 12px;">${sourceLabel}</td></tr>`,
   ].filter(Boolean).join("");
 
@@ -122,7 +133,7 @@ export function buildAdminNotificationEmail(order) {
   </table>
   <p><strong>Total:</strong> ${total}</p>
   <p><strong>Items:</strong></p>
-  <ul>${order.items.map((i) => `<li>${i.name} x${i.quantity} — &pound;${(i.price / 100).toFixed(2)}</li>`).join("")}</ul>
+  <ul>${order.items.map((i) => `<li>${escapeHtml(i.name)} x${i.quantity} — &pound;${(i.price / 100).toFixed(2)}</li>`).join("")}</ul>
 </body>
 </html>`,
     text: `New Order #${order.orderNumber} [${sourceLabel}]\nCustomer: ${order.customerName} (${order.customerEmail})\n${order.customerPhone ? `Phone: ${order.customerPhone}\n` : ""}${addressStr ? `Address: ${addressStr}\n` : ""}${order.notes ? `Notes: ${order.notes}\n` : ""}Total: ${total}\n\nItems:\n${itemList}`,

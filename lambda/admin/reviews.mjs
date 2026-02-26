@@ -28,12 +28,23 @@ export async function createReview(body, origin) {
   return success({ id: ref.id }, origin);
 }
 
+const REVIEW_ALLOWED_FIELDS = ["authorName", "rating", "body", "isApproved", "productId"];
+
 export async function updateReview(body, origin) {
-  const { id, ...updates } = body;
+  const { id } = body;
   if (!id) return error(400, "Review ID required", origin);
+
+  const updates = {};
+  for (const field of REVIEW_ALLOWED_FIELDS) {
+    if (field in body) updates[field] = body[field];
+  }
 
   if (updates.rating) {
     updates.rating = Math.min(5, Math.max(1, parseInt(updates.rating) || 1));
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return error(400, "No valid fields to update", origin);
   }
 
   await db.collection("reviews").doc(id).update(updates);

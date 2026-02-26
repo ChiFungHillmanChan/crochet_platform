@@ -6,7 +6,14 @@
     "comingSoon": "Coming soon",
     "backToShop": "Back to Shop",
     "currency": "£",
-    "or": "or"
+    "or": "or",
+    "home": "Home",
+    "noResults": "No products found."
+  },
+  "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "unexpectedError": "We're sorry, something unexpected happened.",
+    "tryAgain": "Try again"
   },
   "nav": {
     "shop": "Shop",
@@ -188,7 +195,25 @@
     "sourcePaymentLink": "Payment Link",
     "phone": "Phone",
     "shippingAddress": "Shipping Address",
-    "customerNotes": "Customer Notes"
+    "customerNotes": "Customer Notes",
+    "customer": "Customer",
+    "items": "Items",
+    "updateStatus": "Update Status",
+    "statusUpdated": "Status updated",
+    "updateFailed": "Update failed",
+    "orderNotFound": "Order not found",
+    "productUpdated": "Product updated",
+    "productCreated": "Product created",
+    "failedToSave": "Failed to save",
+    "slug": "Slug",
+    "description": "Description",
+    "pence": "(pence)",
+    "images": "Images",
+    "saving": "...",
+    "reviewUpdated": "Review updated",
+    "reviewCreated": "Review created",
+    "orderNumber": "Order #",
+    "date": "Date"
   },
   "about": {
     "seoTitle": "About Us | Cosy Loops",
@@ -282,8 +307,9 @@
     "bestSellers": "Loved By You",
     "reviewsTitle": "What Our Customers Say",
     "instagramTitle": "Follow Our Journey",
-    "instagramHandle": "@cosyloops",
+    "instagramHandle": "@littleyinshop_",
     "instagramCta": "Follow on Instagram",
+    "instagramComingSoon": "Photos coming soon",
     "newsletterTitle": "Stay in the Loop",
     "newsletterSubtitle": "Get updates on new creations, behind-the-scenes peeks, and exclusive offers.",
     "subscribe": "Subscribe",

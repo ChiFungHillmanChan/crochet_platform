@@ -80,7 +80,7 @@ export function useCartSync() {
         store.setHydrated(true);
         // Save merged cart if migration brought new items
         if (migrated.length > 0) {
-          saveCart(uid, merged).catch(() => {});
+          saveCart(uid, merged).catch((err) => console.warn("Cart sync failed:", err));
         }
       })
       .catch(() => {
@@ -105,7 +105,7 @@ export function useCartSync() {
 
       clearTimeout(saveTimer.current);
       saveTimer.current = setTimeout(() => {
-        saveCart(uid, state.items).catch(() => {});
+        saveCart(uid, state.items).catch((err) => console.warn("Cart sync failed:", err));
       }, 500);
     });
 
