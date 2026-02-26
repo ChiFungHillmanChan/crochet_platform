@@ -1,9 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const INSTAGRAM_URL = "https://www.instagram.com/cosyloops";
+const INSTAGRAM_URL = "https://www.instagram.com/littleyinshop_/";
 
 const PLACEHOLDER_COLOURS = [
   "from-soft-pink/40 to-blush/60",
@@ -24,21 +25,24 @@ export default function InstagramFeed() {
           {t("instagramTitle")} {t("instagramHandle")}
         </h2>
 
-        {/* Desktop: 6 squares, Mobile: 3 visible + scroll */}
-        <div className="scrollbar-hide flex snap-x snap-mandatory gap-4 overflow-x-auto md:grid md:grid-cols-6 md:gap-4">
-          {PLACEHOLDER_COLOURS.map((gradient, i) => (
-            <div
-              key={i}
-              className="w-[30%] flex-shrink-0 snap-start md:w-auto"
-            >
+        <div className="relative">
+          <div className="grid grid-cols-3 gap-3 md:grid-cols-6 md:gap-4">
+            {PLACEHOLDER_COLOURS.map((gradient, i) => (
               <div
-                className={`aspect-square rounded-xl bg-gradient-to-br ${gradient}`}
-              />
-            </div>
-          ))}
+                key={i}
+                className={`aspect-square rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center`}
+              >
+                <Camera className="h-6 w-6 text-cocoa/15 sm:h-8 sm:w-8" />
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-4 text-center text-sm text-warm-gray">
+            {t("instagramComingSoon")}
+          </p>
         </div>
 
-        <div className="mt-8 text-center">
+        <div className="mt-6 text-center">
           <a
             href={INSTAGRAM_URL}
             target="_blank"

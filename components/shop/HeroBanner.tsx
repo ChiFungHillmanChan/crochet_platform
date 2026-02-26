@@ -33,7 +33,7 @@ export function HeroBanner() {
         <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12">
           <div className="ml-auto max-w-lg space-y-6 text-right">
             <Image
-              src="/generated/icon-removebg-preview.png"
+              src="/icons/icon-removebg-preview.png"
               alt="Cosy Loops"
               width={72}
               height={72}
@@ -62,7 +62,7 @@ export function HeroBanner() {
       <div className="relative flex min-h-[70vh] items-end md:hidden">
         <div className="w-full px-6 pb-10 pt-4 text-center">
           <Image
-            src="/generated/icon-removebg-preview.png"
+            src="/icons/icon-removebg-preview.png"
             alt="Cosy Loops"
             width={56}
             height={56}
