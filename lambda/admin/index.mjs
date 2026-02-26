@@ -136,9 +136,10 @@ async function getUploadUrl(body, origin) {
 }
 
 async function getDashboardStats(origin) {
-  const [ordersSnap, productsSnap] = await Promise.all([
+  const [ordersSnap, productsSnap, usersSnap] = await Promise.all([
     db.collection("orders").get(),
     db.collection("products").where("isActive", "==", true).get(),
+    db.collection("users").get(),
   ]);
 
   const orders = ordersSnap.docs.map((d) => d.data());
@@ -152,6 +153,7 @@ async function getDashboardStats(origin) {
     totalRevenue,
     totalProducts: productsSnap.size,
     pendingOrders,
+    totalUsers: usersSnap.size,
   }, origin);
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Package, ShoppingCart, PoundSterling, Clock } from "lucide-react";
+import { Package, ShoppingCart, PoundSterling, Clock, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatPrice } from "@/lib/utils";
 
@@ -10,6 +10,7 @@ interface StatsGridProps {
   totalRevenue: number;
   totalProducts: number;
   pendingOrders: number;
+  totalUsers: number;
 }
 
 export function StatsGrid({
@@ -17,6 +18,7 @@ export function StatsGrid({
   totalRevenue,
   totalProducts,
   pendingOrders,
+  totalUsers,
 }: StatsGridProps) {
   const t = useTranslations("admin");
 
@@ -45,10 +47,16 @@ export function StatsGrid({
       icon: Clock,
       color: "bg-butter",
     },
+    {
+      label: t("totalUsers"),
+      value: totalUsers.toString(),
+      icon: Users,
+      color: "bg-blush",
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
       {stats.map((stat) => (
         <Card key={stat.label} className="rounded-2xl">
           <CardContent className="flex items-center gap-4 p-6">

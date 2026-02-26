@@ -70,9 +70,19 @@ export async function createCheckoutSession(body, origin, event, stripe) {
     quantity: item.quantity,
   }));
 
+  // Shipping: free for orders >= £50, otherwise £3.99
+  const FREE_SHIPPING_THRESHOLD = 5000; // pence
+  const SHIPPING_RATE_STANDARD = process.env.STRIPE_SHIPPING_RATE_STANDARD || "shr_1T4ukUIpw9oLScWbeG2OiKRA";
+  const SHIPPING_RATE_FREE = process.env.STRIPE_SHIPPING_RATE_FREE || "shr_1T4ukVIpw9oLScWbcrGEUxom";
+  const orderTotal = verifiedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const shippingOptions = orderTotal >= FREE_SHIPPING_THRESHOLD
+    ? [{ shipping_rate: SHIPPING_RATE_FREE }]
+    : [{ shipping_rate: SHIPPING_RATE_STANDARD }];
+
   const session = await stripe.checkout.sessions.create({
     ui_mode: "custom",
     line_items: lineItems,
+    shipping_options: shippingOptions,
     mode: "payment",
     return_url: `${FRONTEND_URL}/${validLocale}/checkout/success/?session_id={CHECKOUT_SESSION_ID}`,
     customer_email: customerEmail,
