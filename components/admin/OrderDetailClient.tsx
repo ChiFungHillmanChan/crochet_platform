@@ -58,9 +58,9 @@ export function OrderDetailClient() {
     try {
       await apiPost("update-order-status", { id: order.id, status });
       setOrder({ ...order, status: status as Order["status"] });
-      toast.success("Status updated");
+      toast.success(t("statusUpdated"));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Update failed");
+      toast.error(err instanceof Error ? err.message : t("updateFailed"));
     }
   }
 
@@ -74,7 +74,7 @@ export function OrderDetailClient() {
   }
 
   if (!order) {
-    return <p className="text-warm-gray">Order not found</p>;
+    return <p className="text-warm-gray">{t("orderNotFound")}</p>;
   }
 
   const addr = order.shippingAddress;
@@ -103,7 +103,7 @@ export function OrderDetailClient() {
 
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-4 rounded-2xl bg-white p-6 shadow-sm">
-          <h2 className="font-heading font-semibold text-cocoa">Customer</h2>
+          <h2 className="font-heading font-semibold text-cocoa">{t("customer")}</h2>
           <p className="text-cocoa">{order.customerName}</p>
           <p className="text-sm text-warm-gray">{order.customerEmail}</p>
           {order.customerPhone && (
@@ -119,7 +119,7 @@ export function OrderDetailClient() {
 
         <div className="space-y-4 rounded-2xl bg-white p-6 shadow-sm">
           <h2 className="font-heading font-semibold text-cocoa">
-            Update {t("status")}
+            {t("updateStatus")}
           </h2>
           <Select
             defaultValue={order.status}
@@ -169,7 +169,7 @@ export function OrderDetailClient() {
       )}
 
       <div className="rounded-2xl bg-white p-6 shadow-sm">
-        <h2 className="mb-4 font-heading font-semibold text-cocoa">Items</h2>
+        <h2 className="mb-4 font-heading font-semibold text-cocoa">{t("items")}</h2>
         <div className="space-y-3">
           {order.items.map((item, i) => (
             <div

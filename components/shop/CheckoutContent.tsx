@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import CheckoutDetailsForm from "./CheckoutDetailsForm";
 import type { CheckoutDetails } from "./CheckoutDetailsForm";
 import CheckoutPaymentForm from "./CheckoutPaymentForm";
+import type { CartItem } from "@/lib/types";
 
 type Phase = "details" | "payment";
 
@@ -122,14 +123,6 @@ export default function CheckoutContent() {
       </div>
     </main>
   );
-}
-
-interface CartItem {
-  productId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: string;
 }
 
 function OrderSummary({

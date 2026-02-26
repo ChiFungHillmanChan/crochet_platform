@@ -1,5 +1,14 @@
 import { getFirebaseDb } from "@/lib/firebase";
+import type { QueryDocumentSnapshot } from "firebase/firestore";
 import type { Product, Category } from "@/lib/types";
+
+function docToProduct(doc: QueryDocumentSnapshot): Product {
+  return {
+    id: doc.id,
+    ...doc.data(),
+    createdAt: doc.data().createdAt?.toDate?.() ?? new Date(),
+  } as Product;
+}
 
 export async function getProducts(): Promise<Product[]> {
   const db = await getFirebaseDb();
@@ -13,11 +22,7 @@ export async function getProducts(): Promise<Product[]> {
     orderBy("createdAt", "desc")
   );
   const snap = await getDocs(q);
-  return snap.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-    createdAt: doc.data().createdAt?.toDate?.() ?? new Date(),
-  })) as Product[];
+  return snap.docs.map(docToProduct);
 }
 
 export async function getProductsByCategory(
@@ -35,11 +40,7 @@ export async function getProductsByCategory(
     orderBy("createdAt", "desc")
   );
   const snap = await getDocs(q);
-  return snap.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-    createdAt: doc.data().createdAt?.toDate?.() ?? new Date(),
-  })) as Product[];
+  return snap.docs.map(docToProduct);
 }
 
 export async function getProductBySlug(
@@ -58,21 +59,16 @@ export async function getProductBySlug(
   const snap = await getDocs(q);
   if (snap.empty) return null;
 
-  const doc = snap.docs[0];
-  return {
-    id: doc.id,
-    ...doc.data(),
-    createdAt: doc.data().createdAt?.toDate?.() ?? new Date(),
-  } as Product;
+  return docToProduct(snap.docs[0]);
 }
 
 export async function getRelatedProducts(
   categorySlug: string,
   excludeId: string,
-  limit = 4
+  limitCount = 4
 ): Promise<Product[]> {
   const db = await getFirebaseDb();
-  const { collection, getDocs, query, where, orderBy } = await import(
+  const { collection, getDocs, query, where, orderBy, limit } = await import(
     "firebase/firestore"
   );
 
@@ -80,16 +76,13 @@ export async function getRelatedProducts(
     collection(db, "products"),
     where("isActive", "==", true),
     where("categorySlug", "==", categorySlug),
-    orderBy("createdAt", "desc")
+    orderBy("createdAt", "desc"),
+    limit(limitCount + 1)
   );
   const snap = await getDocs(q);
   const products = snap.docs
-    .map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate?.() ?? new Date(),
-    }))
-    .filter((p) => p.id !== excludeId) as Product[];
+    .map(docToProduct)
+    .filter((p) => p.id !== excludeId);
 
   // Shuffle using Fisher-Yates
   for (let i = products.length - 1; i > 0; i--) {
@@ -97,7 +90,7 @@ export async function getRelatedProducts(
     [products[i], products[j]] = [products[j], products[i]];
   }
 
-  return products.slice(0, limit);
+  return products.slice(0, limitCount);
 }
 
 export async function getCategories(): Promise<Category[]> {

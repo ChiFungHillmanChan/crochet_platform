@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ShoppingBag, LogIn, Check } from "lucide-react";
@@ -37,6 +37,8 @@ export function ProductCard({
   const { user, loading: authLoading } = useAuth();
   const addItem = useCartStore((s) => s.addItem);
   const [added, setAdded] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(timerRef.current), []);
 
   const thumbSrc = product.images[0]
     ? getOptimizedImageUrl(product.images[0], "thumb")
@@ -57,7 +59,8 @@ export function ProductCard({
     });
     setAdded(true);
     toast.success(t("added"));
-    setTimeout(() => setAdded(false), 2000);
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setAdded(false), 2000);
   }
 
   const isOutOfStock = product.stock === 0;
@@ -151,7 +154,11 @@ export function ProductCard({
             {formatPrice(product.price)}
           </p>
           {showRating && averageRating > 0 && (
-            <div className="mt-1 flex items-center gap-1">
+            <div
+              className="mt-1 flex items-center gap-1"
+              role="img"
+              aria-label={`${Math.round(averageRating)} out of 5 stars`}
+            >
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
                   key={i}

@@ -5,6 +5,7 @@ import { firebaseAuth, db } from "../shared/firebase-admin.mjs";
 import { success, error } from "../shared/response.mjs";
 import { getReviews, createReview, updateReview, deleteReview } from "./reviews.mjs";
 import { createPaymentLink, getPaymentLinks, deactivatePaymentLink } from "./payment-links.mjs";
+import { createCheckoutSession } from "./checkout.mjs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -29,8 +30,6 @@ function getR2Client() {
   return r2Client;
 }
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "").split(",").map((e) => e.trim().toLowerCase());
-const FRONTEND_URL = process.env.FRONTEND_URL || "https://cosyloops.com";
-
 function isAdmin(email) {
   return ADMIN_EMAILS.includes(email.toLowerCase());
 }
@@ -49,52 +48,6 @@ async function verifyAuth(event) {
   }
 }
 
-async function createCheckoutSession(body, origin) {
-  const { items, userId, customerName, customerEmail, customerPhone, shippingAddress, notes, locale } = body;
-  if (!items?.length) return error(400, "No items provided", origin);
-
-  const validLocale = ["en", "zh-hk"].includes(locale) ? locale : "en";
-
-  const lineItems = items.map((item) => ({
-    price_data: {
-      currency: "gbp",
-      product_data: { name: item.name },
-      unit_amount: item.price,
-    },
-    quantity: item.quantity,
-  }));
-
-  const session = await stripe.checkout.sessions.create({
-    ui_mode: "custom",
-    line_items: lineItems,
-    mode: "payment",
-    return_url: `${FRONTEND_URL}/${validLocale}/checkout/success/?session_id={CHECKOUT_SESSION_ID}`,
-    customer_email: customerEmail,
-    metadata: {
-      userId: userId || "",
-      customerName: customerName || "",
-      customerPhone: customerPhone || "",
-      shippingLine1: shippingAddress?.line1 || "",
-      shippingLine2: shippingAddress?.line2 || "",
-      shippingCity: shippingAddress?.city || "",
-      shippingPostcode: shippingAddress?.postcode || "",
-      shippingCountry: shippingAddress?.country || "GB",
-      notes: notes || "",
-      source: "checkout",
-      items: JSON.stringify(
-        items.map((i) => ({
-          productId: i.productId,
-          name: i.name,
-          price: i.price,
-          quantity: i.quantity,
-        }))
-      ),
-    },
-  });
-
-  return success({ clientSecret: session.client_secret }, origin);
-}
-
 async function createProduct(body, origin) {
   const { name, slug, description, price, stock, categorySlug, images, isActive } = body;
   if (!name || !slug) return error(400, "Name and slug required", origin);
@@ -109,9 +62,20 @@ async function createProduct(body, origin) {
   return success({ id: ref.id }, origin);
 }
 
+const PRODUCT_ALLOWED_FIELDS = ["name", "slug", "description", "price", "stock", "categorySlug", "images", "isActive"];
+
 async function updateProduct(body, origin) {
-  const { id, ...updates } = body;
+  const { id } = body;
   if (!id) return error(400, "Product ID required", origin);
+
+  const updates = {};
+  for (const field of PRODUCT_ALLOWED_FIELDS) {
+    if (field in body) updates[field] = body[field];
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return error(400, "No valid fields to update", origin);
+  }
 
   await db.collection("products").doc(id).update(updates);
   return success({ updated: true }, origin);
@@ -142,9 +106,14 @@ async function getOrders(origin) {
   return success({ orders }, origin);
 }
 
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
 async function getUploadUrl(body, origin) {
   const { filename, contentType } = body;
   if (!filename) return error(400, "Filename required", origin);
+  if (contentType && !ALLOWED_IMAGE_TYPES.includes(contentType)) {
+    return error(400, `Invalid content type. Allowed: ${ALLOWED_IMAGE_TYPES.join(", ")}`, origin);
+  }
   if (!R2_ACCOUNT_ID || !R2_BUCKET_NAME) {
     return error(500, "R2 not configured", origin);
   }
@@ -193,13 +162,18 @@ export async function handler(event) {
     return success({}, origin);
   }
 
-  const body = event.body ? JSON.parse(event.body) : {};
+  let body;
+  try {
+    body = event.body ? JSON.parse(event.body) : {};
+  } catch {
+    return error(400, "Invalid JSON body", origin);
+  }
   const action = body.action || event.queryStringParameters?.action;
 
   // Public endpoint: create-checkout-session (requires user auth, not admin)
   if (action === "create-checkout-session") {
     try {
-      return await createCheckoutSession(body, origin);
+      return await createCheckoutSession(body, origin, event, stripe);
     } catch (err) {
       console.error("Checkout error:", err);
       return error(500, "Failed to create checkout session", origin);

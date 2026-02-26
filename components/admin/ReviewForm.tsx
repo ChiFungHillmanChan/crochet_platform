@@ -42,14 +42,14 @@ export function ReviewForm({ review }: ReviewFormProps) {
 
       if (isEdit) {
         await apiPost("update-review", { id: review.id, ...data });
-        toast.success("Review updated");
+        toast.success(t("reviewUpdated"));
       } else {
         await apiPost("create-review", data);
-        toast.success("Review created");
+        toast.success(t("reviewCreated"));
       }
       router.push("/admin/reviews/");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      toast.error(err instanceof Error ? err.message : t("failedToSave"));
     } finally {
       setSaving(false);
     }
@@ -123,7 +123,7 @@ export function ReviewForm({ review }: ReviewFormProps) {
           className="rounded-full bg-soft-pink text-cocoa hover:bg-soft-pink/80"
         >
           {saving
-            ? "..."
+            ? t("saving")
             : isEdit
               ? t("save")
               : t("create")}

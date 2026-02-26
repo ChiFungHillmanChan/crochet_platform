@@ -24,6 +24,7 @@ type SortOption = "newest" | "priceLow" | "priceHigh";
 
 export default function ShopContent() {
   const t = useTranslations("shopPage");
+  const tc = useTranslations("common");
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -110,7 +111,7 @@ export default function ShopContent() {
         {/* Breadcrumbs */}
         <nav className="mb-6 text-sm text-warm-gray">
           <Link href="/" className="hover:underline">
-            Home
+            {tc("home")}
           </Link>
           <span className="mx-2">&gt;</span>
           <span className="text-cocoa">Shop</span>
@@ -121,6 +122,7 @@ export default function ShopContent() {
           <div className="scrollbar-hide flex gap-2 overflow-x-auto">
             <button
               onClick={() => updateParams("category", "")}
+              aria-pressed={!activeCategory}
               className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                 !activeCategory
                   ? "bg-soft-pink text-cocoa"
@@ -133,6 +135,7 @@ export default function ShopContent() {
               <button
                 key={cat.id}
                 onClick={() => updateParams("category", cat.slug)}
+                aria-pressed={activeCategory === cat.slug}
                 className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                   activeCategory === cat.slug
                     ? "bg-soft-pink text-cocoa"
@@ -190,7 +193,7 @@ export default function ShopContent() {
 
         {!loading && filtered.length === 0 && (
           <p className="py-20 text-center text-warm-gray">
-            No products found.
+            {tc("noResults")}
           </p>
         )}
 
@@ -203,6 +206,7 @@ export default function ShopContent() {
               className="rounded-full border-blush"
               disabled={currentPage <= 1}
               onClick={() => updateParams("page", String(currentPage - 1))}
+              aria-label="Go to previous page"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -217,6 +221,8 @@ export default function ShopContent() {
                     : "border-blush text-warm-gray hover:bg-blush/20"
                 }`}
                 onClick={() => updateParams("page", String(i + 1))}
+                aria-label={`Go to page ${i + 1}`}
+                aria-current={currentPage === i + 1 ? "page" : undefined}
               >
                 {i + 1}
               </Button>
@@ -227,6 +233,7 @@ export default function ShopContent() {
               className="rounded-full border-blush"
               disabled={currentPage >= totalPages}
               onClick={() => updateParams("page", String(currentPage + 1))}
+              aria-label="Go to next page"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>

@@ -51,14 +51,14 @@ export function ProductForm({ product }: ProductFormProps) {
 
       if (isEdit) {
         await apiPost("update-product", { id: product.id, ...data });
-        toast.success("Product updated");
+        toast.success(t("productUpdated"));
       } else {
         await apiPost("create-product", data);
-        toast.success("Product created");
+        toast.success(t("productCreated"));
       }
       router.push("/admin/products/");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      toast.error(err instanceof Error ? err.message : t("failedToSave"));
     } finally {
       setSaving(false);
     }
@@ -88,7 +88,7 @@ export function ProductForm({ product }: ProductFormProps) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="slug">Slug</Label>
+          <Label htmlFor="slug">{t("slug")}</Label>
           <Input
             id="slug"
             value={slug}
@@ -100,7 +100,7 @@ export function ProductForm({ product }: ProductFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">{t("description")}</Label>
         <Textarea
           id="description"
           value={description}
@@ -112,7 +112,7 @@ export function ProductForm({ product }: ProductFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="space-y-2">
-          <Label htmlFor="price">{t("price")} (pence)</Label>
+          <Label htmlFor="price">{t("price")} {t("pence")}</Label>
           <Input
             id="price"
             type="number"
@@ -155,7 +155,7 @@ export function ProductForm({ product }: ProductFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label>Images</Label>
+        <Label>{t("images")}</Label>
         <ImageUploader images={images} onImagesChange={setImages} />
       </div>
 
@@ -166,7 +166,7 @@ export function ProductForm({ product }: ProductFormProps) {
           className="rounded-full bg-soft-pink text-cocoa hover:bg-soft-pink/80"
         >
           {saving
-            ? "..."
+            ? t("saving")
             : isEdit
               ? t("save")
               : t("create")}
