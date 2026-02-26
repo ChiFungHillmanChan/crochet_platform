@@ -11,6 +11,7 @@ Thumbs.db
 .cursor/
 .vscode/
 .idea/
+.claude/
 
 # Media assets (too large for git)
 Crochet videos-photos/
