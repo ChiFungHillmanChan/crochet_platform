@@ -13,6 +13,9 @@ export function Footer() {
     { href: "/shipping/" as const, label: t("shipping") },
     { href: "/faq/" as const, label: t("faq") },
     { href: "/contact/" as const, label: t("contact") },
+    { href: "/privacy/" as const, label: t("privacy") },
+    { href: "/terms/" as const, label: t("terms") },
+    { href: "/returns/" as const, label: t("returns") },
   ];
 
   return (

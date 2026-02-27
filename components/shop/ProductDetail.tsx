@@ -17,6 +17,7 @@ import { ProductAccordion } from "@/components/shop/ProductAccordion";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { trackViewProduct } from "@/lib/analytics";
 
 /** Extract product slug from the browser URL instead of useParams(),
  *  because the static placeholder page bakes "placeholder" into RSC params. */
@@ -68,6 +69,12 @@ export function ProductDetail() {
 
   useEffect(() => {
     if (!product) return;
+    trackViewProduct({
+      id: product.slug,
+      name: product.name,
+      price: product.price,
+      category: product.categorySlug,
+    });
     const loc = getLocaleFromUrl();
     const SITE_URL = "https://cosyloops.com";
 

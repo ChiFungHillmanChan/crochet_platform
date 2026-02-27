@@ -235,7 +235,7 @@ export async function handler(event) {
   const body = event.body || "";
 
   if (!verifyStripeSignature(body, sigHeader)) {
-    return { statusCode: 400, body: JSON.stringify({ error: "Invalid signature" }) };
+    return { statusCode: 403, body: JSON.stringify({ error: "Invalid signature" }) };
   }
 
   let stripeEvent;
@@ -267,6 +267,6 @@ export async function handler(event) {
     return { statusCode: 200, body: JSON.stringify({ received: true }) };
   } catch (err) {
     console.error("Webhook processing error:", err);
-    return { statusCode: 500, body: JSON.stringify({ error: "Processing failed" }) };
+    return { statusCode: 202, body: JSON.stringify({ received: true, error: "Processing encountered an issue" }) };
   }
 }

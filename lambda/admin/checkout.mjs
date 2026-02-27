@@ -1,11 +1,17 @@
 import { db } from "../shared/firebase-admin.mjs";
 import { verifyToken } from "../shared/auth.mjs";
 import { success, error } from "../shared/response.mjs";
+import { validateCheckoutDetails } from "../shared/validate.mjs";
 
 export async function createCheckoutSession(body, origin, event, stripe) {
   const FRONTEND_URL = process.env.FRONTEND_URL || "https://cosyloops.com";
   const { items, customerName, customerEmail, customerPhone, shippingAddress, notes, locale } = body;
   if (!items?.length) return error(400, "No items provided", origin);
+
+  const validationErrors = validateCheckoutDetails(body);
+  if (validationErrors.length > 0) {
+    return error(400, validationErrors.join("; "), origin);
+  }
 
   // Optional auth for logged-in users (guest checkout is allowed)
   const authedUser = await verifyToken(event);
