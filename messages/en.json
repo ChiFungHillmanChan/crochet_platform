@@ -27,16 +27,24 @@
     "cart": "Shopping cart"
   },
   "footer": {
-    "copyright": "© 2026 Cosy Loops. Handmade with love in the UK.",
-    "shop": "Shop",
-    "about": "About",
+    "copyright": "© 2026 Cosy Loops. All rights reserved.",
+    "tagline": "Adorable handmade crochet creations, lovingly crafted in the UK.",
+    "shopHeading": "Shop",
+    "shop": "All Products",
+    "about": "About Us",
+    "infoHeading": "Information",
     "shipping": "Shipping & Returns",
     "faq": "FAQ",
-    "contact": "Contact",
-    "etsy": "Etsy",
+    "returns": "Returns Policy",
+    "connectHeading": "Connect",
+    "contact": "Contact Us",
+    "etsy": "Etsy Shop",
+    "instagram": "Instagram",
+    "legalHeading": "Legal",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
-    "returns": "Returns Policy"
+    "madeWith": "Handmade with",
+    "inUK": "in the UK"
   },
   "home": {
     "title": "Cosy Loops",
