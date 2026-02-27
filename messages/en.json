@@ -33,7 +33,10 @@
     "shipping": "Shipping & Returns",
     "faq": "FAQ",
     "contact": "Contact",
-    "etsy": "Etsy"
+    "etsy": "Etsy",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "returns": "Returns Policy"
   },
   "home": {
     "title": "Cosy Loops",
@@ -228,7 +231,12 @@
     "embedUrl": "YouTube or Vimeo URL",
     "invalidEmbed": "Invalid YouTube or Vimeo URL",
     "uploadMedia": "Upload Media",
-    "dragDropMedia": "Drag & drop images or videos, or click to browse"
+    "dragDropMedia": "Drag & drop images or videos, or click to browse",
+    "markShipped": "Mark as Shipped",
+    "markShippedButton": "Mark as Shipped & Notify Customer",
+    "trackingNumber": "Tracking Number",
+    "carrier": "Carrier",
+    "customers": "Customers"
   },
   "about": {
     "seoTitle": "About Us | Cosy Loops",
@@ -363,6 +371,84 @@
     "new": "New",
     "bestSeller": "Best Seller",
     "lowStock": "Low Stock"
+  },
+  "cookie": {
+    "message": "We use cookies to improve your experience. By continuing to browse, you agree to our use of cookies.",
+    "accept": "Accept",
+    "reject": "Reject",
+    "learnMore": "Learn more"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "seoTitle": "Privacy Policy | Cosy Loops",
+    "seoDescription": "Learn how Cosy Loops collects, uses, and protects your personal data.",
+    "lastUpdated": "Last updated: {date}",
+    "sections": {
+      "dataWeCollect": "Data We Collect",
+      "dataWeCollectBody": "When you use our website, we may collect: your name, email address, phone number, shipping address (when you place an order); payment information (processed securely by Stripe — we never store your card details); browsing data and cookies (with your consent).",
+      "howWeUse": "How We Use Your Data",
+      "howWeUseBody": "We use your personal data to: process and deliver your orders; send order confirmation and shipping notification emails; improve our website and services; comply with legal obligations.",
+      "dataSharing": "Data Sharing",
+      "dataSharingBody": "We share your data with: Stripe (payment processing); Firebase/Google Cloud (authentication and database); AWS (email delivery and hosting); Cloudflare (image hosting). We never sell your data to third parties.",
+      "dataRetention": "Data Retention",
+      "dataRetentionBody": "We retain your order data for 7 years for accounting and tax purposes. Account data is retained until you request deletion.",
+      "yourRights": "Your Rights",
+      "yourRightsBody": "Under UK GDPR, you have the right to: access your personal data; correct inaccurate data; request deletion of your data; export your data; withdraw consent at any time. To exercise these rights, contact us at {email}.",
+      "cookies": "Cookies",
+      "cookiesBody": "We use essential cookies for website functionality and optional analytics cookies (with your consent) to understand how visitors use our site.",
+      "contact": "Contact",
+      "contactBody": "For privacy-related enquiries, contact us at {email}."
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "seoTitle": "Terms of Service | Cosy Loops",
+    "seoDescription": "Read the terms and conditions for using Cosy Loops and purchasing our handmade crochet products.",
+    "lastUpdated": "Last updated: {date}",
+    "sections": {
+      "general": "General",
+      "generalBody": "These terms govern your use of the Cosy Loops website and your purchase of products from us. By using our website, you agree to these terms.",
+      "products": "Products",
+      "productsBody": "All products are handmade and may have slight variations in size, colour, and appearance. This is a characteristic of handmade items, not a defect. Product images are for illustration purposes and the actual item may differ slightly.",
+      "pricing": "Pricing & Payment",
+      "pricingBody": "All prices are shown in GBP and include VAT where applicable. We accept payment via Stripe (credit/debit cards). Payment is taken at the time of purchase.",
+      "orders": "Orders",
+      "ordersBody": "By placing an order, you are making an offer to purchase. We will confirm your order via email. We reserve the right to cancel any order if the product is unavailable or there is a pricing error.",
+      "shipping": "Shipping",
+      "shippingBody": "We ship within the UK via Royal Mail. Standard delivery takes 3-5 working days. Please allow 1-3 additional working days for handmade preparation. Orders over £50 qualify for free shipping.",
+      "returns": "Returns",
+      "returnsBody": "You have 14 days from receipt to return items under the UK Consumer Contracts Regulations 2013. Items must be unused and in original condition. See our Returns Policy for full details.",
+      "liability": "Limitation of Liability",
+      "liabilityBody": "To the fullest extent permitted by law, Cosy Loops shall not be liable for any indirect, incidental, or consequential damages arising from your use of our website or products.",
+      "privacy": "Privacy",
+      "privacyBody": "Your personal data is handled in accordance with our Privacy Policy. By using our website, you consent to our data practices as described therein.",
+      "changes": "Changes to Terms",
+      "changesBody": "We may update these terms from time to time. Changes will be posted on this page with an updated date. Continued use of the website constitutes acceptance of the revised terms.",
+      "contact": "Contact",
+      "contactBody": "For questions about these terms, contact us at {email}."
+    }
+  },
+  "returns": {
+    "title": "Returns Policy",
+    "seoTitle": "Returns Policy | Cosy Loops",
+    "seoDescription": "Our returns and refund policy. 14-day cooling-off period for all UK orders.",
+    "lastUpdated": "Last updated: {date}",
+    "sections": {
+      "coolingOff": "14-Day Cooling-Off Period",
+      "coolingOffBody": "Under the UK Consumer Contracts Regulations 2013, you have the right to cancel your order within 14 days of receiving your item(s), without giving any reason.",
+      "eligibility": "Eligibility",
+      "eligibilityBody": "To be eligible for a return, items must be unused, unwashed, and in the same condition as received. Items must be returned in their original packaging where possible.",
+      "process": "How to Return",
+      "processBody": "To initiate a return, please email us at {email} within 14 days of receiving your order. We will provide you with return instructions and a reference number.",
+      "refunds": "Refunds",
+      "refundsBody": "Once we receive and inspect your returned item, we will process your refund within 14 days. Refunds will be issued to your original payment method via Stripe.",
+      "exceptions": "Exceptions",
+      "exceptionsBody": "Custom or personalised items cannot be returned unless they are faulty or not as described. Items that have been used, washed, or altered are not eligible for return.",
+      "shippingCosts": "Return Shipping Costs",
+      "shippingCostsBody": "You are responsible for the cost of return shipping unless the item is faulty or not as described. We recommend using a tracked delivery service.",
+      "contact": "Contact",
+      "contactBody": "For any returns enquiries, please contact us at {email}. We aim to respond within 24-48 hours."
+    }
   },
   "locale": {
     "en": "EN",

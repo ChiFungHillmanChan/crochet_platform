@@ -16,6 +16,7 @@ import CheckoutDetailsForm from "./CheckoutDetailsForm";
 import type { CheckoutDetails } from "./CheckoutDetailsForm";
 import CheckoutPaymentForm from "./CheckoutPaymentForm";
 import type { CartItem } from "@/lib/types";
+import { trackBeginCheckout } from "@/lib/analytics";
 
 type Phase = "details" | "payment";
 
@@ -87,6 +88,14 @@ export default function CheckoutContent() {
         { requireAuth: false }
       );
 
+      trackBeginCheckout(
+        items.map((i) => ({
+          id: i.productId,
+          name: i.name,
+          price: i.price,
+          quantity: i.quantity,
+        }))
+      );
       setClientSecret(data.clientSecret);
       setPhase("payment");
     } catch (err) {

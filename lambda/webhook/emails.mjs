@@ -144,3 +144,41 @@ export function buildAdminNotificationEmail(order) {
     text: `New Order #${order.orderNumber} [${sourceLabel}]\nCustomer: ${sanitizeText(order.customerName)} (${sanitizeText(order.customerEmail)})\n${order.customerPhone ? `Phone: ${sanitizeText(order.customerPhone)}\n` : ""}${addressStr ? `Address: ${sanitizeText(addressStr)}\n` : ""}${order.notes ? `Notes: ${sanitizeText(order.notes)}\n` : ""}Total: ${total}\n\nItems:\n${itemList}`,
   };
 }
+
+export function buildShippingNotificationEmail(order, trackingNumber, carrier) {
+  const e = escapeHtml;
+  const subject = `Your Cosy Loops order #${order.orderNumber || order.id.substring(0, 8)} has been shipped!`;
+
+  const carrierLinks = {
+    "royal-mail": `https://www.royalmail.com/track-your-item#/tracking-results/${trackingNumber}`,
+    "dpd": `https://www.dpd.co.uk/tracking/trackvia.do?parcelNumbers=${trackingNumber}`,
+    "hermes": `https://www.evri.com/track/parcel/${trackingNumber}`,
+  };
+  const trackingUrl = carrierLinks[carrier] || "#";
+
+  const html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head>
+<body style="font-family: 'Inter', -apple-system, sans-serif; background: #FFF9FA; color: #5D4037; padding: 40px 20px;">
+  <div style="max-width: 520px; margin: 0 auto; background: #FFFFFF; border-radius: 24px; padding: 40px; border: 1px solid #F0E6E3;">
+    <h1 style="font-family: 'Quicksand', sans-serif; color: #5D4037; font-size: 1.5rem; margin-bottom: 8px;">Your order is on its way!</h1>
+    <p style="color: #8D7B6A;">Hi ${e(order.customerName)},</p>
+    <p style="color: #8D7B6A;">Great news! Your order <strong>#${e(order.orderNumber || order.id.substring(0, 8))}</strong> has been shipped.</p>
+    ${trackingNumber ? `
+    <div style="background: #FFF5F5; border-radius: 16px; padding: 20px; margin: 24px 0; text-align: center;">
+      <p style="color: #8D7B6A; font-size: 0.85rem; margin-bottom: 8px;">Tracking Number</p>
+      <p style="color: #5D4037; font-size: 1.1rem; font-weight: 700; margin: 0;">${e(trackingNumber)}</p>
+      <a href="${e(trackingUrl)}" style="display: inline-block; margin-top: 12px; padding: 10px 24px; background: #F8C8DC; color: #5D4037; text-decoration: none; border-radius: 24px; font-weight: bold;">Track Your Parcel</a>
+    </div>` : ""}
+    <p style="color: #8D7B6A;">Estimated delivery: 3-5 working days (UK).</p>
+    <div style="margin-top: 32px; padding-top: 20px; border-top: 1px solid #F0E6E3;">
+      <p style="color: #8D7B6A; font-size: 0.8rem; margin: 0;">Cosy Loops — Handmade with love in the UK</p>
+    </div>
+  </div>
+</body></html>`;
+
+  const text = `Your order #${order.orderNumber || order.id.substring(0, 8)} has been shipped!\n\n`
+    + (trackingNumber ? `Tracking: ${trackingNumber}\n` : "")
+    + `Estimated delivery: 3-5 working days.\n\nThank you!\n— Cosy Loops`;
+
+  return { subject, html, text };
+}

@@ -58,6 +58,14 @@ export async function generateMetadata({
       type: "website",
       locale: locale === "en" ? "en_GB" : "zh_HK",
       url: `${SITE_URL}/${locale}/products/${slug}/`,
+      images: [
+        {
+          url: `${SITE_URL}/og-image.png`,
+          width: 1200,
+          height: 630,
+          alt: "Handmade crochet product from Cosy Loops",
+        },
+      ],
     },
   };
 }

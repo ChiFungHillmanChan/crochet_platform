@@ -18,10 +18,10 @@ When Claude makes a mistake or the user corrects a pattern, **update this file i
 | Package manager | pnpm |
 | Source directories | `app/`, `components/`, `lib/`, `stores/` |
 | Backend | `lambda/` (AWS Lambda, plain ESM `.mjs` — separate from the Next.js app) |
-| i18n | `next-intl` with `messages/en.json` and `messages/zh-hk.json` (namespaces: common, nav, footer, home, shop, product, cart, checkout, checkoutSuccess, account, auth, admin, about, notFound, orderStatus, locale, reviews, related, shipping, faq, contact) |
+| i18n | `next-intl` with `messages/en.json` and `messages/zh-hk.json` (namespaces: common, errors, nav, footer, home, shop, product, cart, checkout, checkoutSuccess, account, auth, admin, about, notFound, orderStatus, locale, reviews, related, shipping, faq, contact, announcement, homepage, shopPage, productPage, badges, cookie, privacy, terms, returns) |
 | Deployment | Static export (`output: "export"`) → S3 + CloudFront |
 | CI | `.github/workflows/ci.yml` (lint + typecheck + build on PRs) |
-| CD | `.github/workflows/deploy.yml` (build + S3 sync + CloudFront invalidation on push to main) |
+| CD | `.github/workflows/deploy.yml` (build + S3 sync + CloudFront invalidation + Lambda deploy on push to main) |
 | Deploy guide | `.claude/commands/deploy.md` (all URLs, resource IDs, costs) |
 
 ### Production URLs
@@ -69,44 +69,51 @@ Key routes:
 - `/shipping` — Shipping & returns info page
 - `/faq` — Frequently asked questions
 - `/contact` — Contact page with email link
-- `/admin/**` — Admin dashboard (products CRUD, orders, reviews, stats)
+- `/privacy` — Privacy policy (GDPR)
+- `/terms` — Terms of service
+- `/returns` — Returns policy (14-day cooling-off)
+- `/admin/**` — Admin dashboard (products CRUD with archive/restore, orders, reviews, payment links, stats, customers, mark-shipped)
 
 ### Component Organization
 
 - `components/ui/` — shadcn/ui primitives (Button, Card, Dialog, etc.)
-- `components/shop/` — Storefront components (ProductCard, CartContent, CheckoutContent, ReviewSection, RelatedProducts, ShippingContent, FaqContent, ContactContent, etc.)
-- `components/admin/` — Admin dashboard (ProductForm, OrderTable, ImageUploader, ReviewForm, ReviewTable, etc.)
+- `components/shop/` — Storefront components (ProductCard, CartContent, CheckoutContent, ReviewSection, RelatedProducts, ImageGallery, MediaPlayer, ShippingContent, FaqContent, ContactContent, etc.)
+- `components/admin/` — Admin dashboard (ProductForm, ProductTable, OrderTable, MediaUploader, ImageUploader, ReviewForm, ReviewTable, etc.)
 - `components/auth/` — Login/register forms, Google sign-in
-- `components/layout/` — Navbar, Footer, AdminShell, AdminGuard, LocaleSwitcher
+- `components/analytics/` — GoogleAnalytics (GA4, consent-aware)
+- `components/layout/` — Navbar, Footer, AdminShell, AdminGuard, LocaleSwitcher, CookieConsent
 - `components/account/` — Account page content
 
 ### State & Data Flow
 
 - **Auth**: `lib/auth-context.tsx` provides `AuthProvider` + `useAuth()` hook. Firebase Auth (email/password + Google). User profiles stored in Firestore `users` collection.
 - **Cart**: `stores/cartStore.ts` — Zustand store with `persist` middleware (localStorage key: `cosy-loops-cart`). Prices in pence GBP.
-- **Products/Categories**: `lib/products.ts` — Client-side Firestore queries. Products filtered by `isActive`. Includes `getRelatedProducts()` for same-category recommendations. Requires composite index on `isActive` + `createdAt`.
+- **Products/Categories**: `lib/products.ts` — Client-side Firestore queries. `getProducts()` filters `isActive === true` (storefront). `getAllProducts()` returns all products without filter (admin). Includes `getRelatedProducts()` for same-category recommendations. Requires composite index on `isActive` + `createdAt`.
+- **Media**: Products support `MediaItem[]` (image/video/youtube/vimeo) via `media` field alongside legacy `images: string[]`. `MediaUploader` handles uploads + embeds. `MediaPlayer` renders videos/embeds on storefront. `ImageGallery` accepts optional `media` prop and falls back to `images`.
 - **Reviews**: `lib/reviews.ts` — Client-side Firestore queries for approved reviews by product. Admin CRUD via Lambda (`lambda/admin/reviews.mjs`).
 - **Orders**: `lib/orders.ts` — Queries by userId and by customerEmail (for guest checkout recovery).
 - **API calls**: `lib/api.ts` — Single `apiPost()` function that POSTs to `NEXT_PUBLIC_API_URL` with Firebase ID token. All backend actions go through this one endpoint with an `action` field.
-- **Image uploads**: `lib/r2.ts` — Gets presigned URL from backend, uploads directly to Cloudflare R2.
+- **Image/Video uploads**: `lib/r2.ts` — Gets presigned URL from backend, uploads directly to Cloudflare R2. Supports optional `{ productSlug, mediaType }` for structured paths. R2 path structure: `{admin_email}/{product_slug}/{images|videos}/{timestamp}-{filename}`. Videos up to 50MB, images up to 10MB.
 - **Stripe**: `lib/stripe.ts` — Lazy-loaded client-side Stripe.js.
 
 ### Backend (Lambda)
 
 The `lambda/` directory contains AWS Lambda functions (plain `.mjs`, not part of the Next.js build — excluded in `tsconfig.json`):
 
-- `lambda/admin/index.mjs` — Admin API (product CRUD, order management, R2 upload URLs, Stripe checkout, review CRUD)
+- `lambda/admin/index.mjs` — Admin API (product CRUD with archive/restore, order management, R2 upload URLs with structured paths, Stripe checkout, review CRUD, payment links, mark-shipped, get-customers)
 - `lambda/admin/reviews.mjs` — Review CRUD functions (extracted to keep index.mjs under 300 lines)
 - `lambda/webhook/index.mjs` — Stripe webhook handler (order creation on payment)
 - `lambda/webhook/emails.mjs` — Transactional email templates
-- `lambda/shared/` — Shared utilities (Firebase Admin SDK init, HTTP response helpers)
+- `lambda/shared/` — Shared utilities (Firebase Admin SDK init, HTTP response helpers, input validation)
 
 **Lambda packaging**: Files must be zipped preserving the `admin/` or `webhook/` + `shared/` directory structure. Handler is `admin/index.handler` or `webhook/index.handler`.
 
 ### Firebase / Firestore
 
 Project: `resume-system-470420`
-Collections: `users`, `products`, `categories`, `orders`, `stripeEvents`, `reviews`
+Collections: `users`, `products`, `categories`, `orders`, `stripeEvents`, `reviews`, `paymentLinks`
+- Product documents have `isActive` (storefront visibility) and `isArchived` (soft-delete). Archiving sets both `isArchived: true` and `isActive: false`. Restoring sets `isArchived: false` only (admin must re-activate manually).
+- Product documents support `media: MediaItem[]` alongside legacy `images: string[]`.
 - Security rules in `firestore.rules` — products/categories are read-only from client; orders readable by owner (UID or email match); reviews readable if approved; all writes only through Lambda backend.
 - Composite indexes in `firestore.indexes.json` — required for product queries with `isActive` filter + `createdAt` sort, reviews by `productId` + `isApproved` + `createdAt`, orders by `customerEmail` + `createdAt`.
 
@@ -116,6 +123,7 @@ Frontend (must be `NEXT_PUBLIC_`):
 - `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 - `NEXT_PUBLIC_API_URL` — Lambda API Gateway endpoint (`https://2tqn1i1a3e.execute-api.eu-west-2.amazonaws.com/admin`)
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID` — Google Analytics 4 measurement ID (e.g., `G-XXXXXXXXXX`)
 
 Backend (in Lambda environment):
 - `FIREBASE_SERVICE_ACCOUNT` (base64), `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
@@ -132,6 +140,8 @@ Backend (in Lambda environment):
 - **shadcn/ui**: New York style, Slate base color, CSS variables enabled. Add components with `pnpm dlx shadcn@latest add <component>`.
 - **Static params**: Pages using `[locale]` must export `generateStaticParams` returning all locales.
 - **Admin guard**: Admin pages use `AdminGuard` component that checks `userDoc.role === "admin"`.
+- **Admin product tabs**: `AdminProducts.tsx` uses shadcn `Tabs` to show Active/Archived products. Archive is soft-delete (sets `isArchived: true` + `isActive: false`), restore sets `isArchived: false`.
+- **MediaItem type**: `{ type: "image" | "video" | "youtube" | "vimeo"; url: string; thumbnailUrl?: string }`. YouTube thumbnails auto-generated from video ID. Products store both `media: MediaItem[]` and `images: string[]` (derived from media for backwards compatibility).
 
 ---
 
@@ -236,4 +246,21 @@ Escalations: [any, or "none"]
 - 2026-02-26: After Lambda security changes, must repackage and redeploy BOTH admin and webhook Lambdas
 - 2026-02-26: NEVER commit real secrets (API keys, webhook secrets, service account keys, passwords) to git — even in documentation files like deploy.md. Always use placeholders like `<from GitHub Secrets>` or `***`. If a secret is accidentally committed, it lives in git history forever until scrubbed with `git filter-repo`. Rotate the secret immediately, scrub history, force push ALL branches, and dismiss GitHub security alerts.
 - 2026-02-26: deploy.md and all .claude/ files must NEVER contain real secret values — only resource IDs, public keys (NEXT_PUBLIC_), and placeholder references to where secrets are stored (GitHub Secrets, Lambda env, Stripe Dashboard)
+- 2026-02-26: Admin products page must use `getAllProducts()` (no isActive filter) — `getProducts()` filters `isActive === true` which hides inactive/archived products from admin view
+- 2026-02-26: Archive/restore is preferred over permanent delete — `archive-product` sets `isArchived: true` + `isActive: false`, `restore-product` sets `isArchived: false` (admin must manually re-activate)
+- 2026-02-26: R2 upload paths now use structured format: `{email}/{slug}/{images|videos}/{timestamp}-{filename}` — old flat `products/` paths still work (backwards compatible)
+- 2026-02-26: Products support multi-media via `media: MediaItem[]` field — always submit both `media` and derived `images` (for backwards compat with storefront queries that only use `images`)
+- 2026-02-26: Video uploads allowed up to 50MB (vs 10MB for images) — Lambda validates `video/mp4` and `video/webm` MIME types when `mediaType === "videos"`
+- 2026-02-26: YouTube/Vimeo embed URLs parsed client-side in `MediaUploader` — YouTube uses `youtube-nocookie.com/embed/` for privacy, thumbnails from `img.youtube.com/vi/{id}/mqdefault.jpg`
+- 2026-02-26: CI/CD deploy workflow handles BOTH frontend (S3+CloudFront) and Lambda (admin+webhook) deployment automatically on push to main — no need for manual Lambda deploy
+- 2026-02-27: CORS headers now only returned for allowed origins (not empty ACAO for disallowed) — security headers (HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy) added to all Lambda responses
+- 2026-02-27: CloudFront Function `cloudfront-security-headers.js` handles CSP, Permissions-Policy — must be deployed separately via AWS Console
+- 2026-02-27: Cookie consent stored in localStorage key `cosy-loops-cookie-consent` — GA4 only loads if consent === "accepted"
+- 2026-02-27: GDPR pages (privacy, terms, returns) follow same pattern as shipping/faq/contact — `setRequestLocale(locale)` required in page component for static export
+- 2026-02-27: Backend input validation via `lambda/shared/validate.mjs` — validateProduct() for CRUD, validateCheckoutDetails() for checkout, applied in admin/index.mjs and checkout.mjs
+- 2026-02-27: Webhook: invalid signature returns 403 (not 400), processing errors return 202 (not 500) — lets Stripe handle retries properly
+- 2026-02-27: Shipping notification: `mark-shipped` admin action updates order status + sends email via SES with tracking links (Royal Mail, DPD, Evri)
+- 2026-02-27: Admin dashboard includes LowStockAlert component — queries products where isActive=true AND stock<=5, requires composite index in firestore.indexes.json
+- 2026-02-27: Customer management page at /admin/customers/ — aggregates customer data from orders collection (no separate customers collection)
+- 2026-02-27: GA4 analytics via `lib/analytics.ts` — trackViewProduct, trackAddToCart, trackBeginCheckout, trackPurchase. Requires NEXT_PUBLIC_GA_MEASUREMENT_ID env var
 -->

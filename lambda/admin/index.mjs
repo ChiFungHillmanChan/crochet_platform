@@ -7,6 +7,12 @@ import { success, error } from "../shared/response.mjs";
 import { getReviews, createReview, updateReview, deleteReview } from "./reviews.mjs";
 import { createPaymentLink, getPaymentLinks, deactivatePaymentLink } from "./payment-links.mjs";
 import { createCheckoutSession } from "./checkout.mjs";
+import { validateProduct } from "../shared/validate.mjs";
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import { buildShippingNotificationEmail } from "../webhook/emails.mjs";
+
+const ses = new SESClient({ region: process.env.AWS_REGION || "eu-west-2" });
+const SENDER_EMAIL = process.env.SENDER_EMAIL || "noreply@cosyloops.com";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -45,6 +51,11 @@ async function createProduct(body, origin) {
   const { name, slug, description, price, stock, categorySlug, images, isActive } = body;
   if (!name || !slug) return error(400, "Name and slug required", origin);
 
+  const validationErrors = validateProduct(body, false);
+  if (validationErrors.length > 0) {
+    return error(400, validationErrors.join("; "), origin);
+  }
+
   const existing = await db.collection("products").where("slug", "==", slug).limit(1).get();
   if (!existing.empty) return error(409, `Product with slug "${slug}" already exists`, origin);
 
@@ -65,6 +76,11 @@ const PRODUCT_ALLOWED_FIELDS = ["name", "slug", "description", "price", "stock",
 async function updateProduct(body, origin) {
   const { id } = body;
   if (!id) return error(400, "Product ID required", origin);
+
+  const validationErrors = validateProduct(body, true);
+  if (validationErrors.length > 0) {
+    return error(400, validationErrors.join("; "), origin);
+  }
 
   const updates = {};
   for (const field of PRODUCT_ALLOWED_FIELDS) {
@@ -267,6 +283,65 @@ export async function handler(event) {
         return await deactivatePaymentLink(body, origin, stripe);
       case "set-admin-role":
         return await setAdminRole(body, origin);
+      case "mark-shipped": {
+        const { orderId, trackingNumber, carrier } = body;
+        if (!orderId) return error(400, "Order ID required", origin);
+        const orderDoc = await db.doc(`orders/${orderId}`).get();
+        if (!orderDoc.exists) return error(404, "Order not found", origin);
+        const orderData = { id: orderId, ...orderDoc.data() };
+        await db.doc(`orders/${orderId}`).update({
+          status: "shipped",
+          trackingNumber: trackingNumber || null,
+          carrier: carrier || null,
+          shippedAt: new Date(),
+        });
+        if (orderData.customerEmail) {
+          try {
+            const email = buildShippingNotificationEmail(orderData, trackingNumber, carrier);
+            await ses.send(new SendEmailCommand({
+              Source: SENDER_EMAIL,
+              Destination: { ToAddresses: [orderData.customerEmail] },
+              Message: {
+                Subject: { Data: email.subject, Charset: "UTF-8" },
+                Body: {
+                  Html: { Data: email.html, Charset: "UTF-8" },
+                  Text: { Data: email.text, Charset: "UTF-8" },
+                },
+              },
+            }));
+          } catch (err) {
+            console.error("Shipping email failed:", err);
+          }
+        }
+        return success({ updated: true }, origin);
+      }
+      case "get-customers": {
+        const ordersSnap = await db.collection("orders").orderBy("createdAt", "desc").limit(500).get();
+        const customerMap = new Map();
+        ordersSnap.docs.forEach((doc) => {
+          const order = doc.data();
+          if (!order.customerEmail) return;
+          const key = order.customerEmail.toLowerCase();
+          const existing = customerMap.get(key);
+          if (existing) {
+            existing.orderCount++;
+            existing.totalSpent += order.totalAmount || 0;
+            const orderDate = order.createdAt?.toDate?.() || new Date(0);
+            if (orderDate > existing.lastOrderDate) existing.lastOrderDate = orderDate;
+          } else {
+            customerMap.set(key, {
+              email: order.customerEmail,
+              name: order.customerName || "Unknown",
+              phone: order.customerPhone || "",
+              orderCount: 1,
+              totalSpent: order.totalAmount || 0,
+              lastOrderDate: order.createdAt?.toDate?.() || new Date(),
+            });
+          }
+        });
+        const customers = Array.from(customerMap.values()).sort((a, b) => b.totalSpent - a.totalSpent);
+        return success({ customers }, origin);
+      }
       default:
         return error(400, `Unknown action: ${action}`, origin);
     }

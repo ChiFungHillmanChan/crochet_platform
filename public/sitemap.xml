@@ -4,34 +4,182 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cosyloops.com/en/</loc>
-    <lastmod>2026-02-26</lastmod>
+    <lastmod>2026-02-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/" />
     <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/en/shop/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/shop/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/shop/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/shop/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/en/about/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/about/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/about/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/about/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/en/faq/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/faq/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/faq/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/faq/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/en/shipping/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/shipping/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/shipping/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/shipping/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/en/contact/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/contact/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/contact/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/contact/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/en/privacy/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/privacy/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/privacy/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/privacy/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/en/terms/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/terms/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/terms/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/terms/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/en/returns/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/returns/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/returns/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/returns/" />
   </url>
   <url>
     <loc>https://cosyloops.com/en/account/login/</loc>
-    <lastmod>2026-02-26</lastmod>
+    <lastmod>2026-02-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/account/login/" />
     <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/account/login/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/account/login/" />
   </url>
   <url>
     <loc>https://cosyloops.com/zh-hk/</loc>
-    <lastmod>2026-02-26</lastmod>
+    <lastmod>2026-02-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/" />
     <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/zh-hk/shop/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/shop/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/shop/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/shop/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/zh-hk/about/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/about/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/about/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/about/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/zh-hk/faq/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/faq/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/faq/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/faq/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/zh-hk/shipping/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/shipping/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/shipping/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/shipping/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/zh-hk/contact/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/contact/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/contact/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/contact/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/zh-hk/privacy/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/privacy/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/privacy/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/privacy/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/zh-hk/terms/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/terms/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/terms/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/terms/" />
+  </url>
+  <url>
+    <loc>https://cosyloops.com/zh-hk/returns/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/returns/" />
+    <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/returns/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/returns/" />
   </url>
   <url>
     <loc>https://cosyloops.com/zh-hk/account/login/</loc>
-    <lastmod>2026-02-26</lastmod>
+    <lastmod>2026-02-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://cosyloops.com/en/account/login/" />
     <xhtml:link rel="alternate" hreflang="zh-hk" href="https://cosyloops.com/zh-hk/account/login/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cosyloops.com/en/account/login/" />
   </url>
 </urlset>

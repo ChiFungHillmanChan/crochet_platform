@@ -12,6 +12,8 @@ import {
 } from "@/lib/structured-data";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { LangUpdater } from "@/components/layout/LangUpdater";
+import CookieConsent from "@/components/layout/CookieConsent";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 const SITE_URL = "https://cosyloops.com";
 
@@ -83,6 +85,8 @@ export default async function LocaleLayout({
         <AnnouncementBar />
         <div className="flex-1">{children}</div>
         <Footer />
+        <CookieConsent />
+        <GoogleAnalytics />
       </ClientProviders>
     </NextIntlClientProvider>
   );

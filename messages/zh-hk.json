@@ -33,7 +33,10 @@
     "shipping": "運送與退貨",
     "faq": "常見問題",
     "contact": "聯絡我們",
-    "etsy": "Etsy"
+    "etsy": "Etsy",
+    "privacy": "私隱政策",
+    "terms": "服務條款",
+    "returns": "退貨政策"
   },
   "home": {
     "title": "Cosy Loops",
@@ -228,7 +231,12 @@
     "embedUrl": "YouTube 或 Vimeo 網址",
     "invalidEmbed": "無效的 YouTube 或 Vimeo 網址",
     "uploadMedia": "上傳媒體",
-    "dragDropMedia": "拖放圖片或影片，或點擊瀏覽"
+    "dragDropMedia": "拖放圖片或影片，或點擊瀏覽",
+    "markShipped": "標記為已發貨",
+    "markShippedButton": "標記為已發貨並通知客戶",
+    "trackingNumber": "追蹤號碼",
+    "carrier": "快遞公司",
+    "customers": "客戶"
   },
   "about": {
     "seoTitle": "關於我們 | Cosy Loops",
@@ -363,6 +371,84 @@
     "new": "新品",
     "bestSeller": "暢銷",
     "lowStock": "少量存貨"
+  },
+  "cookie": {
+    "message": "我們使用 Cookie 來改善您的體驗。繼續瀏覽即表示您同意我們使用 Cookie。",
+    "accept": "接受",
+    "reject": "拒絕",
+    "learnMore": "了解更多"
+  },
+  "privacy": {
+    "title": "私隱政策",
+    "seoTitle": "私隱政策 | Cosy Loops",
+    "seoDescription": "了解 Cosy Loops 如何收集、使用和保護您的個人資料。",
+    "lastUpdated": "最後更新：{date}",
+    "sections": {
+      "dataWeCollect": "我們收集的資料",
+      "dataWeCollectBody": "當您使用我們的網站時，我們可能收集：您的姓名、電郵地址、電話號碼、送貨地址（當您下單時）；付款資訊（由 Stripe 安全處理——我們從不儲存您的卡號）；瀏覽數據和 Cookie（經您同意）。",
+      "howWeUse": "我們如何使用您的資料",
+      "howWeUseBody": "我們使用您的個人資料來：處理和運送您的訂單；發送訂單確認和運送通知電郵；改善我們的網站和服務；遵守法律義務。",
+      "dataSharing": "資料共享",
+      "dataSharingBody": "我們與以下方共享您的資料：Stripe（付款處理）；Firebase/Google Cloud（身份驗證和數據庫）；AWS（電郵發送和託管）；Cloudflare（圖片託管）。我們從不向第三方出售您的資料。",
+      "dataRetention": "資料保留",
+      "dataRetentionBody": "我們保留您的訂單資料 7 年，用於會計和稅務目的。帳戶資料在您要求刪除前一直保留。",
+      "yourRights": "您的權利",
+      "yourRightsBody": "根據英國 GDPR，您有權：存取您的個人資料；更正不準確的資料；要求刪除您的資料；匯出您的資料；隨時撤回同意。如要行使這些權利，請聯絡 {email}。",
+      "cookies": "Cookie",
+      "cookiesBody": "我們使用必要的 Cookie 來維持網站功能，以及可選的分析 Cookie（經您同意）來了解訪客如何使用我們的網站。",
+      "contact": "聯絡方式",
+      "contactBody": "如有私隱相關查詢，請聯絡 {email}。"
+    }
+  },
+  "terms": {
+    "title": "服務條款",
+    "seoTitle": "服務條款 | Cosy Loops",
+    "seoDescription": "閱讀使用 Cosy Loops 和購買手工鉤針產品的條款和條件。",
+    "lastUpdated": "最後更新：{date}",
+    "sections": {
+      "general": "一般條款",
+      "generalBody": "這些條款規管您使用 Cosy Loops 網站以及向我們購買產品的行為。使用我們的網站即表示您同意這些條款。",
+      "products": "產品",
+      "productsBody": "所有產品均為手工製作，尺寸、顏色和外觀可能略有差異。這是手工製品的特點，而非缺陷。產品圖片僅供參考，實物可能略有不同。",
+      "pricing": "定價與付款",
+      "pricingBody": "所有價格以英鎊顯示，適用時已含增值稅。我們接受通過 Stripe 付款（信用卡/扣帳卡）。付款在購買時收取。",
+      "orders": "訂單",
+      "ordersBody": "下單即表示您提出購買要約。我們將通過電郵確認您的訂單。如產品缺貨或定價有誤，我們保留取消任何訂單的權利。",
+      "shipping": "運送",
+      "shippingBody": "我們通過 Royal Mail 在英國境內發貨。標準送貨需 3-5 個工作天。請預留額外 1-3 個工作天用於手工準備。訂單滿 £50 可享免費送貨。",
+      "returns": "退貨",
+      "returnsBody": "根據英國《消費者合約條例 2013》，您有 14 天的退貨期。商品必須未使用且保持原始狀態。詳情請參閱我們的退貨政策。",
+      "liability": "責任限制",
+      "liabilityBody": "在法律允許的最大範圍內，Cosy Loops 不對因您使用我們的網站或產品而產生的任何間接、附帶或後果性損害承擔責任。",
+      "privacy": "私隱",
+      "privacyBody": "您的個人資料按照我們的私隱政策處理。使用我們的網站即表示您同意我們的資料處理方式。",
+      "changes": "條款變更",
+      "changesBody": "我們可能會不時更新這些條款。變更將在此頁面發佈並更新日期。繼續使用網站即表示接受修訂後的條款。",
+      "contact": "聯絡方式",
+      "contactBody": "如對這些條款有疑問，請聯絡 {email}。"
+    }
+  },
+  "returns": {
+    "title": "退貨政策",
+    "seoTitle": "退貨政策 | Cosy Loops",
+    "seoDescription": "我們的退貨和退款政策。所有英國訂單享有 14 天冷靜期。",
+    "lastUpdated": "最後更新：{date}",
+    "sections": {
+      "coolingOff": "14 天冷靜期",
+      "coolingOffBody": "根據英國《消費者合約條例 2013》，您有權在收到商品後 14 天內取消訂單，無需提供任何理由。",
+      "eligibility": "退貨條件",
+      "eligibilityBody": "商品必須未使用、未清洗，且與收到時狀態相同。商品應盡可能以原包裝退回。",
+      "process": "如何退貨",
+      "processBody": "如需退貨，請在收到訂單後 14 天內電郵至 {email}。我們會提供退貨指引和參考編號。",
+      "refunds": "退款",
+      "refundsBody": "收到並檢查您的退貨商品後，我們將在 14 天內處理退款。退款將通過 Stripe 退還至您原來的付款方式。",
+      "exceptions": "例外情況",
+      "exceptionsBody": "訂製或個人化商品不可退貨，除非有缺陷或與描述不符。已使用、已清洗或已改動的商品不符合退貨條件。",
+      "shippingCosts": "退貨運費",
+      "shippingCostsBody": "除非商品有缺陷或與描述不符，退貨運費由您承擔。我們建議使用可追蹤的快遞服務。",
+      "contact": "聯絡方式",
+      "contactBody": "如有任何退貨查詢，請聯絡 {email}。我們通常在 24-48 小時內回覆。"
+    }
   },
   "locale": {
     "en": "EN",

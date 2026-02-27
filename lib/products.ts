@@ -1,6 +1,12 @@
 import { getFirebaseDb } from "@/lib/firebase";
-import type { QueryDocumentSnapshot } from "firebase/firestore";
+import type { QueryDocumentSnapshot, DocumentSnapshot } from "firebase/firestore";
 import type { Product, Category } from "@/lib/types";
+
+export interface PaginatedResult {
+  products: Product[];
+  lastDoc: DocumentSnapshot | null;
+  hasMore: boolean;
+}
 
 function docToProduct(doc: QueryDocumentSnapshot): Product {
   return {
@@ -108,6 +114,36 @@ export async function getRelatedProducts(
   }
 
   return products.slice(0, limitCount);
+}
+
+export async function getProductsPaginated(
+  pageSize = 20,
+  cursor?: DocumentSnapshot | null,
+  categorySlug?: string
+): Promise<PaginatedResult> {
+  const db = await getFirebaseDb();
+  const {
+    collection, getDocs, query, where, orderBy, limit, startAfter,
+  } = await import("firebase/firestore");
+
+  const constraints = [
+    where("isActive", "==", true),
+    ...(categorySlug ? [where("categorySlug", "==", categorySlug)] : []),
+    orderBy("createdAt", "desc"),
+    ...(cursor ? [startAfter(cursor)] : []),
+    limit(pageSize + 1),
+  ];
+
+  const q = query(collection(db, "products"), ...constraints);
+  const snap = await getDocs(q);
+  const hasMore = snap.docs.length > pageSize;
+  const docs = hasMore ? snap.docs.slice(0, pageSize) : snap.docs;
+
+  return {
+    products: docs.map(docToProduct),
+    lastDoc: docs.length > 0 ? docs[docs.length - 1] : null,
+    hasMore,
+  };
 }
 
 export async function getCategories(): Promise<Category[]> {

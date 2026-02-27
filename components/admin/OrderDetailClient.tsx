@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Phone, MapPin, MessageSquare } from "lucide-react";
+import { ArrowLeft, Phone, MapPin, MessageSquare, Truck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { getFirebaseDb } from "@/lib/firebase";
@@ -11,6 +11,9 @@ import { formatPrice } from "@/lib/utils";
 import type { Order } from "@/lib/types";
 import { OrderStatusBadge } from "@/components/shop/OrderStatusBadge";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -26,6 +29,9 @@ export function OrderDetailClient() {
   const t = useTranslations("admin");
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [carrier, setCarrier] = useState("royal-mail");
+  const [shipping, setShipping] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -52,6 +58,24 @@ export function OrderDetailClient() {
     }
     load();
   }, [params.id]);
+
+  async function handleMarkShipped() {
+    if (!order) return;
+    setShipping(true);
+    try {
+      await apiPost("mark-shipped", {
+        orderId: order.id,
+        trackingNumber: trackingNumber.trim() || undefined,
+        carrier,
+      });
+      setOrder({ ...order, status: "shipped" as Order["status"] });
+      toast.success(t("statusUpdated"));
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t("updateFailed"));
+    } finally {
+      setShipping(false);
+    }
+  }
 
   async function handleStatusChange(status: string) {
     if (!order) return;
@@ -140,6 +164,44 @@ export function OrderDetailClient() {
           </Select>
         </div>
       </div>
+
+      {order.status === "paid" && (
+        <div className="space-y-3 rounded-2xl bg-blush/20 p-6 shadow-sm">
+          <h2 className="flex items-center gap-2 font-heading font-semibold text-cocoa">
+            <Truck className="h-4 w-4" />
+            {t("markShipped")}
+          </h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-1">
+              <Label htmlFor="tracking">{t("trackingNumber")}</Label>
+              <Input
+                id="tracking"
+                value={trackingNumber}
+                onChange={(e) => setTrackingNumber(e.target.value)}
+                placeholder="AB123456789GB"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="carrier">{t("carrier")}</Label>
+              <Select value={carrier} onValueChange={setCarrier}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="royal-mail">Royal Mail</SelectItem>
+                  <SelectItem value="dpd">DPD</SelectItem>
+                  <SelectItem value="hermes">Evri (Hermes)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <Button
+            onClick={handleMarkShipped}
+            disabled={shipping}
+            className="rounded-full bg-soft-pink text-cocoa hover:bg-soft-pink/80"
+          >
+            {shipping ? "..." : t("markShippedButton")}
+          </Button>
+        </div>
+      )}
 
       {addr && (
         <div className="rounded-2xl bg-white p-6 shadow-sm">

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { LayoutDashboard, Package, ShoppingCart, Star, Link2, Menu } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Star, Link2, Menu, Users } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ const adminLinks = [
   { href: "/admin/orders/" as const, labelKey: "orders", icon: ShoppingCart },
   { href: "/admin/reviews/" as const, labelKey: "reviews", icon: Star },
   { href: "/admin/payment-links/" as const, labelKey: "paymentLinks", icon: Link2 },
+  { href: "/admin/customers/" as const, labelKey: "customers", icon: Users },
 ];
 
 function AdminNavLinks({ onNavigate }: { onNavigate?: () => void }) {
