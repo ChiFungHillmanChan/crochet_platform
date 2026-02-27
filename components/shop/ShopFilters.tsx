@@ -1,6 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { SlidersHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -8,6 +11,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import type { Category } from "@/lib/types";
 
 type SortOption = "newest" | "priceLow" | "priceHigh";
@@ -30,10 +40,69 @@ export function ShopFilters({
   onSortChange,
 }: ShopFiltersProps) {
   const t = useTranslations("shopPage");
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const activeName =
+    categories.find((c) => c.slug === selectedCategory)?.name ??
+    t("filterAll");
+
+  function selectCategory(slug: string) {
+    onCategoryChange(slug);
+    setSheetOpen(false);
+  }
 
   return (
     <div className="mb-8 flex flex-wrap items-center gap-3">
-      <div className="scrollbar-hide flex gap-2 overflow-x-auto">
+      {/* Mobile: hamburger button that opens category sheet */}
+      <div className="sm:hidden">
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 rounded-full border-blush"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              <span>{activeName}</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="rounded-t-2xl">
+            <SheetHeader>
+              <SheetTitle className="font-heading text-cocoa">
+                {t("filterCategories")}
+              </SheetTitle>
+            </SheetHeader>
+            <div className="flex flex-col gap-1 py-4">
+              <button
+                onClick={() => selectCategory("")}
+                className={`rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors ${
+                  !selectedCategory
+                    ? "bg-soft-pink text-cocoa"
+                    : "text-warm-gray hover:bg-blush/30"
+                }`}
+              >
+                {t("filterAll")}
+              </button>
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => selectCategory(cat.slug)}
+                  className={`rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors ${
+                    selectedCategory === cat.slug
+                      ? "bg-soft-pink text-cocoa"
+                      : "text-warm-gray hover:bg-blush/30"
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Desktop: pill buttons */}
+      <div className="hidden gap-2 sm:flex">
         <button
           onClick={() => onCategoryChange("")}
           aria-pressed={!selectedCategory}
