@@ -40,8 +40,13 @@ export async function apiPost<T>(
   });
 
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    throw new Error(data.error || `API error: ${res.status}`);
+    let data: Record<string, unknown> = {};
+    try {
+      data = await res.json();
+    } catch {
+      // Response body is not JSON
+    }
+    throw new Error((data.error as string) || `API error: ${res.status}`);
   }
 
   return res.json();

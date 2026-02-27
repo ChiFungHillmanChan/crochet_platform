@@ -1,30 +1,41 @@
 "use client";
 
-import type { Product } from "@/lib/types";
-import { ProductCard } from "@/components/shop/ProductCard";
 import { useTranslations } from "next-intl";
+import { ProductCard } from "@/components/shop/ProductCard";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import type { Product } from "@/lib/types";
 
 interface ProductGridProps {
   products: Product[];
   loading?: boolean;
+  hasMore?: boolean;
+  loadingMore?: boolean;
+  onLoadMore?: () => void;
 }
 
-export function ProductGrid({ products, loading }: ProductGridProps) {
-  const t = useTranslations("shop");
+export function ProductGrid({
+  products,
+  loading,
+  hasMore,
+  loadingMore,
+  onLoadMore,
+}: ProductGridProps) {
+  const tc = useTranslations("common");
+  const t = useTranslations("shopPage");
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-3 lg:gap-10">
-        {Array.from({ length: 6 }).map((_, i) => (
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
             className="animate-pulse overflow-hidden rounded-2xl bg-white shadow-sm"
           >
             <div className="aspect-[3/4] bg-blush/30" />
-            <div className="space-y-2 p-3 sm:space-y-3 sm:p-5">
-              <div className="h-3 w-14 rounded bg-blush/50 sm:h-4 sm:w-20" />
-              <div className="h-4 w-3/4 rounded bg-blush/50 sm:h-6" />
-              <div className="h-4 w-1/3 rounded bg-blush/50 sm:h-6" />
+            <div className="space-y-2 p-4">
+              <div className="h-4 w-16 rounded bg-blush/50" />
+              <div className="h-5 w-3/4 rounded bg-blush/50" />
             </div>
           </div>
         ))}
@@ -34,17 +45,31 @@ export function ProductGrid({ products, loading }: ProductGridProps) {
 
   if (products.length === 0) {
     return (
-      <div className="py-20 text-center">
-        <p className="text-lg text-warm-gray">{t("noProducts")}</p>
-      </div>
+      <p className="py-20 text-center text-warm-gray">{tc("noResults")}</p>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-3 lg:gap-10">
-      {products.map((product, i) => (
-        <ProductCard key={product.id} product={product} priority={i < 3} />
-      ))}
-    </div>
+    <>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {products.map((product, i) => (
+          <ProductCard key={product.id} product={product} priority={i < 4} />
+        ))}
+      </div>
+
+      {hasMore && (
+        <div className="mt-10 flex justify-center">
+          <Button
+            variant="outline"
+            className="rounded-full border-blush px-8"
+            onClick={onLoadMore}
+            disabled={loadingMore}
+          >
+            {loadingMore && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {t("loadMore")}
+          </Button>
+        </div>
+      )}
+    </>
   );
 }

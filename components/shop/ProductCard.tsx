@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { memo, useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ShoppingBag, LogIn, Check } from "lucide-react";
@@ -25,7 +25,7 @@ interface ProductCardProps {
   reviewCount?: number;
 }
 
-export function ProductCard({
+export const ProductCard = memo(function ProductCard({
   product,
   priority = false,
   badge,
@@ -205,4 +205,4 @@ export function ProductCard({
       )}
     </Link>
   );
-}
+});
